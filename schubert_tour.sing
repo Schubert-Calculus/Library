@@ -1,0 +1,34 @@
+option(redSB); 
+LIB "matrix.lib"; 
+LIB "linalg.lib"; 
+LIB "schubert.lib";
+
+
+print("myring() is used as a quick way to construct a polynomial ring in n variables. Optional parameters (given as a list of strings) allow changing the characteristic, the name of the variables, or the term ordering.");
+print("Example: myring(5,list(''1009'',''y''))");
+myring(5, list("1009","y"));
+print("This function is called in the other ring construction functions found in the library.");
+
+print("nIndents() computes the number of indeterminates for a flag variety, which is then used to build a ring with flagRing(). flagRing() takes the pieces of the ring important to your flag variety, the dimension of the space containing the flag, and (optionally) a pair of permutations that give relations in the flag.");
+print("For our example, we will use the problem of four lines in G(2,4). Here, the ''important'' piece of our flag is the 2-plane, our ambient space is 4-dimensional, and we are using the conditions given by two of the lines for our optional permutations.");
+print("Example: flagRing(intvec(2),4,intvec(1, 3, 2, 4),intvec(1, 3, 2, 4))");
+def R= flagRing(intvec(2),4,intvec(1, 3, 2, 4),intvec(1, 3, 2, 4));
+R;
+
+
+def S= myring(nvars(R), "1009"); 
+setring(S); 
+
+
+print("localCoordMatrix() computes the matrix of local coordinates of the flag variety as described in flagRing(). Its inputs are the same as this previous function. Continuing with our problem of four lines, we will compute local coordinates for the intersection of the conditions imposed by the first two lines.");
+print("Example: localCoordMatrix(intvec(2), 4, intvec(1, 3, 2, 4),intvec(1, 3, 2, 4))");
+print(localCoordMatrix(intvec(2), 4, intvec(1, 3, 2, 4),intvec(1, 3, 2, 4)));
+
+
+
+print("randomCondition() computes the ideal that vanishes on the variety defined by a given Schubert cell in the local coordinates given in the previous example using a random flag. It takes as its inputs the Schubert condition, the ''important'' pieces of the flag (as given in the previous examples), the maximum size of the random numbers used to generate the flag, the size of the space containing the flag, and the same two optional schubert cells as given in flagRing() and localCoordMatrix(). We will now compute the ideal that vanishes on three lines in G(2,4) for a random flag represented by the column space of a matrix with interger entries less than 1000.");
+print("Example: randomCondition(intvec(1,3,2,4), intvec(2), 1000, 4, intvec(1,3,2,4), intvec(1,3,2,4))");
+randomCondition(intvec(1,3,2,4), intvec(2), 1000, 4, intvec(1,3,2,4), intvec(1,3,2,4));
+
+quit;
+
