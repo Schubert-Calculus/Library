@@ -258,7 +258,7 @@ with open('Unknown_Galois_Group.txt','r') as problems:
 		parts= line.split('[')
 		numsolns= parts[1].split(',')[0]
 		# we check for desired cycles trials*numsolns times
-		trials= 300000
+		trials= 300
 		# maximum size of random numbers when generating a random condition
 		randomnumsize= 1000
 		# length of a condition vector
