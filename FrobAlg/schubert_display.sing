@@ -5,6 +5,7 @@ LIB "matrix.lib";
 LIB "linalg.lib"; 
 LIB "schubert.lib"; 
 
+int TT = timer;
 
 // We are in G(m,m+p). The vectors w and v encode the first two Schubert conditions 
 
@@ -129,11 +130,12 @@ for (j=1; j<=trials*numsolns; j++) {
         } 
       } 
       if (OddCycle*BigPrimecycle*Nminusonecycle==1) { 
-        printf("We have found the full symmetric group!"); 
+        printf("We have found the full symmetric group! in %s seconds and %s trials",timer-TT,j); 
         quit; 
       } 
     } 
   } 
 } 
 0; 
+
 quit; 
