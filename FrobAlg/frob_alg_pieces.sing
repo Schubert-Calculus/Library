@@ -1,0 +1,86 @@
+// Caution: Altering this file could cause FrobAlg.py to run into errors or  produce false results. Deleting this file is safe as FrobAlg.py will rewrite it if it can not be found. 
+
+option(redSB); 
+LIB "matrix.lib"; 
+LIB "linalg.lib"; 
+LIB "schubert.lib"; 
+
+
+// We are in G(m,m+p). The vectors w and v encode the first two Schubert conditions 
+
+int character = 1009;
+int m = 4;
+int p = 5;
+int numsolns =    4;
+// trials*numsolns is the number of times we will pick random cycles to check for desired cycle types 
+int trials = 10;
+int badtrial = 0; //used to count number of trials discarded 
+int variable= 0; //used to change what variable we reduce to if we encounter too many badtrials 
+int randomnumsize = 1000;
+intvec w = 1, 4, 5, 7, 2, 3, 6, 8, 9;
+intvec v = 1, 4, 5, 6, 2, 3, 7, 8, 9;
+
+// conditions is a list of the vectors of all but the first two Schubert conditions 
+list conditions = list( intvec(1, 2, 5, 6, 3, 4, 7, 8, 9), intvec(1, 2, 3, 6, 4, 5, 7, 8, 9), intvec(1, 2, 3, 5, 4, 6, 7, 8, 9) );
+int i,ii,j; 
+intvec mm = m; 
+int OddCycle = 0; 
+int Nminusonecycle = 0; 
+int BigPrimecycle = 0; 
+def R = flagRing(mm,m+p,v,w); 
+setring R; 
+
+int half = numsolns div 2; 
+// When building the Primes vector, we take advantage of the occasional strange relation between numsolns div 2 and numsolns-3 for numsolns<=7 to give us a vector that will be useful when we get the loop where we check for BigPrimecycle's 
+intvec Primes = primes(half,numsolns-3); 
+
+// this conditonal code block eliminates the potential small prime that we may have picked up above 
+if (Primes[1] < half) { 
+  Primes[1] = 0; 
+  Primes = compress(Primes); 
+} 
+
+ideal I; 
+def S = myring(nvars(R), string(character)); 
+setring(S); 
+
+ideal J,B; 
+list L; 
+poly F; 
+
+for (j=1; j<=1; j++) { 
+  setring R; 
+
+  I= 0; 
+  for (ii=1; ii<= size(conditions); ii++) { 
+    I = I + randomCondition(conditions[ii], mm, randomnumsize, m+p, v, w); 
+  } 
+  setring S;
+// When running the full code, we want to count how many times we go past the line J= std( ); to get # of GB needed 
+  J= std(fetch(R,I)); 
+  if (mult(J)==numsolns) { 
+    printf("J is");
+    J;
+    B= kbase(J); 
+    printf("B is");
+    B;
+    printf("reduce(var(nvars(R)-variable)*B,J) outputs");
+    reduce(var(nvars(R)-variable)*B,J);
+    F= charpoly(coeffs(reduce(var(nvars(R)-variable)*B,J),B), varstr(nvars(R)-variable));
+    printf("F is");
+    F; 
+    L= factorize(F,2); 
+    if (L[2]-1 <> 0 or deg(F) < numsolns) { 
+      badtrial++; 
+      j++; 
+      if (badtrial > trials*numsolns/2 & variable < nvars(R)-1) { 
+        variable++; // tries next variable 
+        list output; // clears output list 
+        badtrial= 0; 
+        j= 1; // restart counters 
+      } 
+      continue; 
+    }   
+  } 
+} 
+quit;
