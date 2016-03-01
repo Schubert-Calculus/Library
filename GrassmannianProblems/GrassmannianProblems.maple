@@ -1,0 +1,229 @@
+#GrassmannianProbems.maple
+#
+# Frank Sottile
+# 26 May 2008
+#
+########################################################
+interface(quiet=true):
+k:=4:
+n:=10:
+########################################################
+#
+#   This script lits all Schubert problems on the
+# Grassmannian G(k,n) by the number of solutions.
+#
+# It first generates a list of Grassmannian permutations that 
+#   fit in the k by n-k rectangle and that have length less than 
+#   k(n-k)-2, sorted into a table by length.
+#
+# Then it generates the ideal of the Grassmannian and
+#  computes all relevant Schubert classes.
+#
+#  Then it computes the intersection numbers of all Schubert problems
+# and writes them to a file  Gkn.data
+#
+#   Here is the format
+#
+#  3,6|6|1,3,5,2,4,6;1,3,5,2,4,6;1,2,4,3,5,6;1,2,4,3,5,6;1,2,4,3,5,6|
+#   ^  ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   |  |          List of permutations
+#   |  \
+#   |   \
+# Flag   -- Intersection number
+# Variety
+#
+#########################################################
+#
+#  Step 0: removes the old directory Gkn to get it ready to fill
+#
+#########################################################
+system(sprintf("rm -rf G%d%d",k,n)):
+system(sprintf("mkdir G%d%d",k,n)):
+read(Procedures):
+#########################################################
+#
+#  Step 1: Make a list of Grassmannian permutations with descent k
+#           (At least those with length \leq k(n-k)-2 )
+#
+#########################################################
+ for len from 1 to k*(n-k)-2 do 
+   GPerms[len]:=[]:
+ end do:
+ for p in combinat[choose](n,k) do
+  if p[k]>k and p[1]=1 and p[k]<n then
+     w:=[p[],op( sort(convert({seq(idx,idx=1..n)} minus convert(p,set),list)))]:
+     ell:=Ell(w):
+     if ell<=k*(n-k)-2 then 
+       GPerms[ell]:=[GPerms[ell][],w]:
+     end if:
+   end if:
+ end do:
+#print(GPerms);
+#quit;
+########################################################
+#
+#  Step 2: Generate the ideal of the cohomology ring of the Grassmannian
+#
+########################################################
+ h_0:=1:
+ e_0:=1:
+ for a from 1 to n do
+  H:=hx:
+  for b from 1 to min(a,k) do
+   H:=H+(-1)^b*e_||b*h_||(a-b):
+  od:
+  h_||a:=solve(H=0,hx):
+ od:
+  Ideal:=[seq(h_||idx, idx=n-k+1..n)]:
+# Ideal:=Groebner[gbasis](Ideal, tdeg(op(indets(Ideal)))):
+#
+ Ideal:=Groebner[Basis](Ideal, tdeg(op(indets(Ideal)))):
+########################################################
+#
+#  Step 3: Generate the Schubert classes
+#
+########################################################
+ for len from 1 to k*(n-k)-2 do
+   for w in GPerms[len] do
+     lam:=[seq(w[k+1-idx]-k-1+idx,idx=1..k)]:
+     M:=linalg[matrix](k,k,0):
+     for a from 1 to k do
+       for b from 1 to k do
+         if lam[a]+b-a<0
+            then M[a,b]:=0:
+          else M[a,b]:=h_||(lam[a]+b-a):
+         end if:
+       od:
+     od:
+     Sc[w]:=linalg[det](M):
+   od:
+ od:
+########################################################
+#
+#  Step 4: Generate lists of Schubert problems, compute their
+#           degrees and write files.
+#
+#    This loops over all partitions of k(n-k) that can be the 
+# `support' of a product of Schubert classes. (GoodPartitions).
+# For each such partition (in exponential notation), we make a list
+# of length the number of different parts of mu, where the 
+# piece corresponding to a block a^b of mu is all ways of choosing
+# b Grassmannian permutations of length a.
+#
+#    This list is called `Conditions'.  It is the building block
+# for Schubert problems of shape mu
+#
+ Nums:={}:
+for mu in GoodPartitions(k*(n-k)) do 
+
+   Conditions:=[]:
+   for len from 1 to nops(mu) do
+     if mu[len]>0 then
+       Betti:=nops(GPerms[len]):
+       Conds:=[]:
+       for C in combinat[composition](Betti+mu[len],Betti) do
+         A:=[]:
+         for j from 1 to Betti do
+           if C[j]>1 then
+             A:=[A[],[GPerms[len][j],C[j]-1]]:
+           end if:
+         end do:
+         Conds:=[Conds[],A]:
+       end do:
+     Conditions:=[Conditions[],Conds]:
+     end if:
+   end do:
+#
+#  Now we want to create and compute degrees of the enumerative problems, 
+# consisting of one choice from each of Conditions[i] for each i
+#
+   A:=[seq(nops(Conditions[idx]),idx=1..nops(Conditions))];
+   S:=[0,seq(1,idx=2..nops(A))];
+ 
+   for ii from 1 to mul(A[indx],indx=1..nops(A)) do 
+     j:=1:
+     while S[j]=A[j] do
+       S[j]:=1:
+       j:=j+1:
+     end do:
+     S[j]:=S[j]+1:
+ 
+     EP:=[seq(Conditions[idx][S[idx]][],idx=1..nops(S))]:
+     Enp:=[]:
+     for sc in EP do 
+       for i from 1 to sc[2] do
+         Enp:=[sc[1],Enp[]]:
+       end do:
+     end do:
+     Class:=mul(Sc[Enp[idx]], idx=1..nops(Enp)):
+########################   Differences in types of Maple   ################################
+#     Class:=Groebner[normalf](Class,Ideal, tdeg(op(indets(Ideal)))):
+#
+     Class:=Groebner[NormalForm](Class,Ideal, tdeg(op(indets(Ideal)))):
+     INT:=coeff(Class,e_||k^(n-k)):
+########################  Test only those with >2 solutions  ##############################
+#     if INT>1 then
+#     if INT>2 then
+########################  Test only those with 3<Nsols < 300  ##############################
+     if INT>3 and INT <300 then
+       if member(INT, Nums) then
+          read(sprintf("G%d%d/%d.data",k,n,INT)):
+        else
+         Nums:= Nums union {INT}:
+         Data:=[]:
+       end if:
+
+       Data:=[Data[],Enp]:
+
+       file:=fopen(sprintf("G%d%d/%d.data",k,n,INT),WRITE):
+
+       fprintf(file,"Data:=[NULL\n"):
+       for An in Data do
+         fprintf(file,",%a\n",An):
+       end do:
+       fprintf(file,"]:\n"):
+       fclose(file):
+     end if:
+   end do:
+ end do:
+########################################################
+#
+# Step 5: Read the files in Gkn and sort the data according to
+#          intersection number
+#
+########################################################
+Nums:=convert(Nums,list):
+
+numProbs:=0:
+
+ file:=fopen(sprintf("G%d.%d.problems",k,n),WRITE):
+ for INT in Nums do
+   read(sprintf("G%d%d/%d.data",k,n,INT)):
+   for SP in Data do
+     SP:= Standard_list(SP)[k]:
+     fprintf(file,"%s|%1d,%1d|%1d|",makeGrassName(SP),k,n,INT):
+     for i from 1 to nops(SP) do
+       fprintf(file,"%1d",SP[i][1]):
+       for j from 2 to n do
+         fprintf(file,",%1d",SP[i][j]):
+       end do:
+       if i<nops(SP) then fprintf(file,";") end if: 
+     end do:
+     fprintf(file,"|\n"):
+   end do:
+   numProbs:=numProbs+nops(Data):
+ end do:
+
+fclose(file):
+#########################################################
+#
+#  Step 0: removes the old directory Gkn
+#
+#########################################################
+system(sprintf("rm -rf G%d%d",k,n)):
+#########################################################
+printf("Elapsed  Time :=%8.2f  seconds\n", time()):
+printf("NumberofProblems:=%5d\n", numProbs):
+quit:
+########################################################
+ 

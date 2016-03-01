@@ -1,0 +1,267 @@
+#Procedures
+#
+# Frank Sottile
+#
+#   These are procedures to help compute all Grassmannian Schubert problems in 
+# small flag manifolds
+#
+###################################################################
+#
+# GoodPartitions(m)  Partitions of m in exponent notation with at least three  
+#                           parts and with largest part at most m-2
+# Partitions(m,a)  List of partitions of m with largest part at most a
+# Ell(w)         Computes the length of a permutation w
+# LT(v,w)        determines if v <= w in the Bruhat order
+# Descents(w)    computes the descents of w
+# lexCompare(v,w) evaluates the comparison v<w, where we compare the
+#                   augmented sequences [Ell(v),v] and [Ell(w),w]
+# Condition_name(w) This makes the name of the condition associated to w.
+#                     It is supposed to conform to the conventions of the monotone
+#                     conjecture project
+# Standard_list(Schub_Problem)  This takes a list of permutations that is purported to be
+#         a Schubert problem.  First it checks that it is a list of permutations and that
+#         the codimensions add up.  Then it sorts them by their descents into a table
+#         whose i-th entry are thos permutations in the Schubert problem with a unique
+#         descent at i.  `Mixed' conditions are in the 0-th entry.  Each entry is then
+#         sorted according in decreasing order according to lexCompare.
+# makeGrassName := proc(SP)    This procedure makes the name of a Grassmannian problem.
+#                           Its input is the sorted list of permutations SP encoding the Schubert problem.
+###################################################################
+
+
+
+
+
+############################################################
+GoodPartitions := proc(m)
+#
+#  Returns partitions of m in exponent notation with at least three  
+#  parts and with largest part at most m-2
+#
+local p,lambda,mu,idx,i:
+ p:=[]:
+ for lambda in Partitions(m,m-2) do 
+  if nops(lambda)>2 then  
+   mu:=[seq(0,idx=1..m-2)]:
+   for i in lambda do 
+    mu[i]:=mu[i]+1:
+   end do:
+   p:=[p[],mu]:
+  end if:
+ end do:
+ return(p):
+end proc:
+############################################################
+Partitions := proc(m,a)
+#
+#  List of partitions of m with largest part at most a
+#
+ local q, i, lambda:
+ if m=0 then 
+   return([[]]): 
+  else
+   q:=[]:
+   for i from 1 to a do 
+    for lambda in Partitions(m-i,min(i,m-i)) do 
+     q:=[q[], [i, lambda[]]]:
+    end do:
+   end do:
+   return(q):
+ end if:
+end proc:
+###################################################################
+Ell := proc(w)
+ local ell,n,i,j ;
+ ell:=0:
+ n := nops(w):
+ if n<>1 then
+  for i from 1 to n-1 do
+   for j from i+1 to n do
+    if w[i]>w[j] then ell:=ell+1 fi:
+   od:
+  od:
+ fi:
+ ell
+end:
+###################################################################
+LT := proc(v,w)
+local lt, i, sv, sw, j:
+lt:=evalb(true):
+for i from 1 to nops(w)-1 do
+ sv:=sort(v[1..i]):
+ sw:=sort(w[1..i]):
+ for j from 1 to i do
+  lt:=evalb((sv[j]<=sw[j]) and lt):
+ od:
+od:
+evalb(lt)
+end:
+######################################################
+Descents:=proc(w)
+#
+#  Returns:  descents:= descents of w
+#
+ local i, descents;
+ descents:=[]:
+ for i from 1 to nops(w)-1 do 
+  if w[i]>w[i+1] then 
+   descents:=[descents[],i]:
+  fi:
+ od:
+ return(descents):
+end proc:
+########################################################################
+lexCompare:= proc(p,q)
+#
+#   This evaluates the comparison p<q, where
+# < is lexicographic on the augmented sequences
+# [length(p), p] and [length(q), q]
+#
+ local ap, aq, i, pltq:
+ if p=q then return(evalb(1=0)) end if:
+ ap:=[Ell(p),p[]]:
+ aq:=[Ell(q),q[]]:
+ for i from 1 to nops(p) do 
+  if ap[i]>aq[i] then return(evalb(1=0)) end if:
+  if ap[i]<aq[i] then return(evalb(1=1)) end if:
+ end do:
+end proc:
+######################################################
+Condition_name := proc(w)
+#
+#   This makes a name for a Schubert condition, w.  If w is Grassmannian, then
+# the name has the form *lam, where *\in[Z,Y,X,W,V,U,T,S,R] records the codimension
+# of the linear spaces parametrized by that Grassmannian, and lam is the corresponding
+# partition.  We omit the partition of the permutation has codimension 1.
+#   If w has two or more descents, so that it is not Grassmannian, then the name has the
+# form Au, where u is the word w_1 w_2 ... w_(last descent).
+#
+ local GrassSymbols,Name,des, i;
+ GrassSymbols:=["Z","Y","X","W","V","U","T","S","R"]:
+ des:=Descents(w):
+ if nops(des)=1 then
+   Name:=GrassSymbols[nops(w)-des[1]]:
+   if Ell(w)>1 then 
+    i:=des[1]:
+    while i>0 and w[i]>i do 
+     Name:=sprintf("%s%d",Name,w[i]-i):
+     i:=i-1:
+    end do:
+   end if:
+  else
+   Name:="A":
+   for i from 1 to des[nops(des)] do
+    Name:=sprintf("%s%d",Name,w[i]):
+   end do:
+ end if:
+ return(Name)
+end proc:
+###########################################################################################
+Standard_list := proc(SP)
+#
+#  SP := list of permutations
+#
+#  Its output is a table of lists of permutations Perms[i].
+#  It also checks that the data do come from a Schubert problem.  This procedure likely
+#   does a little too much.
+#
+#  This procedure first checks that the list it is given are in fact permutations.
+# In the initial loop, we also put the permutations into a table Perms, with Perms[i] a
+# list of permutations with descent i and Perms[0] a list of those permutations with no
+# descents.
+#
+#  Next, it checks that the codimensions add up.
+#
+# Then, it completely sorts the permutations in Perms[i] as follows:
+# A permutation p is augmented to a list [length(p), p], and these are
+# sorted lexicographically in descending order.
+#
+# Its output is this list.
+#
+ local n, i, ii, Perms, nelts, Des, Cod, w, Desc, Ddes, j, value, k:
+ n:=nops(SP[1]):
+ for i from 0 to n do
+  Perms[i]:=[]:
+ end do:
+ nelts:={seq(ii,ii=1..n)}:
+ Des:={}:
+ Cod:=0:
+ for w in SP do
+  if convert(w,set)<>nelts then 
+   printf("The purported list of permutations is not a list of permutations in the same symmetric group\n"):
+   printf("The culprit is %a and the list of permutation is\n %a\n",w,SP):
+   quit;
+  end if:
+  Desc:=Descents(w):
+  Des := Des union {Desc[]}:
+  if nops(Desc)>1 then 
+    Perms[0]:=[Perms[0][],w]:
+   else
+    Perms[Desc[]]:=[Perms[Desc[]][],w]:
+  end if:
+  Cod:=Cod+Ell(w):
+ end do:
+ #
+ #  ensure that Des is in order
+ #
+ Des:=sort(convert(Des,list)):
+ Ddes:=[0,Des[]]:
+ #
+ #  Check that the permutations define a Schubert problem for the expected Flag manifold.x
+ #
+ if Cod<>sum((Ddes[ii+1]-Ddes[ii])*(n-Ddes[ii+1]),ii=1..nops(Des)) then
+  printf("This is not a Schubert problem as the codimensions do not add up!\n"):
+  printf(" The offending list of permutations is \n %a\n",SP):
+  quit:
+ end if:
+ #
+ #
+ for i from 0 to n-1 do 
+  j:=1:
+  for j from 2 to nops(Perms[i]) do
+   value := Perms[i][j]:  
+   k:=j-1:
+    while k>=1 and lexCompare(Perms[i][k], value) do
+     Perms[i][k+1]:=Perms[i][k]:
+     k:=k-1: 
+    end do:
+   Perms[i][k+1]:=value:
+  end do:
+ end do:
+
+ return(Perms)
+end proc:
+##############################################################################
+makeGrassName := proc(SP)
+#
+#  This procedure makes the name of a Grassmannian problem
+# Its input is the sorted list of permutations SP encoding the 
+# Schubert problem.
+#
+ local new, freq, Name, i:
+ new:=true:
+ freq:=1:
+ Name := Condition_name(SP[nops(SP)]);
+
+ for i from nops(SP)-1 to 1 by -1 do
+  if SP[i]<>SP[i+1] then
+    if freq>1 then
+     Name := sprintf("%s^%d",Name,freq):
+    end if:
+    Name := sprintf("%s%s",Name,Condition_name(SP[i])):
+    new:=true:
+    freq:=1:
+   else
+    new:=false:
+    freq:=freq+1:
+  end if:
+ end do: 
+
+ if not(new) then
+  Name := sprintf("%s^%d",Name,freq):
+ end if:
+
+ return(Name)
+
+end proc:
+############################################################################
