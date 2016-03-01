@@ -5,8 +5,8 @@
 #
 ########################################################
 interface(quiet=true):
-k:=4:
-n:=10:
+k:=3:
+n:=6:
 ########################################################
 #
 #   This script lits all Schubert problems on the
@@ -163,9 +163,9 @@ for mu in GoodPartitions(k*(n-k)) do
      INT:=coeff(Class,e_||k^(n-k)):
 ########################  Test only those with >2 solutions  ##############################
 #     if INT>1 then
-#     if INT>2 then
+     if INT>2 then
 ########################  Test only those with 3<Nsols < 300  ##############################
-     if INT>3 and INT <300 then
+#     if INT>3 and INT <300 then
        if member(INT, Nums) then
           read(sprintf("G%d%d/%d.data",k,n,INT)):
         else
