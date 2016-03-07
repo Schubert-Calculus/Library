@@ -61,7 +61,7 @@ for (j=1; j<=600; j++) {
   }
   if (BP*NmoC*NC==1) {
 //   printf("Full Galois Group in %s steps!",j);
-//   printf("Elapsed time = %s seconds", timer-T);
+   printf("Elapsed time = %s hundreths of a second", timer-T);
    fprintf(OutPut, " %s,",j);
    quit;
   }
