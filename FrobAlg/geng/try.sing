@@ -1,0 +1,135 @@
+//try~W^6W21^2
+
+
+// Caution: Altering this file could cause FrobAlg.py to run into errors or  produce false results. Deleting this file is safe as FrobAlg.py will rewrite it if it can not be found. 
+
+option(redSB); 
+LIB "matrix.lib"; 
+LIB "linalg.lib"; 
+LIB "schubert.lib"; 
+
+
+// We are in G(m,m+p). The vectors w and v encode the first two Schubert conditions 
+
+int character = 1009;
+int m = 4;
+int p = 3;
+int numsolns =    61;
+// trials*numsolns is the number of times we will pick random cycles to check for desired cycle types 
+int trials = 10;
+int badtrial = 0; //used to count number of trials discarded 
+int variable= 0; //used to change what variable we reduce to if we encounter too many badtrials 
+int randomnumsize = 1000;
+
+//schubert conditions:  1,3,5,2,4,6,7;1,3,5,2,4,6,7;1,2,4,3,5,6,7;1,2,4,3,5,6,7;1,2,4,3,5,6,7;1,2,4,3,5,6,7;1,2,4,3,5,6,7;1,2,4,3,5,6,7|
+intvec w = 1,3,5,2,4,6,7;
+intvec v = 1,3,5,2,4,6,7;
+
+// conditions is a list of the vectors of all but the first two Schubert conditions 
+list conditions = list( intvec(1,2,4,3,5,6,7), intvec(1,2,4,3,5,6,7), intvec(1,2,4,3,5,6,7) ,intvec(1,2,4,3,5,6,7),intvec(1,2,4,3,5,6,7));
+
+int i,ii,j; 
+intvec mm = m; 
+int OddCycle = 0; 
+int Nminusonecycle = 0; 
+int BigPrimecycle = 0; 
+def R = flagRing(mm,m+p,v,w); 
+setring R; 
+
+int half = numsolns div 2; 
+// When building the Primes vector, we take advantage of the occasional strange relation between numsolns div 2 and numsolns-3 for numsolns<=7 to give us a vector that will be useful when we get the loop where we check for BigPrimecycle's 
+intvec Primes = primes(half,numsolns-3); 
+
+// this conditonal code block eliminates the potential small prime that we may have picked up above 
+if (Primes[1] < half) { 
+  Primes[1] = 0; 
+  Primes = compress(Primes); 
+} 
+
+ideal I; 
+def S = myring(nvars(R), string(character)); 
+setring(S); 
+
+ideal J,B; 
+list L; 
+poly F; 
+
+for (j=1; j<=trials*numsolns; j++) { 
+  setring R; 
+
+  I= 0; 
+  for (ii=1; ii<= size(conditions); ii++) { 
+    I = I + randomCondition(conditions[ii], mm, randomnumsize, m+p, v, w); 
+  } 
+  setring S; 
+  J= std(fetch(R,I)); 
+  if (mult(J)==numsolns) { 
+    B= kbase(J); 
+    F= charpoly(coeffs(reduce(var(nvars(R)-variable)*B,J),B), varstr(nvars(R)-variable)); 
+    L= factorize(F,2); 
+    if (L[2]-1 <> 0 or deg(F) < numsolns) { 
+      badtrial++; 
+      j++; 
+      if (badtrial > trials*numsolns/2 & variable < nvars(R)-1) { 
+        variable++; // tries next variable 
+        list output; // clears output list 
+        badtrial= 0; 
+        j= 1; // restart counters 
+      } 
+      continue; 
+    } 
+    if (numsolns== 3) { 
+      if (deg(L[1][1])== 2) { 
+        1; 
+        quit; 
+      } 
+    } 
+    else {
+      if ( numsolns%2 <> size(L[1])%2 ) {  
+        OddCycle=1; 
+      } 
+      if (deg(L[1][1])== numsolns-1) { 
+        Nminusonecycle=1; 
+      } 
+      if (numsolns == 7) { 
+        if (deg(L[1][1]) == 4) { 
+          BigPrimecycle=1; 
+        } 
+      } 
+      // When we have 5 solutions, Primes=2. When we have 7 solutions, Primes=3 
+      if (numsolns == 5 or numsolns == 7) { 
+        int Count_Prime_Appearance = 0; 
+        for (ii=1; ii<=size(L[1]); ii++) { 
+          if (deg(L[1][ii]) == Primes[1]) {
+            Count_Prime_Appearance++; 
+          } 
+        } 
+        if (Count_Prime_Appearance == 1) { 
+          BigPrimecycle=1; 
+        } 
+      } 
+      else{ 
+        for (ii=1; ii<=nrows(Primes); ii++) { 
+          if (ii == 1 and 2*Primes[1] <= numsolns) { 
+            if (deg(L[1][1])== Primes[1]) { 
+              if (deg(L[1][2]) < Primes[1]) { 
+                BigPrimecycle=1; 
+              } 
+            } 
+          } 
+          else { 
+            if (deg(L[1][1])==Primes[ii]) { 
+              BigPrimecycle=1; 
+            } 
+          } 
+        } 
+      } 
+      if (OddCycle*BigPrimecycle*Nminusonecycle==1) { 
+        1; 
+        quit; 
+      } 
+    } 
+  } 
+} 
+0; 
+quit; 
