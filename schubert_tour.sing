@@ -1,7 +1,7 @@
 option(redSB); 
 LIB "matrix.lib"; 
 LIB "linalg.lib"; 
-LIB "schubert.lib";
+LIB "schubert_orig.lib";
 
 
 print("myring() is used as a quick way to construct a polynomial ring in n variables. Optional parameters (given as a list of strings) allow changing the characteristic, the name of the variables, or the term ordering.");
