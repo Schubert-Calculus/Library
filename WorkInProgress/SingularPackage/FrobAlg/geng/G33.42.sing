@@ -1,0 +1,74 @@
+//
+//  Frank's test file for the Galois group of the Schubert problem
+//    on G(3,3) with 42 solutions
+//
+option(redSB);
+LIB "matrix.lib";
+LIB "linalg.lib";
+
+link OutPut=":a G33.42.steps"; 
+
+int i,ii,j;
+int T=timer;
+int n=42;
+int nvar = 7;
+int NC = 0;
+int NmoC = 0;
+int BP = 0;
+intvec Primes = primes(21,40);
+
+ring R = 0, (a,b,c,d,e,f,g), dp;
+ideal I;
+matrix Y;
+matrix LocalCoordinates[3][6] = 
+1, a, b, 0, 0, 0, 
+0, 1, c, d, e, 0, 
+0, 0, 0, 1, f, g;
+///////////////////////////////////////////////////
+ring S = 1009, (a,b,c,d,e,f,g), dp;
+ideal J,B;
+list L;
+poly F;
+
+for (j=1; j<=600; j++) {
+ setring R;
+ 
+ I = 0;
+ for (i=1; i<=nvar; i++) {  
+  Y = random(10000,6,3);
+  I = I + ideal( det( concat( transpose(  LocalCoordinates),Y)));
+ }
+
+ setring S;
+ J = std(fetch(R, I));
+ if (mult(J)==n) {
+  B = kbase(J);
+  F = charpoly(coeffs(reduce(var(nvar)*B,J),B), varstr(nvar));   
+  L = factorize(F, 2);
+  if (size(L[1])==1) {
+//    print("full cycle");
+    NC=1;
+  }
+  if (size(L[1])==2 and deg(L[1][1])==n-1) {
+//    print("big cycle");
+    NmoC=1;
+  }
+  for (ii=1; ii<=nrows(Primes); ii++) {
+   if (deg(L[1][1])==Primes[ii]) {
+//    print("big p cycle");
+     BP = 1;
+   }
+  }
+  if (BP*NmoC*NC==1) {
+//   printf("Full Galois Group in %s steps!",j);
+   printf("Elapsed time = %s hundreths of a second", timer-T);
+   fprintf(OutPut, " %s,",j);
+   quit;
+  }
+ }
+
+}
+printf("Did not find the full Galois Group in %s steps!",j-1);
+printf("Elapsed time = %s seconds", timer-T);
+
+quit;
