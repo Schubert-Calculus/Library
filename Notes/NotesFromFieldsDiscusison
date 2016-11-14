@@ -1,0 +1,147 @@
+ToDo:
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Understand two formulations which are new:
+-efficient way to generate all equations
+-lifting formulation
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Agree on what to implement
+-Steifel coordinates?
+-frobeniusAlgorithm?
+-monodromy?
+-etc
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Write a description file of functions
+-{Function,Input,Output,M2Name,SingularName}
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Read up on naming conventions for Singular/M2
+Write Clean code w/ good variable names
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Read up on documentation for M2/Singular
+-html and in the file
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Maintain in the code, small examples for testing
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+What to Implement
+------------------
+This package should just compute ideals for schubert problems
+
+For now, we do things on Grassmanian and Flag varieties (type A). 
+
+-Generate Steiffel Coordinates (local coordinates for some schubert variety. people also call these matrix schubert varieties)
+-Conversely, it could eat Steiffel Coordinates or similar stuff, and still give out equations.
+-On the Steiffel coordinates, it should be able to impose a schubert condition given by (alpha,F) where
+        alpha is combinatorial (permutation) and F is a flag.
+     Should also be able to impose a schubert problem (which is just a list of schubert conditions)
+
+-generate a colelction of interesting flags (for example osculating flags)
+
+
+
+Instead of overloading, should be able to understand in one method what the user inpputed (for example permuation vs. partition corresponding to a permuation)
+
+
+Verbosity? Yes
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Notes on Lifting:
+Doing this on grassmanian
+
+Standard Schuber varieties. These have Steifel coordinates, X_a  =      a1[1 0 0 0]
+									  [* 0 0 0]
+									  [0 1 0 0]
+									  [0 0 1 0]
+									  [* * * *]
+									ak[0 0 0 1]
+									  [* * * *]
+
+rows corresponding to alpha there is an identity matrix
+
+
+Plucker coordinates of X_a are all minors of X_a, call them p_beta =the beta minor of X
+
+there are n choose k minors.
+
+Notice that p_beta(X_alpha)=0 if (and only if) beta < alpha
+
+These are just p_beta's setting equal to zero. 
+
+
+
+Claim X_alpha F has steifel coordinates F.X_alpha
+
+
+Now if we have X \susbseteq M_{nxk} and we want to know if it looks like X_aF then this is asking 
+{H \in X|H \in X_aF, H looks like FX_a, (equivalently F^{-1} H looks like X_a}
+
+So the equations are p_beta(F^{-1}(X)) for beta <a
+
+What are these?
+
+p_beta(F^{-1}X) = sum_{a} p_beta,a(F^{-1})p_a(X)
+
+This is cauchy-bonnet
+
+
+
+
