@@ -1,0 +1,71 @@
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Questons:
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Can Sing/M2 make rings like QQ[x_{1,2},x_{3,7}]?
+How many inputs can a function take?
+FRANK: do people want osculating flags in positive characteristic?
+????lifting formulation?????(might be good for numerical certification since this is square)
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Conventions:
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+*Conditions should be encoded as permutation. Same convention as in previous package.
+*Can allow either full permutaitons or partial permutations. Detect this (since latter numbers are redundant)
+*Comment: For flags, they can be 
+	user given, 
+	random, 
+	osculating {{{NOTE! FRANK, do people want to know this in positive characteristic?}}}, 
+	secant
+*Flag variety should be {a_1,a_2,...,a_s=a_n} example Gr(3,6) is {3,6} and Fl(2,3,5) is {2,3,5}
+*{w,flagType}------verification------>check that length(w) is an 'element' of flag type. If yes, then complete the permutation
+*Flags should be acceptable as trunctations of square matrices
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Functions:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+%give ideal of schubert problem
+%might do a check on expected dimension of this ideal
+%
+
+schubertIdeal(List,Matrix,List,List)=(flagManifold,steiffelCoordinates,schubertConditions,Flags) ->(
+	Did we get steiffel coordinates?
+	No?
+		make a ring, get steiffel coordinates
+	Yes?
+		great
+
+	w.r.t Flags, get equations for the schubert problem.
+
+
+
+	)
+
+
+%maybe steiffel could be matrix or a plucker vector. that way we don't recompute; and we can use faster method for equations.
+schubertCondition(List,Matrix,List,List)=(flagManifold,steiffelCoordinates/pluckerVector,oneSchubertCondition,Flags) ->(
+	get equation strictly 
+
+	)
+
+
+
+stieffel coordinates(Ring,Matrix)=(R,MatrixOfCoords) ->(
+
+	)
+stieffel coordinates(List,List)=(ringData,shapeOfCoord) ->( 
+%ring data is like characteristic, term order, variable names
+	call the above guy after getting ring and matrix
+	)
+
+
+
+
