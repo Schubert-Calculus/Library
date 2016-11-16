@@ -23,7 +23,7 @@
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
 //
-// proc completePermutation ( intvec w, intvec flagType ) returns an intvec (a permutation)
+// proc completePermutation ( intvec w, int n ) returns an intvec (a permutation)
 //      Completes a partial permutation w to a full permutation for flagType or breaks
 //
 // proc partitionToPermutation ( intvec partition, int k, int n )
@@ -64,27 +64,17 @@ proc isCondition (intvec w, intvec flagType)
   return( fits );
 } 
 /////////////////////////////////////////////////////////////////////////////////
-/*  Completes a partial permutation w to a full permutation for flagType.      */
+/*  Completes a partial permutation w to a full permutation for S_n            */
 //
-proc completePermutation ( intvec w, intvec flagType )
-//
-/*  Returns the completed permutation or breaks with error message             */
+proc completePermutation ( intvec w, int n )
 //
 {
-  if ( isCondition(w, flagType) ) {
-    if ( nrows(w)<flagType[nrows(flagType)] ) {
-      for ( int i=1; i<=flagType[nrows(flagType)]; i++ ) {
-        if (member(i,w)==0) { w = w, intvec(i); }
-      }
+  if ( nrows(w) < n ) {
+    for ( int i=1; i<=n; i++ ) {
+      if (member(i,w)==0) { w = w, intvec(i); }
     }
-    return ( w );
   }
-  else
-  {
-    printf("Input failure for completePermutation ( intvec(%s), intvec(%s) ) :",w,flagType);
-    printf("The permutation (%s) is not a Schubert condition for the flag manifold Fl(%s)",w,flagType);
-    quit;
-   }
+  return ( w );
 }
 /////////////////////////////////////////////////////////////////////////////////
 /* Converts a partition Gr(k,n) into the corresponding permuation.             */
@@ -108,7 +98,7 @@ proc partitionToPermutation ( intvec partition, int k, int n )
   for (i=2; i<=k; i++) {
     condition = condition , intvec(i+partition[k+1-i]);
   }
-   completePermutation ( condition, intvec(k,n) ) ;
+   completePermutation ( condition, n ) ;
 }
 /////////////////////////////////////////////////////////////////////////////////
 /* Computes the Grassmannian permutation of a partial permutation w given by   */
@@ -116,12 +106,12 @@ proc partitionToPermutation ( intvec partition, int k, int n )
 //
 proc makeGrassmannianPermutation ( intvec w, int k, int n)
 {
-  if (size(w)<n) { w = completePermutation ( w,  intvec(k,n) ); }
+  if (size(w)<n) { w = completePermutation ( w, n ); }
   intvec tmp = w[1];
   for (int i=2; i<=k; i++) {
     tmp = tmp, intvec(w[i]);
   }
-  completePermutation ( sort(tmp)[1], intvec(k,n) );
+  completePermutation ( sort(tmp)[1], n );
 }
 /////////////////////////////////////////////////////////////////////////////////
 /* Gets the descent set of a partial permutation w.  The first descent is at 0 */
