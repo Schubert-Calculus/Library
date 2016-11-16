@@ -21,7 +21,7 @@ export{
 "randomCondition"
 }
 --this next line is dumb. it gets frobenius' location by going up one directory and then down
-load( (concatenate for i from 0 to #(currentDirectory())-18 list (currentDirectory())#i)|"Frobenius/Frobenius.m2")
+load( (concatenate for i from 0 to #(currentDirectory())-12 list (currentDirectory())#i)|"FrobAlgM2/Frobenius.m2")
 
 --------------------------------------------------------
 --Input: permutation word (as a list)
