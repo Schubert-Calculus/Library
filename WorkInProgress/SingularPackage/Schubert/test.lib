@@ -29,9 +29,13 @@
 // proc partitionToPermutation ( intvec partition, int k, int n )
 //       Converts a partition for Gr(k,n) into the corresponding permuation or breaks
 //
-   
-
-
+// proc getDescents (intvec w)
+//       Gets the descent set of a partial permutation w.  The first descent is at 0 
+//
+// proc makeGrassmannianPermutation ( intvec w, int k, int n)
+//       Computes the Grassmannian permutation of a partial permutation w given by 
+//       the first k values of w.  This indexes the Schubert variety of the image  
+//
 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Checks if integer d is a component of vector a */
@@ -105,5 +109,30 @@ proc partitionToPermutation ( intvec partition, int k, int n )
     condition = condition , intvec(i+partition[k+1-i]);
   }
    completePermutation ( condition, intvec(k,n) ) ;
+}
+/////////////////////////////////////////////////////////////////////////////////
+/* Computes the Grassmannian permutation of a partial permutation w given by   */
+/*  the first k values of w.  This indexes the Schubert variety of the image   */
+//
+proc makeGrassmannianPermutation ( intvec w, int k, int n)
+{
+  if (size(w)<n) { w = completePermutation ( w,  intvec(k,n) ); }
+  intvec tmp = w[1];
+  for (int i=2; i<=k; i++) {
+    tmp = tmp, intvec(w[i]);
+  }
+  completePermutation ( sort(tmp)[1], intvec(k,n) );
+}
+/////////////////////////////////////////////////////////////////////////////////
+/* Gets the descent set of a partial permutation w.  The first descent is at 0 */
+//
+proc  getDescents (intvec w)
+{
+  intvec descents;
+  for (int i=1; i<=nrows(w)-1; i++) {
+    if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
+  } 
+  descents = descents , nrows(w);
+  return (descents );
 }
 /////////////////////////////////////////////////////////////////////////////////
