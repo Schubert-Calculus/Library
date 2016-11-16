@@ -22,6 +22,15 @@
 //
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
+//
+// proc completePermutation ( intvec w, intvec flagType ) returns an intvec (a permutation)
+//      Completes a partial permutation w to a full permutation for flagType or breaks
+//
+// proc partitionToPermutation ( intvec partition, int k, int n )
+//       Converts a partition for Gr(k,n) into the corresponding permuation or breaks
+//
+   
+
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +46,8 @@ proc member (int d, intvec a)
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-/*  Checks if partial permutation w is a Schubert condition for manifold of type flagType */
+/*  Checks if partial permutation w is a Schubert condition for the
+           flag manifold of type flagType                                      */
 proc isCondition (intvec w, intvec flagType)
 //  Returns a boolean
 {
@@ -49,4 +59,51 @@ proc isCondition (intvec w, intvec flagType)
   }
   return( fits );
 } 
+/////////////////////////////////////////////////////////////////////////////////
+/*  Completes a partial permutation w to a full permutation for flagType.      */
+//
+proc completePermutation ( intvec w, intvec flagType )
+//
+/*  Returns the completed permutation or breaks with error message             */
+//
+{
+  if ( isCondition(w, flagType) ) {
+    if ( nrows(w)<flagType[nrows(flagType)] ) {
+      for ( int i=1; i<=flagType[nrows(flagType)]; i++ ) {
+        if (member(i,w)==0) { w = w, intvec(i); }
+      }
+    }
+    return ( w );
+  }
+  else
+  {
+    printf("Input failure for completePermutation ( intvec(%s), intvec(%s) ) :",w,flagType);
+    printf("The permutation (%s) is not a Schubert condition for the flag manifold Fl(%s)",w,flagType);
+    quit;
+   }
+}
+/////////////////////////////////////////////////////////////////////////////////
+/* Converts a partition Gr(k,n) into the corresponding permuation.             */
+//
+proc partitionToPermutation ( intvec partition, int k, int n )
+{
+  if (n<=k) {
+    printf("Input failure for partitionToPermutation ( intvec(%s), int %s, int %s ) :",partition, k, n);
+    printf("The dimension %s of the ambient space is larger than the dimension %s of a subspace.",n,k);
+    quit;
+  }
+  if (k<nrows(partition)) {
+    printf("Input failure for partitionToPermutation ( intvec(%s), int %s, int %s ) :",partition, k, n);
+    printf("The partition (%s) has more parts than %s, so it is not a condition on Gr(%s,%s).",partition,k,k,n);
+    quit;
+  } 
+  for (int i=nrows(partition)+1; i<=k; i++) {
+    partition = partition , intvec(0);
+  }
+  intvec condition= 1+partition[k];
+  for (i=2; i<=k; i++) {
+    condition = condition , intvec(i+partition[k+1-i]);
+  }
+   completePermutation ( condition, intvec(k,n) ) ;
+}
 /////////////////////////////////////////////////////////////////////////////////

@@ -27,50 +27,48 @@ LIB "test.lib";
 //
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
+//
+// proc completePermutation ( intvec w, intvec flagType ) returns an intvec (a permutation)
+//      Completes a partial permutation w to a full permutation for flagType or breaks
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// ToDo:  partitionToPermutation
-//        getDescents
+// ToDo:  getDescents
 //        makeGrassmannianPermutation
 //        lengthOfPermutation
 
 intvec myFlagType =  2, 5, 8;
 intvec w = 2,8, 3,4,7, 1,5,6;
 intvec v = 2,4, 5,7,8;
-intvec u = 1,3,5,7, 2,4,6,8;
 intvec x = 2,8;
 
-u;
-v;
-w;
-x;
-isCondition(u, myFlagType);
-isCondition(v, myFlagType);
-isCondition(w, myFlagType);
-isCondition(x, myFlagType);
 
-/////////////////////////////////////////////////////////////////////////////////
-//  Completes a partial permutation w to a full permutation for flagType.      
-//    Breaks (ToDo) if w is not a codition for the given flagType              
-proc completePermutation ( intvec w, intvec flagType )
-//  Returns the completed permutaiton or breaks
+int k = 5;
+
+proc makeGrassmannianPermutation ( intvec w, int k, int n)
 {
-  if ( isCondition(w, flagType) ) {
-    if ( nrows(w)<flagType[nrows(flagType)] ) {
-      for ( int i=1; i<=flagType[nrows(flagType)]; i++ ) {
-        if (member(i,w)==0) { w = w, intvec(i); }
-      }
-    }
-    return ( w );
+  intvec tmp = w[1];
+  for (int i=2; i<=k; i++) {
+    tmp = tmp, intvec(w[i]);
   }
-  else
-  {
-     return("The permutation is not a Schubert condition for this flag manifold");
-   }
+  completePermutation ( sort(tmp)[1], intvec(k,n) );
 }
 
-completePermutation (u, myFlagType);
-completePermutation (v, myFlagType);
-completePermutation (w, myFlagType);
-completePermutation (x, myFlagType);
 
+makeGrassmannianPermutation ( w, k, 9);
+
+/////////////////////////////////////////////////////////////////////////////////
+/* Gets the descent set of a partial permutation w.  The first descent is at 0 */
+//
+proc  getDescents (intvec w)
+{
+  intvec descents;
+  for (int i=1; i<=nrows(w)-1; i++) {
+    if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
+  } 
+  descents = descents , nrows(w);
+  return (descents );
+}
+
+getDescents(w);
+getDescents(v);
+getDescents(x);
