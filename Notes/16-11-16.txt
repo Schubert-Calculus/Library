@@ -1,0 +1,139 @@
+Permutation functions to code (see test.sing for names):
+
+One that converts partitions into permutations
+One that gets descents
+One that sorts a permutation w.r.t a descent
+One that pulls the length of the permutation
+
+For later: one that lists all permutations not greater than or equal to a given one w.r.t. Bruhat order 
+
+
+
+Notes on the function "makeStiefelCoordinates"
+
+Stiefel has the correct spelling
+
+
+Outputs set of Stiefel coordinates for X_wI_n
+If Gr then X_wI_n \cap X_v I_n^{reverse}
+
+We could do a sanity check and check that dim(FlagType)-permutationLength=#variables
+
+Notes:
+For w=id and flagType is (1,2,...,n) then
+[ *	1]
+[      10]
+[	 ]
+[	 ]
+[1000000 ]
+
+that is, n+1-w(i) is the row of the "1" in the "i"th column
+
+Applying the simple transposition (i+1,i) would create a block matrix of [1 0]
+									 [0 1]
+in the (i,i+1) minor
+
+So the algorithm is as follow:
+make a ring X_{i,j} i=1,\ldots,n & j=1,\ldots,n (note that we could stop at m:=a_{s} where flagType=(a_s,n))
+This ring is bigger than we will want at the end.
+We will also make a generic matrix M=(x_{i,j})
+Put "1"'s in (i,n+w-w(i)) positions for i=1...m
+Put "0"'s in 
+	row (n+1-w(i),j) for j>i
+	row > n+1-w(i) col j
+(that is south and east of the 1's die.)
+
+Now there's one of two things that happen, but we'll start with an example:
+Example:
+	[******1]
+	[****100]
+	[**10000]
+	[**0*01	]
+	[**01	]
+	[*1	]
+	[1	]
+	 1253647
+
+Call attention to the * in the middle of this matrix.
+This is a schubert variety in the full flag variety, but we don't have the full flag variety.
+What do we have? 
+We actually have a partial flag variety. the first three columns are not a 1 space, 2 space and 3 space. but are considered together as one 3 space.
+This allows us to shoot zeros to the left of the pivots within the strips corresponding to the flagtype.
+
+
+
+	[***|**|01]
+	[***|01|00]
+	[001|00|00]
+	[**0|*0|1 ]
+	[**0|1 |  ]
+	[01 |  |  ]
+	[1  |  |  ]
+(this is not how it was coded previously)
+
+NOTE the variables x_{i,j} will be put into a new ring, and we should choose an ordering (in the monomial sense and in the CS list sense) of these. We suggest we use x_{1,2}<x_{1,4}<x_{2,1}<...
+
+
+Exercise: 
+if flagType = (k,n) 
+w=w_1<..<w_k
+then we get
+"1"'s killing things in the south, west, and east direcitons (there' only one strip)
+
+
+Optional Richardson
+-------------------------
+FlagType,w,v (where w,v are conditions for (k,n))
+(now we have two conditions which we will impose on I_n and I_n^{rev})
+NOTE! flagType MUST  be (k,n) for this
+
+Check that: w(i)+v(k+1-i)<=n (otherwise, this implies the emptyset)
+
+
+We still get a "1" in the (n+1-w(i),i) positions and zeros below and to the right.
+
+
+1<3<6
+
+[***]
+[***]
+[**1]
+[**0]
+[**0]
+[*10]
+[*00]
+[100]
+
+Now put zeros in row(j) column (i) for j<v(k+1-i)
+
+
+v=(1,2,3)
+
+[00$]
+[0$*]
+[$*1]
+[**0]
+[**0]
+[*10]
+[*00]
+[100]
+
+This implicitly assumes that $ are non-zero, which is how we get zeros to the left of them via column operations.
+
+What if v=(1,2,5)?
+
+
+[00$]
+[0$*]
+[0*1]
+[0*0]
+[$*0]
+[*10]
+[*00]
+[100]
+
+Look! the $ moved so that they are in row 1 2 and 5
+
+Making one of the "1"'s zero from this operation with v is precisely saying that v(k+1-i)>n+1-w(i)
+
+

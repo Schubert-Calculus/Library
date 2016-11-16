@@ -183,9 +183,6 @@ translateCondition(List):=cond->(
     return(finishedCondition)
     )
 translateCondition({4,6,7})
-
-
-
 ----------------------------------------------------------------------------------------
 --Input: List of conditions in vert/horiz notation (largest two being last)
 --Output: An ideal whose solutions correspond to solutions to the schubert problem
