@@ -1,13 +1,8 @@
-//  This is for testing the new schubert.lib
+//test.lib
 //
-// Note schubert.lib calls linalg.lib and matrix.lib
+//  This is for procedures that are being tested and developed before 
+//  committing to the main library file
 //
-//   NOTE: Singular is 1-based: intvec v = 1,2,3;  v[1]=1.
-//
-option(redSB); 
-LIB "schubert.lib"; 
-LIB "test.lib"; 
-
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  flagType is an integer vector (intvec) (a_1, ..., a_s, n)=(adot, n) with increasing 
@@ -27,19 +22,31 @@ LIB "test.lib";
 //
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
-//////////////////////////////////////////////////////////////////////////////////////
 
-intvec flagType =  2, 5, 8;
-intvec w = 2,8, 3,4,7, 1,5,6;
-intvec v = 2,4, 5,7,8;
-intvec u = 1,3,5,7, 2,4,6,8;
-intvec x = 2,8;
 
-isCondition(w, flagType);
-isCondition(v, flagType);
-isCondition(u, flagType);
-isCondition(x, flagType);
+/////////////////////////////////////////////////////////////////////////////////
+/*  Checks if integer d is a component of vector a */
+proc member (int d, intvec a)
+//  Returns a boolean
+{
+  for (int i=1; i<=nrows(a); i++) {
+    if (d==a[i]) { return(1) }
+  }
+  return(0);
+}
+/////////////////////////////////////////////////////////////////////////////////
 
-if (nrows(x)<flagType[nrows(flagType)]) {
- x, flagType;
- }
+/////////////////////////////////////////////////////////////////////////////////
+/*  Checks if partial permutation w is a Schubert condition for manifold of type flagType */
+proc isCondition (intvec w, intvec flagType)
+//  Returns a boolean
+{
+  int fits = 1;
+  if (member(nrows(w), flagType)==1) {
+    for (int i=1; i<nrows(w); i++) {
+      if (w[i]>w[i+1]) { fits = fits * member(i,flagType); }
+    }
+  }
+  return( fits );
+} 
+/////////////////////////////////////////////////////////////////////////////////
