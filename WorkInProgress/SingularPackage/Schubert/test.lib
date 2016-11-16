@@ -12,7 +12,7 @@
 //                        2-plane contained in a 3-plane lying in 7-space
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// Schubert conditions are permutations w of {1,...,n} represented as integer vectors.
+// Schubert conditions are partial permutations w of {1,...,n} represented as integer vectors.
 //         w has descents only at positions of adot, where flagType=(adot,n)
 //
 //////////////////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,26 @@ isCondition(v, flagType);
 isCondition(u, flagType);
 isCondition(x, flagType);
 
-if (nrows(x)<flagType[nrows(flagType)]) {
- x, flagType;
- }
+
+proc fullPermutation ( intvec w, intvec flagType )
+//  
+{
+  if ( isCondition(w, flagType) ) {
+    if ( nrows(w)<flagType[nrows(flagType)] ) {
+      for ( int i=1; i<=flagType[nrows(flagType)]; i++ ) {
+        if (member(i,w)==0) { w = w, intvec(i); }
+      }
+    }
+    return ( w );
+  }
+  else
+  {
+     return("The permutation is not a Schubert condition for this flag manifold");
+   }
+}
+
+u, fullPermutation (u, flagType);
+v, fullPermutation (v, flagType);
+w, fullPermutation (w, flagType);
+x, fullPermutation (x, flagType);
+
