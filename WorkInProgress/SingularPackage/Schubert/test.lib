@@ -36,6 +36,10 @@
 //       Computes the Grassmannian permutation of a partial permutation w given by 
 //       the first k values of w.  This indexes the Schubert variety of the image  
 //
+// proc lengthOfPermutation ( intvec w )
+//   Computes the Coxeter group length of the partial permutation w 
+//
+///////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Checks if integer d is a component of vector a */
@@ -124,5 +128,20 @@ proc  getDescents (intvec w)
   } 
   descents = descents , nrows(w);
   return (descents );
+}
+/////////////////////////////////////////////////////////////////////////////////
+/* Computes the Coxeter group length of the partial permutation w              /*
+proc lengthOfPermutation ( intvec w )
+{
+  int n = sort(w)[1][nrows(w)];
+  int i,j;
+  w = completePermutation( w, n );
+  int len = 0;
+  for ( i=1; i<n; i++) {
+    for ( j=i+1; j<=n; j++) {
+      if ( w[i]>w[j] ) { len++; }
+    }
+  }
+  return ( len );
 }
 /////////////////////////////////////////////////////////////////////////////////

@@ -45,38 +45,76 @@ LIB "test.lib";
 //
 // ToDo:  lengthOfPermutation
 
+
 intvec myFlagType =  2, 5, 8;
 intvec w = 2,8, 3,4,7, 1,5,6;
 intvec v = 2,4, 5,7,8;
 intvec x = 2,8;
 
-int k = 5;
+//w=1,4, 2,5,7;
 
-makeGrassmannianPermutation (w, 5, 8);
-getDescents(w);
-getDescents(v);
-getDescents(x);
+// myFlagType =  2, 5, 8, 12;
+// w = 1,8, 3,7,11, 2,6,9;
+w = completePermutation( w, myFlagType[nrows(myFlagType)]);
 
+intvec flagType = myFlagType;
 
-print("New stuff below");
-
-proc lengthOfPermutation ( intvec w )
-{
-  int n = sort(w)[1][nrows(w)];
-  int i,j;
-  w = completePermutation( w, n );
-  int len = 0;
-  for ( i=1; i<n; i++) {
-    for ( j=i+1; j<=n; j++) {
-      if ( w[i]>w[j] ) { len++; }
+  int i,j,ii;
+  int n = flagType[nrows(flagType)];
+  int m = flagType[nrows(flagType)-1];
+  intvec extendedFlagType = intvec(0), flagType;
+  intmat patternMatrix[n][m];
+  //
+  for (i=1; i<=n; i++) {
+    for (j=1; j<=m; j++) {
+      patternMatrix[i,j] = 2;
     }
   }
-  return ( len );
-}
+  for  (j=1; j<=m; j++) {
+    patternMatrix[n+1-w[j],j] = 1;
+    for (i=n+2-w[j]; i<=n; i++) {
+      patternMatrix[i,j] = 0;
+    }
+    for (i=j+1; i<=m; i++) {
+      patternMatrix[n+1-w[j],i] = 0;
+    }
+  }
+  //
+  for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
+    for (j=extendedFlagType[ii]+1; j<=extendedFlagType[ii+1]; j++) {
+      for (i=extendedFlagType[ii]+1; i<j; i++) {
+        patternMatrix[n+1-w[j],i] = 0;
+      }
+    }
+  }
 
-intvec u = 1,4,5, 2,9,12, 7;
+  list  varIndices;
+  for (i=n; i>=1; i--) {
+    for (j=m; j>=1; j--) {
+      if (patternMatrix[i,j] == 2) {
+        varIndices = insert( varIndices, intvec(i,j) );
+      }
+    }
+  }
 
-u;lengthOfPermutation ( u );
-v;lengthOfPermutation ( v );
-w;lengthOfPermutation ( w );
-x;lengthOfPermutation ( x );
+print(patternMatrix);
+
+list #;
+
+#[1] = "0"; #[2] = "x"; #[3] = "dp";
+
+  int i = 1;   
+  string ringconstructor = "ring nameofmyprettyring = " + #[1] + ",(" ;
+  ringconstructor =  ringconstructor + #[2] + "(" + string(varIndices[1]) + ")";
+  for (i=2; i<=size(varIndices); i++)   
+    {   
+      ringconstructor = ringconstructor + ",";   
+      ringconstructor = ringconstructor + #[2] + "(" + string(varIndices[i]) + ")";   
+    }   
+  ringconstructor = ringconstructor + ")," + #[3] + ";";   
+
+ringconstructor;
+
+ring R = 0, (x(2,1),x(3,2),x(5,6)), dp;
+
+quit;
