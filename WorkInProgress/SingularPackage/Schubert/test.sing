@@ -43,8 +43,28 @@ LIB "test.lib";
 //
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// ToDo:  lengthOfPermutation
+/////////////////////////////////////////////////////////////////////////////////
+//
+//  Make a ring with indexed variables
+//
+proc myIndexedRing (list indicesOfVariables, list #)   
+{   
+  if (size(#)==0 or size(#)>3) { #[1] = "0"; #[2] = "x"; #[3] = "dp";}   
+  if (size(#)==1) { #[2] = "x"; #[3] = "dp";}   
+  if (size(#)==2) { #[3] = "dp";}   
 
+  intvec pr;
+  string ringConstructor = "ring nameofmyprettyring = " + #[1] + ",(" ;
+  for (i=1; i<=size(indicesOfVariables); i++)  {
+    pr = indicesOfVariables[i];
+    if ( i>1 ) { ringConstructor = ringConstructor + ","; }
+    ringConstructor =  ringConstructor + #[2] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
+  }   
+  ringConstructor = ringConstructor + ")," + #[3] + ";";   
+  execute(ringConstructor);   
+  return(basering);   
+}
+/////////////////////////////////////////////////////////////////////////////////
 
 intvec myFlagType =  2, 5, 8;
 intvec w = 2,8, 3,4,7, 1,5,6;
@@ -53,11 +73,25 @@ intvec x = 2,8;
 
 //w=1,4, 2,5,7;
 
-// myFlagType =  2, 5, 8, 12;
-// w = 1,8, 3,7,11, 2,6,9;
-w = completePermutation( w, myFlagType[nrows(myFlagType)]);
+ myFlagType =  4,10;
+ w = completePermutation( intvec(1,2,6,8), myFlagType[nrows(myFlagType)]);
+ v = completePermutation( intvec(1,5,6,7), myFlagType[nrows(myFlagType)]);
 
 intvec flagType = myFlagType;
+list # = "0", "x", "dp";
+list conditions = w , v;
+/////////////////////////////////////////////////////////////////////////////////
+//
+// Makes Stiefel coordinates for the Schubert variety X_w I, where w is a
+//   Schubert condition for the flag variety  flagType and I is the standard
+//   coordinate flag.  This is if there is one permutation w in conditions.
+// When conditions has two permutations (and necessarily the flag variety
+//   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
+//   where I' is the opposite flag.
+// # specifies the ring.  It is a list of three strings, the characteristic, 
+//   general ring variable name, and term order.
+//
+// proc makeStiefelCoordinates ( intvec flagType, list conditions, list # )
 
   int i,j,ii;
   int n = flagType[nrows(flagType)];
@@ -65,11 +99,16 @@ intvec flagType = myFlagType;
   intvec extendedFlagType = intvec(0), flagType;
   intmat patternMatrix[n][m];
   //
+  //  First, make a square integer matrix of 2s
+  //
   for (i=1; i<=n; i++) {
     for (j=1; j<=m; j++) {
       patternMatrix[i,j] = 2;
     }
   }
+  //
+  //  Next, place w in the pivots
+  //
   for  (j=1; j<=m; j++) {
     patternMatrix[n+1-w[j],j] = 1;
     for (i=n+2-w[j]; i<=n; i++) {
@@ -80,41 +119,60 @@ intvec flagType = myFlagType;
     }
   }
   //
-  for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
-    for (j=extendedFlagType[ii]+1; j<=extendedFlagType[ii+1]; j++) {
-      for (i=extendedFlagType[ii]+1; i<j; i++) {
-        patternMatrix[n+1-w[j],i] = 0;
+  //  
+  //
+  if (size(conditions) == 1) {
+    for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
+      for (j=extendedFlagType[ii]+1; j<=extendedFlagType[ii+1]; j++) {
+        for (i=extendedFlagType[ii]+1; i<j; i++) {
+          patternMatrix[n+1-w[j],i] = 0;
+        }
       }
     }
   }
-
-  list  varIndices;
+   else
+  //
+  //  In this case, we must have that flagType = (k,n) so that we are on a Grassmannian
+  //
+  {
+    if (nrows(flagType) > 2) {
+      printf("Input failure for makeSteifelCoordinates ( intvec (%s), intvec (%s), intvec (%s) ) :",
+               flagType, conditions[1], conditions[2]);
+      printf("The flag variety is not a Grassmannian, as flagType = (%s), and the Richarson variety",flagType);
+      printf("option requires a Grassmannian.");
+      quit;
+    }
+    intvec v = conditions[2];
+    //
+    //   !!!!!  Need to check that v and w are comaptible  !!!!!!!!
+    //
+    for (j=1; j<=m; j++) {
+      for (i=1; i<v[m+1-j]; i++) {
+        patternMatrix[i,j] = 0;
+      }
+    }
+  }
+  //
+  //
+  //
+  list  indicesOfVariables;
   for (i=n; i>=1; i--) {
     for (j=m; j>=1; j--) {
       if (patternMatrix[i,j] == 2) {
-        varIndices = insert( varIndices, intvec(i,j) );
+        indicesOfVariables = insert( indicesOfVariables, intvec(i,j) );
       }
     }
   }
 
-print(patternMatrix);
+ def R = myIndexedRing( indicesOfVariables, #);
+ setring R;
+ matrix StiefelCoordinates = matrix(patternMatrix);
+ intvec pr;
+ for (i=1; i<= size(indicesOfVariables); i++) {
+   pr =indicesOfVariables[i];
+   StiefelCoordinates[pr[1],pr[2]] = var(i);
+ }
 
-list #;
-
-#[1] = "0"; #[2] = "x"; #[3] = "dp";
-
-  int i = 1;   
-  string ringconstructor = "ring nameofmyprettyring = " + #[1] + ",(" ;
-  ringconstructor =  ringconstructor + #[2] + "(" + string(varIndices[1]) + ")";
-  for (i=2; i<=size(varIndices); i++)   
-    {   
-      ringconstructor = ringconstructor + ",";   
-      ringconstructor = ringconstructor + #[2] + "(" + string(varIndices[i]) + ")";   
-    }   
-  ringconstructor = ringconstructor + ")," + #[3] + ";";   
-
-ringconstructor;
-
-ring R = 0, (x(2,1),x(3,2),x(5,6)), dp;
-
+ patternMatrix;
+ print(StiefelCoordinates);
 quit;

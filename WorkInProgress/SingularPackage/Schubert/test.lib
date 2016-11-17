@@ -86,12 +86,12 @@ proc completePermutation ( intvec w, int n )
 proc partitionToPermutation ( intvec partition, int k, int n )
 {
   if (n<=k) {
-    printf("Input failure for partitionToPermutation ( intvec(%s), int %s, int %s ) :",partition, k, n);
+    printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
     printf("The dimension %s of the ambient space is larger than the dimension %s of a subspace.",n,k);
     quit;
   }
   if (k<nrows(partition)) {
-    printf("Input failure for partitionToPermutation ( intvec(%s), int %s, int %s ) :",partition, k, n);
+    printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
     printf("The partition (%s) has more parts than %s, so it is not a condition on Gr(%s,%s).",partition,k,k,n);
     quit;
   } 
