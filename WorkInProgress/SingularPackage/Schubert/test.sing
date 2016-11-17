@@ -47,6 +47,8 @@ LIB "test.lib";
 //
 //  Make a ring with indexed variables
 //
+//  # is a list  "characteristic", "variable name", "monomial order"
+//
 proc myIndexedRing (list indicesOfVariables, list #)   
 {   
   if (size(#)==0 or size(#)>3) { #[1] = "0"; #[2] = "x"; #[3] = "dp";}   
@@ -54,8 +56,9 @@ proc myIndexedRing (list indicesOfVariables, list #)
   if (size(#)==2) { #[3] = "dp";}   
 
   intvec pr;
+  int i;
   string ringConstructor = "ring nameofmyprettyring = " + #[1] + ",(" ;
-  for (i=1; i<=size(indicesOfVariables); i++)  {
+  for ( i=1; i<=size(indicesOfVariables); i++ )  {
     pr = indicesOfVariables[i];
     if ( i>1 ) { ringConstructor = ringConstructor + ","; }
     ringConstructor =  ringConstructor + #[2] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
@@ -66,20 +69,7 @@ proc myIndexedRing (list indicesOfVariables, list #)
 }
 /////////////////////////////////////////////////////////////////////////////////
 
-intvec myFlagType =  2, 5, 8;
-intvec w = 2,8, 3,4,7, 1,5,6;
-intvec v = 2,4, 5,7,8;
-intvec x = 2,8;
 
-//w=1,4, 2,5,7;
-
- myFlagType =  4,10;
- w = completePermutation( intvec(1,2,7,8), myFlagType[nrows(myFlagType)]);
- v = completePermutation( intvec(1,5,7,8), myFlagType[nrows(myFlagType)]);
-
-intvec flagType = myFlagType;
-list # = "0", "x", "dp";
-list conditions = w , v;
 /////////////////////////////////////////////////////////////////////////////////
 //
 // Makes Stiefel coordinates for the Schubert variety X_w I, where w is a
@@ -88,18 +78,18 @@ list conditions = w , v;
 // When conditions has two permutations (and necessarily the flag variety
 //   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
 //   where I' is the opposite flag.
-// # specifies the ring.  It is a list of three strings, the characteristic, 
+// # specifies the ring.  It is a list of four strings, the ring name, the characteristic, 
 //   general ring variable name, and term order.
 //
-// proc makeStiefelCoordinates ( intvec flagType, list conditions, list # )
-
+proc makeStiefelCoordinates ( intvec flagType, list conditions, list # )
+{
   int i,j,ii;
   int n = flagType[nrows(flagType)];
   int m = flagType[nrows(flagType)-1];
   intvec extendedFlagType = intvec(0), flagType;
   intmat patternMatrix[n][m];
   //
-  //  First, make a square integer matrix of 2s
+  //  First, make a square integer matrix of 2s  (2 is a place keeper)
   //
   for (i=1; i<=n; i++) {
     for (j=1; j<=m; j++) {
@@ -119,7 +109,7 @@ list conditions = w , v;
     }
   }
   //
-  //  
+  //  Finishes the Stiefel coordinates for X_w I
   //
   if (size(conditions) == 1) {
     for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
@@ -144,7 +134,7 @@ list conditions = w , v;
     }
     intvec v = conditions[2];
     //
-    //  This returns a skew Schubert (Richardson) variety. Must check that it is nonempty,
+    //  This returns the pattern for a skew Schubert (Richardson) variety. Must check that it is nonempty,
     //
     for (j=1; j<=m; j++) {
       if ( n+1 < w[j] +v[m+1-j] ) {
@@ -159,7 +149,7 @@ list conditions = w , v;
     }
   }
   //
-  //
+  //  Find the indices of our variables.
   //
   list  indicesOfVariables;
   for (i=n; i>=1; i--) {
@@ -169,16 +159,46 @@ list conditions = w , v;
       }
     }
   }
+  //
+  //  Now we make our ring and plug in indeterminates in to the Stiefel Coordinates
+  //
+  //
+  //   !!!!  Problem  with 
+  //
+  //
+  def R = myIndexedRing( indicesOfVariables, delete( #,1) );
+  setring R;
+  keepring(R);
+  matrix StiefelCoordinates = matrix(patternMatrix);
+  intvec pr;
+  for (i=1; i<= size(indicesOfVariables); i++) {
+    pr =indicesOfVariables[i];
+    StiefelCoordinates[pr[1],pr[2]] = var(i);
+  }
+//  list OUT = R,  ;
+  return( StiefelCoordinates );
+}
 
- def R = myIndexedRing( indicesOfVariables, #);
- setring R;
- matrix StiefelCoordinates = matrix(patternMatrix);
- intvec pr;
- for (i=1; i<= size(indicesOfVariables); i++) {
-   pr =indicesOfVariables[i];
-   StiefelCoordinates[pr[1],pr[2]] = var(i);
- }
 
- patternMatrix;
- print(StiefelCoordinates);
+intvec myFlagType =  2, 5, 8;
+intvec w = 2,8, 3,4,7, 1,5,6;
+intvec v = 2,4, 5,7,8;
+intvec x = 2,8;
+
+//w=1,4, 2,5,7;
+
+ myFlagType =  4,10;
+ w = completePermutation( intvec(1,4,5,7), myFlagType[nrows(myFlagType)]);
+ v = completePermutation( intvec(1,3,4,8), myFlagType[nrows(myFlagType)]);
+
+intvec flagType = myFlagType;
+list # = "R", "0", "x", "dp";
+list conditions = w , v;
+
+matrix StiefelCoordinates = makeStiefelCoordinates ( myFlagType, conditions,  # );
+
+R;
+
+// patternMatrix;
+// print(StiefelCoordinates);
 quit;
