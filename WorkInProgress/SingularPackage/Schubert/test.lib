@@ -42,22 +42,43 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-/*  Checks if integer d is a component of vector a */
+/*  Checks if integer d is a component of vector a, returning a boolean 1/0    */
+//
+//   Should not be exported
+//
 proc member (int d, intvec a)
-//  Returns a boolean
-{
+"USAGE:  member(d, a);  d int, a intvec
+   
+ RETURN: int: 1 if d is a component of a  and  0 if not
+   
+ Example: example member; shows an example"
+ {
   for (int i=1; i<=nrows(a); i++) {
     if (d==a[i]) { return(1) }
   }
   return(0);
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec a = 2,3,5;   
+  int d = 3;   
+  member(d, a);   
+} 
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Checks if partial permutation w is a Schubert condition for the
-           flag manifold of type flagType                                      */
+       flag manifold of type flagType                                         */
 proc isCondition (intvec w, intvec flagType)
-//  Returns a boolean
+"USAGE:  isCondition( w, flagType);  w intvec, flagType intvec
+   
+ RETURN: int: 1 if the partial permutation w has descents in the set flagType
+              0 if not.
+	This is the requirement that w is a Schubert condition for the flag variety
+              encoded by flagType
+   
+ Example: example isCondition; shows an example"
 {
   int fits = 1;
   if (member(nrows(w), flagType)==1) {
@@ -67,11 +88,25 @@ proc isCondition (intvec w, intvec flagType)
   }
   return( fits );
 } 
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  intvec flagType = 2, 3, 5;   
+  isCondition(w, flagType);   
+} 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Completes a partial permutation w to a full permutation for S_n            */
 //
 proc completePermutation ( intvec w, int n )
-//
+"USAGE:  completePermutation( w, n);  w intvec, n int
+   
+ RETURN: The full permutation in S_n whose initial values agree with w, and remaining
+           values are increasing.
+
+ NOTE: We do not yet check that w takes on distinct values.
+   
+ Example: example completePermutation; shows an example"
 {
   if ( nrows(w) < n ) {
     for ( int i=1; i<=n; i++ ) {
@@ -80,10 +115,29 @@ proc completePermutation ( intvec w, int n )
   }
   return ( w );
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  int n = 5;   
+  completePermutation(w, n);   
+}
+//   The result should be 1,4,3,2,5
 /////////////////////////////////////////////////////////////////////////////////
 /* Converts a partition Gr(k,n) into the corresponding permuation.             */
 //
 proc partitionToPermutation ( intvec partition, int k, int n )
+
+"USAGE:  partitionToPermutation( partition, k, n);  partition intvec, k int, n int
+   
+ RETURN: The full permutation in S_n with unique descent at k corresponding to the
+           given partition.  w[i] = i + partition[k+1-i] -1 for i=1..k
+
+ NOTE: This checks that k < n and that the partition has at most k parts.
+        It does not yet check that the partition is weakly decreasing with
+	largest part at most n-k.
+   
+ Example: example completePermutation; shows an example"
 {
   if (n<=k) {
     printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
@@ -104,11 +158,30 @@ proc partitionToPermutation ( intvec partition, int k, int n )
   }
    completePermutation ( condition, n ) ;
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec lam = 2,2,1;   
+  int k = 4;   
+  int n = 8;   
+  partitionToPermutation( lam, k, n);
+}
+//   The result should be 1,3,5,6, 2,4,7,8
 /////////////////////////////////////////////////////////////////////////////////
 /* Computes the Grassmannian permutation of a partial permutation w given by   */
 /*  the first k values of w.  This indexes the Schubert variety of the image   */
 //
 proc makeGrassmannianPermutation ( intvec w, int k, int n)
+
+"USAGE:  makeGrassmannianPermutation( w, k, n);  w intvec, k int, n int
+   
+ RETURN: The full permutation in S_n with unique descent at k whose first k values
+           are the first k values of the completion of w to a permutation in S_n,
+	   sorted in order.
+
+ NOTE: This does not check that w is a partial permutation.
+   
+ Example: example makeGrassmannianPermutation; shows an example"
 {
   if (size(w)<n) { w = completePermutation ( w, n ); }
   intvec tmp = w[1];
@@ -117,18 +190,43 @@ proc makeGrassmannianPermutation ( intvec w, int k, int n)
   }
   completePermutation ( sort(tmp)[1], n );
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 3,5, 1,6, 2,7;   
+  int k = 4;   
+  int n = 8;   
+  makeGrassmannianPermutation( w, k, n);
+}
+//   The result should be 1,3,5,6, 2,4,7,8
 /////////////////////////////////////////////////////////////////////////////////
 /* Gets the descent set of a partial permutation w.  The first descent is at 0 */
 //
 proc  getDescents (intvec w)
+
+"USAGE:  getDescents( w );  w intvec
+   
+ RETURN: The integer vector whose components are the descent set { i : w[i]>w[i+1] }
+           of w.
+
+ NOTE: This does not check that w is a partial permutation.
+   
+ Example: example getDescents; shows an example"
 {
   intvec descents;
   for (int i=1; i<=nrows(w)-1; i++) {
     if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
   } 
   descents = descents , nrows(w);
-  return (descents );
+  return ( descents );
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 3,5, 1,6, 2,7;   
+  getDescents( w );
+}
+//   The result should be 2, 4, 6
 /////////////////////////////////////////////////////////////////////////////////
 /* Computes the Coxeter group length of the partial permutation w              /*
 proc lengthOfPermutation ( intvec w )

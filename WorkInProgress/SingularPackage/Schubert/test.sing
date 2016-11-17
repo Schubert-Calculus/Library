@@ -195,7 +195,7 @@ intvec flagType = myFlagType;
 list # = "R", "0", "x", "dp";
 list conditions = w , v;
 
-matrix StiefelCoordinates = makeStiefelCoordinates ( myFlagType, conditions,  # );
+makeStiefelCoordinates ( myFlagType, conditions,  # );
 
 R;
 
