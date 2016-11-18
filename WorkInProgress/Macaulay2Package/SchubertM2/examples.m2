@@ -1,35 +1,44 @@
 restart
-
-
-
 load ((currentDirectory())|"Test.m2")
 load ((currentDirectory())|"Schubert.m2")
 
 
-restrictRing:=method(Options=>{MonomOrder=>GRevLex})
-restrictRing(RingElement):= o->(f)->(
-    print(f);
-    print(ring(f));
-    newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomOrder]);
-    return(newF)    
-    )
+R=makeRing(6,VarName=>symbol K,Characteristic=>7,MonomOrder=>Lex)
+ring(genericMatrix(R,6,6))
 
-help MonomialOrder
-QQ[x,y,z,MonomialOrder=>Lex]
-f=x+y+x*y-x^2
-restrictRing(f,MonomOrder=>Lex)
 
-peek ring(f)
-peek ring(restrictRing(f))
+gens R
+J=CC[x_{1,1},x_{2,1},x_{1,2},x_{2,2}]
+genericMatrix(J,2,2)
+genericMatrix(R,5,5)
 
-M=coefficientRing(ring f)[support(f)]
-sub(f,M)
+makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>x,Characteristic=>0})
+makeRing(ZZ):= o -> (n) ->(
+	Rfield:=QQ;
+	a:=symbol a;
+	V:=symbol o.VarName;
+	if o.Characteristic !=0 then Rfield = GF(Characteristic,Variable=>a);
+	R:=Rfield[V_{1,1}..V_{n,n},MonomialOrder=>o.MonomOrder];
+	return(R)	
+	)
+
+
+
+testRing:=QQ[x,y,z]
+F:=x^2+y^2-1
+restrictRing(F)
+restrictRing(F,MonomOrder=>Lex)
+x>y
+
+symbol e
+makeRing(11)
+help baseName
+
 myFlagType = {2,5,8};
 w = {2,8, 3,4,7, 1,5,6};
 v = {2,4, 5,7,8};
 u = {1,3,5,7, 2,4,6,8};
 x = {2,8};
-
 
 lengthOfPermutation(w)
 lengthOfPermutation(v)

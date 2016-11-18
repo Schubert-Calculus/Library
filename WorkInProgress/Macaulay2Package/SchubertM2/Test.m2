@@ -23,6 +23,11 @@ export{
 "lengthOfPermutation",
 "makeRing"
 }
+--partitionToPermutation
+--makeGrassmannianPermutation
+----user might get error if monomorder chosen is not ubiquitous for many variables (generic monomial ordeirngs only: lex, grevlex,  etc)
+--apply
+--scan
 
 
 ---------------------------------------------------------------------------------
@@ -32,6 +37,21 @@ export{
 --    committing to the main package file
 --
 ---------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------------
+-------------------------------------NOTES---------------------------------------
+---------------------------------------------------------------------------------
+--  Make sure we are checking all the input (n>k, etc..)
+--
+---------------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -341,9 +361,7 @@ makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>symbol x,Characteristic=>
 makeRing(ZZ):= o -> (n) ->(
 	Rfield:=QQ;
 	a:=symbol a;
-	L:=toList(flatten for i from 1 to n list for j from 1 to n list o.VarName_{j,i});
-	--this is very weird, but if we don't order L in this fashion, genericMatrix(R,n,n)
-	--gives M_{j,i}
+	L:=toList(flatten for i from 1 to n list for j from 1 to n list o.VarName_{i,j});
 	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
 	R:=Rfield[L,MonomialOrder=>o.MonomOrder];
 	return(R)	
