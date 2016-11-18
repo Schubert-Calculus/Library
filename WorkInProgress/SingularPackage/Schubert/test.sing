@@ -49,6 +49,9 @@ LIB "test.lib";
 //
 //  # is a list  "characteristic", "variable name", "monomial order"
 //
+//   Note, only the generic monomial orderings dp; etc. make sense here as
+//          we do not know the number and order of variables without looking closer.
+//
 proc myIndexedRing (list indicesOfVariables, list #)   
 {   
   if (size(#)==0 or size(#)>3) { #[1] = "0"; #[2] = "x"; #[3] = "dp";}   
