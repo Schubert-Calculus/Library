@@ -13,12 +13,15 @@ newPackage(
 export{
 --Options
 "MonomOrder",
+"Characteristic",
+"VarName",
 --Functions
 "restrictRing",
 "getDescents",
 "isCondition",
 "completePermutation",
-"lengthOfPermutation"
+"lengthOfPermutation",
+"makeRing"
 }
 
 
@@ -101,6 +104,22 @@ export{
 --         [name=len,dataType=integer,mathObject=length of w]
 --    Description:
 --         returns the length of a permutation
+---------------------------------------------------------------------------------
+--  makeRing
+--     Input:
+--          [name=n,dataType=ZZ,mathObject=usually ambient space of flagType]
+--     Output:
+--          [ring w/ specified characteristic, variable names, & monomial order,
+--		also, if a finite field, the field element correpsond to the 
+--		symbol 'a']
+--     Options:
+--	    VarName=>symbol x
+--	    Characteristic=>0
+--	    MonomOrder=>monomial order
+--    Description:
+--          Takes the specified data for a ring and returns a ring with variables
+--		x_{1,1}..x_{n,n}, of characteristic Characteristic, and monomial
+--		order: MonomOrder
 ---------------------------------------------------------------------------------
 --  <INSERT METHOD NAME HERE>
 --     Input:
@@ -318,6 +337,28 @@ lengthOfPermutation(List):=(w) ->(
 
 
 
+makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>symbol x,Characteristic=>0})
+makeRing(ZZ):= o -> (n) ->(
+	Rfield:=QQ;
+	a:=symbol a;
+	L:=toList(flatten for i from 1 to n list for j from 1 to n list o.VarName_{j,i});
+	--this is very weird, but if we don't order L in this fashion, genericMatrix(R,n,n)
+	--gives M_{j,i}
+	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
+	R:=Rfield[L,MonomialOrder=>o.MonomOrder];
+	return(R)	
+	)
+
+
+
+
+
+
+getStiefelCoordinates=method()
+getStiefelCoordinates(List,List):=(w,flagType)->(
+	w=completePermutation(w,last flagType);
+	assert(isCondition(w,flagType));
+	)
 
 
 
