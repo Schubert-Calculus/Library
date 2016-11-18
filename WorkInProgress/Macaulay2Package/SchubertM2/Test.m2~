@@ -131,7 +131,7 @@ export{
 
 
 
-restrictRing=method(Options=>{MonomOrder=>GRevLex})
+restrictRing:=method(Options=>{MonomOrder=>GRevLex})
 ---------------------------------------------------------------------------------
 --  restrictRing
 --     Input:
