@@ -15,6 +15,7 @@ export{
 "MonomOrder",
 "Characteristic",
 "VarName",
+"FieldChoice",
 --Functions
 "restrictRing",
 "getDescents",
@@ -22,7 +23,9 @@ export{
 "completePermutation",
 "lengthOfPermutation",
 "makeRing",
-"getStiefelCoordinates"
+"getStiefelCoordinates",
+"trulyRandom",
+"randomFlag"
 }
 --partitionToPermutation
 --makeGrassmannianPermutation
@@ -384,18 +387,6 @@ lengthOfPermutation(List):=(w) ->(
 
 
 
-makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>"x",Characteristic=>0})
-makeRing(ZZ):= o -> (n) ->(
-	Rfield:=QQ;
-	a:=symbol a;
-	L:=toList(flatten for i from 1 to n list for j from 1 to n list o.VarName_{i,j});
-	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
-	R:=Rfield[L,MonomialOrder=>o.MonomOrder];
-	return(R)	
-	)
-
-
-
 
 
 
@@ -479,6 +470,122 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
 	return(localMatrix);
 	)
+
+---------------------------------------------------------------------------------
+--Example:
+--	w = {1,2,5,3,6,4,7}
+--	flagType = {3,5,7}
+--	getStiefelCoordinates({w},flagType)
+--	w = {1,3,6}
+--	v = {1,2,5}
+--	flagType={3,8}
+--	getStiefelCoordinates({w,v},flagType,MonomOrder=>Lex)
+---------------------------------------------------------------------------------
+
+
+
+trulyRandom=method()
+trulyRandom(Ring):=(F)->(
+    	k:=(-1)^(random(ZZ));
+	return(k*random(F))
+	)
+trulyRandom(InexactFieldFamily):=(F)->(
+    	k:=ii^(random(ZZ));
+	return(k*random(F))
+	)
+
+
+
+---------------------------------------------------------------------------------
+--Example:
+--	trulyRandom(QQ);
+--	trulyRandom(CC);
+---------------------------------------------------------------------------------
+
+
+
+
+
+randomFlag=method(Options=>{FieldChoice=>QQ})
+randomFlag(ZZ):=o->(n)->(
+	M:=matrix for i from 0 to n-1 list for j from 0 to n-1 list (trulyRandom(o.FieldChoice));
+	return(M)
+	)
+
+
+
+---------------------------------------------------------------------------------
+--Example:
+--	randomFlag(6);
+--	randomFlag(3,FieldChoice=>CC);
+---------------------------------------------------------------------------------
+
+
+
+
+
+osculatingFlag=method()
+osculatingFlag(List,ZZ):=(F,n)->(
+    	funcList:=for i from 0 to n-1 list for j from 0 to n-1 list diff((gens ring(F#i))#0,F#i);
+        G:=matrix funcList;
+	subFuncList:=for r in funcList list for f in r list(sub(f,{(gens ring f)#0=>trulyRandom(QQ)}));
+	M:=matrix(subFuncList);
+	return({M,G})
+	)
+
+
+---------------------------------------------------------------------------------
+--Example:
+--	QQ[t]
+--	F={t^4+t^3+t^2+t+1,t+t^3+3*t,t^7-t^4+t^2}
+--	osculatingFlag(F,3)
+---------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>"x",Characteristic=>0})
+------------------------------------
+--PROBABLY WON'T INCLUDETHIS
+------------------------------------
+makeRing(ZZ):= o -> (n) ->(
+	Rfield:=QQ;
+	a:=symbol a;
+	L:=toList(flatten for i from 1 to n list for j from 1 to n list o.VarName_{i,j});
+	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
+	R:=Rfield[L,MonomialOrder=>o.MonomOrder];
+	return(R)	
+	)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

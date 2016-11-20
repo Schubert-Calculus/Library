@@ -1,7 +1,26 @@
 
 restart
 load ((currentDirectory())|"Test.m2")
+randomFlag(5,FieldChoice=>CC)
 
+
+(sum for i from 0 to 100 list trulyRandom(CC))/100.0
+
+
+
+QQ[t]
+F={t^4+t^3+t^2+t+1,t+t^3+3*t,t^7-t^4+t^2}
+osculatingFlag(F,3)
+for f in F list diff(t,f)    
+    QQ[t]
+F=t^2+t^3
+diff(t,F)
+
+
+R=CC[x]
+random(R,3,3)
+random(QQ^5,QQ^5)
+help random
 
 getStiefelCoordinates({{1,2,5,3,6,4,7}},{3,5,7})
 M=getStiefelCoordinates({{1,3,6},{1,2,5}},{3,8})
