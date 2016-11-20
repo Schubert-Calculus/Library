@@ -17,9 +17,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// proc member (int d, intvec a)   returns a boolean 0 or 1
-//        Checks if integer d is a component of vector a
-//
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
 //
@@ -41,46 +38,22 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
-/*  Checks if integer d is a component of vector a, returning a boolean 1/0    */
-//
-//   Should not be exported
-//
-proc member (int d, intvec a)
-"USAGE:  member(d, a);  d int, a intvec
-   
- RETURN: int: 1 if d is a component of a  and  0 if not
-   
- Example: example member; shows an example"
- {
-  for (int i=1; i<=nrows(a); i++) {
-    if (d==a[i]) { return(1) }
-  }
-  return(0);
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec a = 2,3,5;   
-  int d = 3;   
-  member(d, a);   
-} 
-/////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Checks if partial permutation w is a Schubert condition for the
        flag manifold of type flagType                                         */
+//
 proc isCondition (intvec w, intvec flagType)
 "USAGE:  isCondition( w, flagType);  w intvec, flagType intvec
    
  RETURN: int: 1 if the partial permutation w has descents in the set flagType
-              0 if not.
+              0 if not, including if it is not a partial permutation.
 	This is the requirement that w is a Schubert condition for the flag variety
               encoded by flagType
    
  Example: example isCondition; shows an example"
 {
-  int fits = 1;
+  int fits = isPartialPermutation( w );
   if (member(nrows(w), flagType)==1) {
     for (int i=1; i<nrows(w); i++) {
       if (w[i]>w[i+1]) { fits = fits * member(i,flagType); }
@@ -104,10 +77,13 @@ proc completePermutation ( intvec w, int n )
  RETURN: The full permutation in S_n whose initial values agree with w, and remaining
            values are increasing.
 
- NOTE: We do not yet check that w takes on distinct values.
-   
  Example: example completePermutation; shows an example"
 {
+  if (isPartialPermutation(w) <>1 ) {
+    printf("Input failure for completePermutation ( intvec (%s), int %s ) :",w, n);
+    printf("The vector (%s) is not a partial permutation.",w);
+    quit;
+  }
   if ( nrows(w) < n ) {
     for ( int i=1; i<=n; i++ ) {
       if (member(i,w)==0) { w = w, intvec(i); }
@@ -137,7 +113,7 @@ proc partitionToPermutation ( intvec partition, int k, int n )
         It does not yet check that the partition is weakly decreasing with
 	largest part at most n-k.
    
- Example: example completePermutation; shows an example"
+ Example: example partitionToPermutation; shows an example"
 {
   if (n<=k) {
     printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
