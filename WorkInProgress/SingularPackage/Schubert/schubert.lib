@@ -6,7 +6,10 @@
 //                James Ruffo, and Frank Sottile 
 //
 //  This version is being written by Taylor Brysiewicz, Frank Sottile, and Robert Williams
-//   
+//
+//   It appears that `StiefelCoordinates' may be a reserved name.  Need to think about this.
+//
+//
 ///////////////////////////////////////////////////////////////////////////////   
 version="version SchubertCalculus.lib  1.0.0.0  November_2016 ";   
 category="Algebraic geometry"; 
@@ -60,14 +63,21 @@ LIB "linalg.lib";
 
 /////////////////////////////////////////////////////////////////////////////////   
 //
-//  Static procedures
+//  Static procedures  (This should eventually go in the header ?)
 //
-// static proc member (int d, intvec a)   returns a boolean 0 or 1
+//   For testing do not call them static
+//
+// proc member (int d, intvec a)   returns a boolean 0 or 1
 //        Checks if integer d is a component of vector a
 //
+// proc getDescents (intvec w)
+//        Gets the descent set of a sequence w.  The first descent is at 0 and last at nrows(w)
 //
+// proc isPartialPermutation( intvec w )
+//        tests if w is a partial permutation.  1 = yes and 0 = no
 //
-//
+// proc completePermutation ( intvec w, int n ) returns an intvec (a permutation)
+//      Completes a partial permutation w to a full permutation in S_n or breaks
 //
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +85,7 @@ LIB "linalg.lib";
 //
 //   This is static and not exported
 //
-static proc member (int d, intvec a)
+proc member (int d, intvec a)
 "USAGE:  member(d, a);  d int, a intvec
 
  RETURN: int: 1 if d is a component of a  and  0 if it is not
@@ -90,8 +100,96 @@ static proc member (int d, intvec a)
 example   
 {   
   "EXAMPLE:"; echo = 2;   
-  intvec a = 2,3,5;   
+  intvec myFlagType = 2,3,5;   
   int d = 3;   
-  member(d, a);   
+  member(d, myFlagType);   
 } 
 /////////////////////////////////////////////////////////////////////////////////
+/* Gets the descent set of a partial permutation w.  The first descent is at 0 */
+//
+proc getDescents (intvec w)
+
+"USAGE:  getDescents( w );  w intvec
+   
+ RETURN: The integer vector whose components are the descent set { i : w[i]>w[i+1] }
+           of w.
+
+ NOTE: This does not check that w is a partial permutation.
+   
+ Example: example getDescents; shows an example"
+{
+  intvec descents;
+  for (int i=1; i<=nrows(w)-1; i++) {
+    if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
+  } 
+  descents = descents , nrows(w);
+  return ( descents );
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 3,5, 1,6, 2,7;   
+  getDescents( w );
+}
+//   The result should be 2, 4, 6
+//////////////////////////////////////////////////////////////////////////////////
+//
+//   This tests if w is a partial permutation.  1 = yes and 0 = no
+//
+proc isPartialPermutation( intvec w )
+"USAGE:  isPartialPermutation( w );  w intvec
+   
+ RETURN: int: 1 if the integer vector is a partial premutation in that it has positive
+                 integral components that are distinct.
+              0 if it is not a partial permutation.
+   
+ Example: example isPartialPermutation; shows an example"
+{
+  intvec u = sort(w)[1];
+  if (u[1] < 1) { return( 0 ); }
+  for (int i=1; i<nrows(u); i=i+1) {
+   if (u[i] == u[i+1]) { return( 0 ); } 
+  }
+  return( 1 );
+}
+example
+{
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1, 4, 3, 7;   
+  isPartialPermutation( w );
+  isPartialPermutation( intvec( 1, 4, 3, 4 ) );
+  isPartialPermutation( intvec( 1,-1, 3, 4 ) );
+}
+// should get the values 1, 0, 0 from these inputs
+/////////////////////////////////////////////////////////////////////////////////
+/*  Completes a partial permutation w to a full permutation for S_n            */
+//
+proc completePermutation ( intvec w, int n )
+"USAGE:  completePermutation( w, n);  w intvec, n int
+   
+ RETURN: The full permutation in S_n whose initial values agree with w, and remaining
+           values are increasing.
+
+ Example: example completePermutation; shows an example"
+{
+  if (isPartialPermutation(w) <>1 ) {
+    printf("Input failure for completePermutation ( intvec (%s), int %s ) :",w, n);
+    printf("The vector (%s) is not a partial permutation.",w);
+    quit;
+  }
+  if ( nrows(w) < n ) {
+    for ( int i=1; i<=n; i++ ) {
+      if (member(i,w)==0) { w = w, intvec(i); }
+    }
+  }
+  return ( w );
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  int n = 5;   
+  completePermutation(w, n);   
+}
+//   The result should be 1,4,3,2,5
+//////////////////////////////////////////////////////////////////////////////////////

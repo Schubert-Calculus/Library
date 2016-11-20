@@ -4,6 +4,11 @@
 //
 //   NOTE: Singular is 1-based: intvec v = 1,2,3;  v[1]=1.
 //
+//  Warning:  The full documentation mode for a procedure generates an error message
+//              if the procedure is in an ordinary input file, but not if it is in a .lib file.
+//            This is strange, but consistent with what I saw in my last 1/2 hour of frustration
+//
+//
 option(redSB); 
 LIB "schubert.lib"; 
 LIB "test.lib"; 
@@ -21,60 +26,13 @@ LIB "test.lib";
 //         w has descents only at positions of adot, where flagType=(adot,n)
 //
 //////////////////////////////////////////////////////////////////////////////////////
-//
-// proc member (int d, intvec a)   returns a boolean 0 or 1
-//        Checks if integer d is a component of vector a
-//
-// proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
-//      Checks if partial permutation w is a Schubert condition for manifold of type flagType
-//
-// proc completePermutation ( intvec w, intvec flagType ) returns an intvec (a permutation)
-//      Completes a partial permutation w to a full permutation for flagType or breaks
-//
-// proc partitionToPermutation ( intvec partition, int k, int n )
-//       Converts a partition for Gr(k,n) into the corresponding permuation or breaks
-//
-// proc getDescents (intvec w)
-//       Gets the descent set of a partial permutation w.  The first descent is at 0 
-//
-// proc makeGrassmannianPermutation ( intvec w, int k, int n)
-//       Computes the Grassmannian permutation of a partial permutation w given by 
-//       the first k values of w.  This indexes the Schubert variety of the image  
-//
-//////////////////////////////////////////////////////////////////////////////////////
-//
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//   This tests if w is a partial permutation.  1 = yes and 0 = no
-//
-proc isPartialPermutation( intvec w )
-{
-  intvec u = sort(w)[1];
-  if (u[1] < 1) { return( 0 ) }
-  for (int i=1; i<nrows(u); i=i+1) {
-   if (u[i] == u[i+1]) { return( 0 ) } 
-  }
-  return( 1 );
-}
-//////////////////////////////////////////////////////////////////////////////////////
-
-intvec w = 2,4,6,1,5,3,5;
-
-isPartialPermutation( w );
-
-w = 1,7,4,12,6;
-isPartialPermutation( w );
-
-quit;
 
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//  Make a ring with indexed variables
+//  Make a ring with indexed variables and exports it.
 //
-//  # is a list  "characteristic", "variable name", "monomial order"
+//  # is a list  "nameOfRing", "characteristic", "variable name", "monomial order"
 //
 //   Note, only the generic monomial orderings dp; etc. make sense here as
 //          we do not know the number and order of variables without looking closer.
@@ -228,5 +186,9 @@ list conditions = w ;
 makeStiefelCoordinates ( myFlagType, conditions,  # );
 
 print(StiefelCoordinates);
+
+def S = basering;
+
+S;
 
 quit;

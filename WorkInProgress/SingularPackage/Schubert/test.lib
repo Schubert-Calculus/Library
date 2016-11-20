@@ -3,6 +3,10 @@
 //  This is for procedures that are being tested and developed before 
 //  committing to the main library file
 //
+//  Warning:  The full documentation mode for a procedure generates an error message
+//              if the procedure is in an ordinary input file, but not if it is in a .lib file.
+//            This is strange, but consistent with what I saw in my last 1/2 hour of frustration
+//
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  flagType is an integer vector (intvec) (a_1, ..., a_s, n)=(adot, n) with increasing 
@@ -17,88 +21,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
-//      Checks if partial permutation w is a Schubert condition for manifold of type flagType
-//
-// proc completePermutation ( intvec w, int n ) returns an intvec (a permutation)
-//      Completes a partial permutation w to a full permutation for flagType or breaks
-//
 // proc partitionToPermutation ( intvec partition, int k, int n )
 //       Converts a partition for Gr(k,n) into the corresponding permuation or breaks
-//
-// proc getDescents (intvec w)
-//       Gets the descent set of a partial permutation w.  The first descent is at 0 
 //
 // proc makeGrassmannianPermutation ( intvec w, int k, int n)
 //       Computes the Grassmannian permutation of a partial permutation w given by 
 //       the first k values of w.  This indexes the Schubert variety of the image  
 //
 // proc lengthOfPermutation ( intvec w )
-//   Computes the Coxeter group length of the partial permutation w 
+//       Computes the Coxeter group length of the partial permutation w 
+//
+// proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
+//      Checks if partial permutation w is a Schubert condition for manifold of type flagType
+//
+//     ---> This is not yet used
 //
 ///////////////////////////////////////////////////////////////////////////
 
-
-/////////////////////////////////////////////////////////////////////////////////
-/*  Checks if partial permutation w is a Schubert condition for the
-       flag manifold of type flagType                                         */
-//
-proc isCondition (intvec w, intvec flagType)
-"USAGE:  isCondition( w, flagType);  w intvec, flagType intvec
-   
- RETURN: int: 1 if the partial permutation w has descents in the set flagType
-              0 if not, including if it is not a partial permutation.
-	This is the requirement that w is a Schubert condition for the flag variety
-              encoded by flagType
-   
- Example: example isCondition; shows an example"
-{
-  int fits = isPartialPermutation( w );
-  if (member(nrows(w), flagType)==1) {
-    for (int i=1; i<nrows(w); i++) {
-      if (w[i]>w[i+1]) { fits = fits * member(i,flagType); }
-    }
-  }
-  return( fits );
-} 
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 1,4,3;   
-  intvec flagType = 2, 3, 5;   
-  isCondition(w, flagType);   
-} 
-/////////////////////////////////////////////////////////////////////////////////
-/*  Completes a partial permutation w to a full permutation for S_n            */
-//
-proc completePermutation ( intvec w, int n )
-"USAGE:  completePermutation( w, n);  w intvec, n int
-   
- RETURN: The full permutation in S_n whose initial values agree with w, and remaining
-           values are increasing.
-
- Example: example completePermutation; shows an example"
-{
-  if (isPartialPermutation(w) <>1 ) {
-    printf("Input failure for completePermutation ( intvec (%s), int %s ) :",w, n);
-    printf("The vector (%s) is not a partial permutation.",w);
-    quit;
-  }
-  if ( nrows(w) < n ) {
-    for ( int i=1; i<=n; i++ ) {
-      if (member(i,w)==0) { w = w, intvec(i); }
-    }
-  }
-  return ( w );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 1,4,3;   
-  int n = 5;   
-  completePermutation(w, n);   
-}
-//   The result should be 1,4,3,2,5
 /////////////////////////////////////////////////////////////////////////////////
 /* Converts a partition Gr(k,n) into the corresponding permuation.             */
 //
@@ -176,34 +115,6 @@ example
 }
 //   The result should be 1,3,5,6, 2,4,7,8
 /////////////////////////////////////////////////////////////////////////////////
-/* Gets the descent set of a partial permutation w.  The first descent is at 0 */
-//
-proc  getDescents (intvec w)
-
-"USAGE:  getDescents( w );  w intvec
-   
- RETURN: The integer vector whose components are the descent set { i : w[i]>w[i+1] }
-           of w.
-
- NOTE: This does not check that w is a partial permutation.
-   
- Example: example getDescents; shows an example"
-{
-  intvec descents;
-  for (int i=1; i<=nrows(w)-1; i++) {
-    if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
-  } 
-  descents = descents , nrows(w);
-  return ( descents );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 3,5, 1,6, 2,7;   
-  getDescents( w );
-}
-//   The result should be 2, 4, 6
-/////////////////////////////////////////////////////////////////////////////////
 /* Computes the Coxeter group length of the partial permutation w              /*
 proc lengthOfPermutation ( intvec w )
 {
@@ -219,3 +130,33 @@ proc lengthOfPermutation ( intvec w )
   return ( len );
 }
 /////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+/*  Checks if partial permutation w is a Schubert condition for the
+       flag manifold of type flagType                                         */
+//
+proc isCondition (intvec w, intvec flagType)
+"USAGE:  isCondition( w, flagType);  w intvec, flagType intvec
+   
+ RETURN: int: 1 if the partial permutation w has descents in the set flagType
+              0 if not, including if it is not a partial permutation.
+	This is the requirement that w is a Schubert condition for the flag variety
+              encoded by flagType
+   
+ Example: example isCondition; shows an example"
+{
+  int fits = isPartialPermutation( w );
+  if (member(nrows(w), flagType)==1) {
+    for (int i=1; i<nrows(w); i++) {
+      if (w[i]>w[i+1]) { fits = fits * member(i,flagType); }
+    }
+  }
+  return( fits );
+} 
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  intvec flagType = 2, 3, 5;   
+  isCondition(w, flagType);   
+} 
