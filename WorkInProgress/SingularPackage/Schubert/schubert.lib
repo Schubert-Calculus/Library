@@ -13,7 +13,7 @@ category="Algebraic geometry";
 info="   
 LIBRARY:  SchubertCalculus.lib  Procedures for formulating Schubert varieties on flag manifolds
 AUTHOR:   Taylor Brysiewicz
-          Frank Sottile     sottile@math.tamu.edu
+          Frank Sottile      sottile@math.tamu.edu
 	  Robert Williams
 
 OVERVIEW: This library provides procedures for formulating membership in Schubert varieties
@@ -30,7 +30,7 @@ PROCEDURES:
  <proc_name_1>();     <one line description of the purpose>
      .
      .
-  <proc_name_N>();     <one line description of the purpose>
+ <proc_name_N>();     <one line description of the purpose>
 ";
 /////////////////////////////////////////////////////////////////////////////////
 LIB "matrix.lib"; 
@@ -53,7 +53,8 @@ LIB "linalg.lib";
 //
 //
 //
-//////////////////////////////////////////////////////////////////////////////////////
+//
+//
 //
 //
 
