@@ -21,7 +21,8 @@ export{
 "isCondition",
 "completePermutation",
 "lengthOfPermutation",
-"makeRing"
+"makeRing",
+"getStiefelCoordinates"
 }
 --partitionToPermutation
 --makeGrassmannianPermutation
@@ -141,6 +142,29 @@ export{
 --		x_{1,1}..x_{n,n}, of characteristic Characteristic, and monomial
 --		order: MonomOrder
 ---------------------------------------------------------------------------------
+--  stiefelCoordinates
+--     Input:
+--          [name=conditions,
+--	     dataType=List,
+--	     mathObject=list of 1 or 2 schubert conditions]
+--          [name=flagType,
+--	     dataType=List,
+--	     mathObject=indicates flag manifold]
+--     Output:
+--          [name=localMatrix,
+--	     dataType=Matrix,
+--	     mathObject=matrix indicating stiefel coordinates for the situation]
+--	    The situation is either (A) one schubert condition for any flag manifold
+--			          or(B) two schubert conditions for a Grassmannian
+--     Options:
+--	    (To be added later) VarName=>symbol x
+--	    Characteristic=>0
+--	    MonomOrder=>monomial order
+--    Description:
+--          Takes the specified data for a ring and returns a ring with variables
+--		x_{1,1}..x_{n,n}, of characteristic Characteristic, and monomial
+--		order: MonomOrder
+---------------------------------------------------------------------------------
 --  <INSERT METHOD NAME HERE>
 --     Input:
 --          [name=,dataType=,mathObject=]
@@ -195,18 +219,22 @@ restrictRing(RingElement):= o-> (f) ->(
     newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomOrder]);
     return(newF)    
     )
+restrictRing(Matrix):= o-> (f) ->(
+    newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomOrder]);
+    return(newF)    
+    )
 ---------------------------------------------------------------------------------
 --Example:
-	testRing:=QQ[x,y,z,MonomialOrder=>Lex]
-	f:=x^2+y^2-1
-	newF:=restrictRing(f)
-	ring(newF)
-	ring(f)
+--	testRing:=QQ[x,y,z,MonomialOrder=>Lex]
+--	f:=x^2+y^2-1
+--	newF:=restrictRing(f)
+--	ring(newF)
+--	ring(f)
 	--note the monomial order was not preserved (to see this use "peek")
-	newF=restrictRing(f,MonomOrder=>Lex)
-	ring(newF)
-	ring(f)
-	--now the monomial order is Lex
+--	newF=restrictRing(f,MonomOrder=>Lex)
+--	ring(newF)
+--	ring(f)
+--	--now the monomial order is Lex
 	
 ---------------------------------------------------------------------------------
 
@@ -299,16 +327,16 @@ isCondition(List,List):=(w,flagType) ->(
     )
 ---------------------------------------------------------------------------------
 --Example:
-	myFlagType = {2,5,8}
-	w = {2,8, 3,4,7, 1,5,6}
-	v = {2,4, 5,7,8}
-	u = {1,3,5,7, 2,4,6,8}
-	x = {2,8}
-	
-	isCondition(w,myFlagType)
-	isCondition(v,myFlagType)
-	isCondition(u,myFlagType)
-	isCondition(x,myFlagType)
+--	myFlagType = {2,5,8}
+--	w = {2,8, 3,4,7, 1,5,6}
+--	v = {2,4, 5,7,8}
+--	u = {1,3,5,7, 2,4,6,8}
+--	x = {2,8}
+--	
+--	isCondition(w,myFlagType)
+--	isCondition(v,myFlagType)
+--	isCondition(u,myFlagType)
+--	isCondition(x,myFlagType)
 ---------------------------------------------------------------------------------
 
 
@@ -344,20 +372,19 @@ lengthOfPermutation(List):=(w) ->(
     )
 ---------------------------------------------------------------------------------
 --Example:
-	w = {2,8, 3,4,7, 1,5,6}
-	v = {2,4, 5,7,8}
-	u = {1,3,5,7, 2,4,6,8}
-	x = {2,8}
-	lengthOfPermutation(w)
-	lengthOfPermutation(v)
-	lengthOfPermutation(u)
-	lengthOfPermutation(x)
+--	w = {2,8, 3,4,7, 1,5,6}
+--	v = {2,4, 5,7,8}
+--	u = {1,3,5,7, 2,4,6,8}
+--	x = {2,8}
+--	lengthOfPermutation(w)
+--	lengthOfPermutation(v)
+--	lengthOfPermutation(u)
+--	lengthOfPermutation(x)
 ---------------------------------------------------------------------------------
 
 
 
-
-makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>symbol x,Characteristic=>0})
+makeRing=method(Options=>{MonomOrder=>GRevLex,VarName=>"x",Characteristic=>0})
 makeRing(ZZ):= o -> (n) ->(
 	Rfield:=QQ;
 	a:=symbol a;
@@ -372,13 +399,86 @@ makeRing(ZZ):= o -> (n) ->(
 
 
 
-getStiefelCoordinates=method()
-getStiefelCoordinates(List,List):=(w,flagType)->(
-	w=completePermutation(w,last flagType);
+
+
+
+
+stiefelCoordinates=method(Options=>{MonomOrder=>GRevLex,VarName=>"x",Characteristic=>0})
+---------------------------------------------------------------------------------
+--  stiefelCoordinates
+--     Input:
+--          [name=conditions,
+--	     dataType=List,
+--	     mathObject=list of 1 or 2 schubert conditions]
+--          [name=flagType,
+--	     dataType=List,
+--	     mathObject=indicates flag manifold]
+--     Output:
+--          [name=localMatrix,
+--	     dataType=Matrix,
+--	     mathObject=matrix indicating stiefel coordinates for the situation]
+--	    The situation is either (A) one schubert condition for any flag manifold
+--			          or(B) two schubert conditions for a Grassmannian
+--     Options:
+--	    (To be added later) VarName=>symbol x
+--	    Characteristic=>0
+--	    MonomOrder=>monomial order
+--    Description:
+--          Takes the specified data for a ring and returns a ring with variables
+--		x_{1,1}..x_{n,n}, of characteristic Characteristic, and monomial
+--		order: MonomOrder
+---------------------------------------------------------------------------------
+stiefelCoordinates(List,List):=o->(conditions,flagType)->(
+--pull, launder, and validate the input
+	n:=last(flagType);
+        m:=flagType#(#flagType-2);
+	w:=completePermutation(conditions#0,n);
 	assert(isCondition(w,flagType));
+--Create a list of the coordinates that are not a priori 1 or 0 
+	E:=select((1,1)..(n,n),p->isSubset({p_0-1},for i from 0 to p_1-1 list n-w#i)==false and p_0-1<(n-w#(p_1-1)));
+--Make the ring
+	x:=symbol x; a:=symbol a;
+	Rfield:=QQ;
+	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
+	R:=Rfield[apply(E,k->x_k)];
+--make a matrix of zeros.put variables in the places that aren't 1's or SouthEast zeros, then put 1's in the pivots
+	genMat:=mutableMatrix(R,n,n);
+	scan(E,k->genMat_(k_0-1,k_1-1)=x_k);
+	scan(w,i->genMat_(n-i,position(w,k->k==i))=1);
+------------------
+--If there is one Schubert condition given, do this
+------------------
+	if #conditions==1 then(
+--pull the descents (as we will be able to push zeros to the west up to these marks)
+	   descents:=getDescents(w);
+	   descents=join({0},descents);
+	   descentFloor:=for i from 0 to n-1 list(max(positions(descents,d->d<=i)));
+--get the biggest space (in the flagType) that the i-th column doesn't belong to
+	   for j from 0 to n-1 do(
+--for each column with a pivot in it (all of them)
+	       for J from descents#(descentFloor#j) to j-1 do(
+--put zeros to the West up to the descent mark
+		   genMat_(n-w#j,J)=0;
+		   ),
+	       ),
+	),	
+------------------
+--If there are two Schubert conditions given, do this
+------------------
+    	if #conditions>1 then(
+	    assert(#conditions==2);
+	    assert(#flagType==2);
+	    v:=reverse for i from 0 to m-1 list((completePermutation(conditions#1,n))#i);
+	    print(v);
+    	    for j from 0 to m-1 do(
+--		assert(v#i-1<n-w#i);
+		for i from 0 to v#j-2 do genMat_(i,j)=0;
+		print("Note that we assume "|toString(x_(v#j,j+1))|" is nonzero");
+		),	         
+	    ),
+	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
+	return(localMatrix);
 	)
-
-
 
 
 

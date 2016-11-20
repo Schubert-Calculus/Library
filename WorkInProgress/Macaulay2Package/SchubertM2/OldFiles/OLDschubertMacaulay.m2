@@ -206,13 +206,12 @@ schubertIdeal(List):=(conditions)->(
     return(J)
     )
 
-schI:=schubertIdeal({{4,6,8},{3,7,8},{3,7,8},{3,7,8},{3,7,8}})
-dim schI
-degree schI
-frobeniusForIdeal(schI,0,8,20);--obviously running frobforIdeal won't work because you aren't changing your ideal. You need to make anew fobAlg with the 
+--schI:=schubertIdeal({{4,6,8},{3,7,8},{3,7,8},{3,7,8},{3,7,8}})
+--dim schI
+--degree schI
+--frobeniusForIdeal(schI,0,8,20);--obviously running frobforIdeal won't work because you aren't changing your ideal. You need to make anew fobAlg with the 
 ---random conditions in it.
 ----thaaaat being said. It seems like changing the prime randomly does the trick
 -----this way we don't have to run randomCondition a bajilion times.
-schI2:=schubertIdeal({{5, 7, 8, 9}, {5, 7, 8, 9}, {5, 7, 8, 9}, {5, 7, 8, 9}, {5, 6, 8, 9}, {5, 6, 7, 9}, {5, 6, 7, 9}, {2, 7, 8, 9}, {2, 7, 8, 9}})
+--schI2:=schubertIdeal({{5, 7, 8, 9}, {5, 7, 8, 9}, {5, 7, 8, 9}, {5, 7, 8, 9}, {5, 6, 8, 9}, {5, 6, 7, 9}, {5, 6, 7, 9}, {2, 7, 8, 9}, {2, 7, 8, 9}})
 
-frobeniusForIdeal(schI2,0,4,100)

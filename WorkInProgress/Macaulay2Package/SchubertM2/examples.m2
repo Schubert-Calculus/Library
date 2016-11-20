@@ -1,9 +1,159 @@
+
+restart
+load ((currentDirectory())|"Test.m2")
+
+
+getStiefelCoordinates({{1,2,5,3,6,4,7}},{3,5,7})
+M=getStiefelCoordinates({{1,3,6},{1,2,5}},{3,8})
+
+
+restrictRing(M)
+
+
+M=matrix{{1,2,3,4,5,6},{6,5,4,3,2,1}}    
+M_{0,5}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+L:={1,2,5,3,6,4,7}
+reverse L
+L=join({0},getDescents(L))
+for i from 0 to 7 list ({1,4,6}#(position({1,4,6},d->d>i)))
+for i from 0 to 7 list(max(positions(L,d->d<i)))
+for i from 0 to 6 list ({i,L#(position(L,d-> d>i))})    
+help first
+
+    
+w={5,1,4,2,3}    
+scan(w,k->print(position(w,i->i==k),5-k))    
+
+
+	for j from 0 to n-1 do(
+	    --for each column, list the rows that are smaller than that column's "1" and (1) haven't been occupied by 1's yet
+	    rows:=select(for i from 0 to n-w#j-1 list i,k->isSubset({k},for i from 0 to j list n-w#i)==false);	   
+	    for i in rows do(
+		genMat_(i,j)=x_(i+1,j+1)
+		),
+	    genMat_(n-w#j,j)=1
+	    );
+	print(genMat);
+	)
+    
+    
+
+
+    help isSubset
+    
+    scan({1,2,3},k->position(k,{1,2,3}))
+help position
+getStiefelCoordinates({1,2,4,3,5},{1,3,5})
+Check=new List from (1,1)..(5,5)
+apply(Check,k->(k_0+1,k_1+1))
+scan(Check,k->if k==(1,1)then k)	
+	D:=(1,1)
+D_0
+NC:=infinity
+FFF:=QQ
+makeLocalCoordinates = method(TypicalValue => MutableMatrix)
+makeLocalCoordinates Array := blackred ->(
+  blackposition := first blackred;
+  redposition := last blackred;
+  VAR := symbol VAR;
+  print("hey");
+  print(redposition);
+  n := #redposition; -- n is the size of the board
+  -- we find how many black checkers are in northwest to a given red
+  print("test");
+  rowsred := sort select(redposition, r->r=!=NC);
+  print("asdf");
+  colsred := apply(rowsred, r -> position(redposition, j-> j == r));
+  print("hi");
+  E := new MutableHashTable;
+    for r to #rowsred-1 do(
+      E#(rowsred#r,r) = 1;
+      variablerows := take(blackposition,colsred#r+1);
+      variablerows = select(variablerows, b-> b< rowsred#r);
+      scan(variablerows, j->(
+        if member(j,rowsred) and position(redposition, i-> i == j) < colsred#r then
+	  variablerows = delete(j,variablerows);
+      ));
+      scan(variablerows, col-> (
+        E#(col,r)=VAR;
+      ));
+   );
+   return(E)
+   )
+   x:= symbol x;
+   R:=FFF[apply(select(sort keys E, k-> E#k===VAR), k-> x_k)];
+   X := mutableMatrix(R,n,#rowsred);
+   scan(keys E, k-> X_k = if E#k === 1 then 1 else x_k);
+   matrix X
+)
+
+restart
+R=QQ[x_1..x_20]
+
+X:=mutableMatrix(R,2,2)
+L={1,3,4,5}
+x
+scan(L,k->X_k=if L#k===1 then 1 else x_k)
+
+    keys E
+
+ blackCheckers = {0,1,3,4,5,2};
+NC=infinity
+ redCheckers = {0, NC, NC, 4, NC, NC};
+
+E= makeLocalCoordinates [blackCheckers, redCheckers]
+
+peek E
+sort keys E
+sort keys  E
+help select
+select({1,2,3,4,4,4,4,4,4,5},k->even(k))
+apply(select(sort keys E,k->E#k===VAR),k->x_k)
+
+
 restart
 load ((currentDirectory())|"Test.m2")
 load ((currentDirectory())|"Schubert.m2")
+myRing(3)
+makeRing(3)
 
+value("x")_{1,2}
+help String
 
+myRing = method(Options => {L=>{0,symbol x, GRevLex}})
+myRing(ZZ) := o -> (n) ->(
+    ringField:=QQ;
+    varName:=symbol x;
+    monomOrder:=GRevLex;
+    if #(o.L)>=1 and (o.L)#0 != 0 then ringField=GF((o.L)#0,Variable=>a);
+    if #(o.L)>=2 then varName=(o.L)#1;
+    if #(o.L)>=3 then monomOrder=(o.L)#2;
+    myRng:=ringField[varName_1..varName_n,MonomialOrder=>monomOrder];
+    return(myRng)
+    )
+myRing(3,L=>{0,symbol y})
+
+flagType:={2,5,8};
+w = {2,8, 3,4,7, 1,5,6};
+getStiefelCoordinates(w,flagType)
+
+help Variable
 R=makeRing(6,VarName=>symbol K,Characteristic=>7,MonomOrder=>Lex)
+
+makeRing(4)
 ring(genericMatrix(R,6,6))
 
 
