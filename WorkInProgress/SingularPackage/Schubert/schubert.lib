@@ -71,7 +71,7 @@ LIB "linalg.lib";
 //        Checks if integer d is a component of vector a
 //
 // proc getDescents (intvec w)
-//        Gets the descent set of a sequence w.  The first descent is at 0 and last at nrows(w)
+//        Gets the descent set of a sequence w.  The last descent is at nrows(w)
 //
 // proc isPartialPermutation( intvec w )
 //        tests if w is a partial permutation.  1 = yes and 0 = no
@@ -93,7 +93,7 @@ proc member (int d, intvec a)
  RETURN: int: 1 if d is a component of a  and  0 if it is not
  
  Example: example member; shows an example"
- {
+{
   for (int i=1; i<=nrows(a); i++) {
     if (d==a[i]) { return(1) }
   }
@@ -107,7 +107,7 @@ example
   member(d, myFlagType);   
 } 
 /////////////////////////////////////////////////////////////////////////////////
-/* Gets the descent set of a partial permutation w.  The first descent is at 0 */
+/* Gets the descent set of a partial permutation w.                            */
 //
 proc getDescents (intvec w)
 
