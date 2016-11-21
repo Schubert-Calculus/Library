@@ -1,0 +1,138 @@
+NOTES
+---------------------------------
+Getting equations
+
+Notice that makeGrassmannianPermutatioon hasn't been used int he code yet. That's because we'll use it in getting equations!
+
+F a general flag.
+Let X_wF be a Schubert variety in Fl({a_1,...,a_s=m,n}).
+How am I going to determine if something lives in X_wF?
+
+There are projections
+
+X_wF
+ |
+ |  pi
+ V
+Gr(a_i,n) containing X_(w_|a_i)F
+
+
+Note that:
+X_wF = \cap \pi^{-1}_{a_i} (X_{w_|{a_i}}F)
+where a_i is a descent of w   			**(Frank needs to double check this index on the intersection[probably correct])**
+
+
+So the equations for X_wF are the union of the eqauations for X_{w_|{a_i}}. 
+
+So what we really need to understand are these.
+
+w|_{a_i} is the grassmannian permutation you get by sorting w w.r.t the descent at a_i (using makeGrassmannianPermutation)
+
+
+
+<<<<(Discussion about geomtry of pi^{-1} w|_{a_i})>>>>>
+
+
+
+
+Not having a descent at an a_i corresponds to the condition being redundant (it is forced by a different part of the condition)
+
+(makeGrassmannianPermutatino is probably going to be a static procedure b.t.w.)
+
+
+
+
+Nice Fact: 
+	X_wI		w is Grassmannian (single descent @ k)
+	We can parametrize X_wI
+
+
+wk ***
+.  **1
+.  **0
+.  *11
+w2 *01
+w1 101
+   000
+
+The plucker coordinates on this that vanish are
+p_v(X_wI)=0 if v is not greater than w
+these are exactly the equations that cut out this schuber variety (along with the equations for the grassmannian)
+
+
+
+
+Now we want a condition for H \in X_wF
+
+Note that this is equivariant.
+Note that F is an nxn invertible matrix
+So this is equivalent to 
+
+	    ____
+F^{-1}H \in X_wI (where I is the identity flag)
+or
+p_v(F^{-1}H) = 0 for all v s.t. v is not < or = to w
+
+
+How to write these down? You can multiply F^{-1}H and then expand it out. 
+But there's a better way: Cauchy-Bonnet: tells you how to expand minors of products of matrices.
+
+\sum_{beta}[p_{v\beta}(F^{-1})p_{\beta}(H)]
+
+(choose v rows and beta columns)
+
+Look! p_{\beta}(H) appear OVER and OVER again. So make sure you don't recompute.
+
+---------------
+So:
+Given H in stiefel coordinates.
+Compute the plucker vector p_beta for H, beta \in ([n] choose k) for all k\in getDescents(OF ALL THE CONDITIONS)
+		(in M2 use a hashTable for this)
+For every schubert condition (w,F)
+Compute F^{-1} 
+>>For every descent k of w
+>>>>U=w|_{k}
+>>>>V \in "not below U"
+>>>>makee matrix p_{v,b}(F^{-1}), multiply by p_{\beta}(H)					(use apply(List,List)?)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
