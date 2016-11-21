@@ -1,0 +1,499 @@
+-- Created by Luis David Garcia and James Ruffo Spring 2007
+-- Modified by Frank Sottile  Spring  2008
+-- Translation to Macaulay2 by Zach Teitler April 2009
+--
+--  ToDo: - Fix computation of osculating ideal.
+--
+--
+--
+--
+-------------------------------------------------------------------------------
+
+schubertlibm2version="$Id: schubert.libm2,v 1.0.0.1 2009/04/27";
+schubertlibm2category="Real Algebraic Geometry";
+schubertlibm2info="
+LIBRARY:  Schubert.lib     Computations for Secant experiment
+
+PROCEDURES:
+ myring(int, list #)                  Creates a ring of dimension int, with default parameters
+                                        in the optional list of string parameters.
+ nIndets(intvec a, int n, list #)  Computes the dimension of the space of local coordinates
+                                    for Fl(a;n) with (optional) one Schubert condition.
+ flagRing (intvec a, int n, list #)   Makes the ring of the flag variety, or local
+                                        coordinates as specified by 1 Schubert condition in #.
+ localCoordMatrix (intvec a, int n, list #)  Gives the matrix of local coordinates.
+ block (intvec v, int c, int n)      A helper for localCoordMatrix
+ secantMatrix (list l, int n)        Matrix of the secant flag
+ osculatingMatrix (number p, int n)  Matrix of the osculating flag
+ secantCondition(l,w,a,n,list #)         Computes the ideal of the Schubert condition w given
+                                       by the flag secant at points of l in the local
+                                       coordinates given by (a, n, #)
+ secantIdeal(points, conditions, a, n, #)
+
+ univarpol (ideal G, int i)
+
+ numPoints(intvec w)     computes the largest dimension of a flag which participates in an
+                          essential condition in w --- this is the number of points needed
+                          to construct the secant flag
+ length(intvec w)  computes the length of the permutation w
+ * renamed to permlength because Macaulay2 reserves 'length'
+ ";
+
+---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+-- myring makes a ring with a specified number of variables
+-- the default coefficient field is QQ
+-- the default NAME of the variables is x (as in x_0,..,x_(n-1))
+-- the default term ordering is GRevLex 
+
+-- usage: myring(5)
+-- usage with optional arguments: myring(5,CoeffField=>ZZ/37,VariableName=>v,MonomialOrder=>GLex)
+
+myring = {CoeffField=>QQ, VariableName=>x, MonomialOrder=>GRevLex} >> o -> (n) -> (
+  varname := o.VariableName;
+  R := o.CoeffField[Variables=>n, VariableBaseName=>varname, MonomialOrder=>o.MonomialOrder];
+  return R;
+)
+--myring = (n) -> (
+--  R := QQ[x_0..x_(n-1), MonomialOrder=>GRevLex, MonomialSize=>8];
+--  return R;
+--)
+
+
+------------------------------------------------------------------------------------
+-- 'nIndets' computes the number of indeterminates for a given computation in a flag variety
+--  required arguments: (a,n), where a is a list of integers defining a flag variety, 
+--   and n is the vector space of that flag variety, 
+--   together with an optional argument: a list of 1 or 2 permutations
+--   (default: the list of permutations is empty)
+--   Returns the dimension of the flag variety described by the required arguments.
+--   If optional argument is present, then it subtracts the length of the first one or two permutations
+--   in the list; these are the codimensions of the Schubert cells described by those permutations.
+--   Thus it gives the dimension of the Schubert cell described by one permutation,
+--   or the intersection of two Schubert cells if there are two permutations.
+--   This second option only make sense for Grassmannians !
+
+nIndets = {PermutationList=>{}} >> o -> (a,n) -> (
+  d := a_0 * (n - a_0) ;
+  
+  for i from 1 to (#a-1) do (
+    d = d + (a_i - a_(i-1))*(n - a_i);
+  );
+  
+  if ( (#(o.PermutationList) == 0) or (#(o.PermutationList) > 2) ) then (
+    return d;
+  );
+  if ( #(o.PermutationList) == 1 ) then (
+    return d - permlength((o.PermutationList)_0);
+  );
+  if ( #(o.PermutationList) == 2 ) then (
+    return d - permlength((o.PermutationList)_0) - permlength((o.PermutationList)_1);
+  );
+)
+
+------------------------------------------------------------
+-- 'flagRing' computes a ring with the number of
+-- indeterminates specified by a given flag variety
+
+flagRing = {PermutationList=>{}} >> o -> (a,n) -> (
+  d := nIndets(a,n,PermutationList=>o.PermutationList);
+  return(myring(d));
+)
+
+
+-----------------------------------------------------------------------
+-- localCoordMatrix  computes the matrix of local coordinates
+--  of a given flag variety, possibly of the intersection of 2 Schubert cells
+--  required arguments: list a, integer n - specifying a flag variety
+--  optional arguments: list of permutations specifying one or two Schubert cells.
+--  Specifying 2 Schubert cells is only allowed on a Grassmanian
+--  default: no permutations - same as one permutation which is the identity
+
+localCoordMatrix = {PermutationList=>{}} >> o -> (a,n) -> (
+  if ( #(o.PermutationList) == 0 ) then (
+    firstperm := 0..(n-1); -- if no permutations are specified, just put the identity
+    numperms := 1;
+  );
+  if ( #(o.PermutationList) == 1 ) then (
+    firstperm = (o.PermutationList)_0;
+    numperms = 1;
+  );
+  if ( #(o.PermutationList) >= 2 ) then (
+    if ( #a > 1 ) then (
+      -- not a Grassmannian, fail!
+      return -1;
+    );
+    firstperm = (o.PermutationList)_0;
+    secondperm := (o.PermutationList)_1;
+    numperms = 2;
+  );
+  
+  varlist := flatten entries vars R; -- list of variables of R; like Singular's var
+  
+  -- Set up matrix E with a_(#a-1) rows, n columns --- initally all zeros
+  -- In Macaulay2, "mutableMatrix" is a matrix where you can change the entries
+  E := mutableMatrix(R,a_(#a-1),n);
+  -- In Macaulay2 version 0.9.2, syntax of mutableMatrix is slightly different
+  -- E := mutableMatrix(toList(a_(#a-1):toList(n:0_R)));
+  -- this should make a mutableMatrix filled with zeros
+  
+  if ( numperms == 2 ) then (
+    i := 0;
+    for row from 0 to (a_0-1) do ( -- it's a Grassmanian, a=(a_0)
+      E_(row,firstperm_row) = 1; -- *** here assuming permutations are 0..n-1, NOT 1..n ***
+      for col from (firstperm_row+1) to (n-1-secondperm_(a_0-1-row)) do (
+        E_(row,col) = varlist_i;
+        i=i+1;
+      );
+    );
+  );
+  
+  if ( numperms == 1 ) then (
+    --  This first places 1s in the positions  [row, w[row]]
+    --   and 0s in positions to the right, and fils the rest of
+    --   the matrix with -1s (as place keepers)
+    
+    for row from 0 to (a_(#a-1)-1) do (
+      for col from 0 to n-1 do (
+        if ( col < firstperm_row ) then ( E_(row,col) = 0_R; ) ;
+        if ( col == firstperm_row ) then ( E_(row,col) = 1_R; ) ;
+        if ( col > firstperm_row ) then ( E_(row,col) = -1_R; ) ;
+      );
+    );
+    
+    -- This puts 0s in position below the pivots
+    --   ( 1s at positions [row, w[row]] ), as well
+    --   as positions above them that are in the same block
+    
+    blockrow := 0;
+    for block from 0 to (#a-1) do (
+      for row from blockrow to (a_block-1) do (
+        for otherrow from blockrow to (a_(#a-1)-1) do (
+          if ( otherrow != row ) then ( E_(otherrow,firstperm_row) = 0_R; ) ;
+        );
+      );
+      blockrow = a_block;
+    );
+    
+    --  Lastly, the variables are written over the place holders
+    
+    i = 0 ;
+    for row from 0 to (a_(#a-1)-1) do (
+      for col from 0 to n-1 do (
+        if ( E_(row,col) == -1_R ) then (
+          E_(row,col) = varlist_i;
+          i = i+1;
+        );
+      );
+    );
+  );
+  
+  return matrix E; -- change from "mutableMatrix" to "matrix"
+)
+
+-------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------
+
+secantMatrix = (l,n) -> (
+  P := mutableMatrix(R,#l,n);
+  -- In Macaulay2 version 0.9.2, syntax of mutableMatrix is slightly different
+  -- P := mutableMatrix(toList(#l:toList(n:0_R)));
+  for i from 0 to (#l-1) do (
+    P_(i,0_ZZ) = 1_R; -- Macaulay2, like Singular, mistakenly thinks 0^0=0 - should be 1
+    for j from 1 to n-1 do (
+      P_(i,j) = ((l_i)_R)^j;
+    );
+  );
+  return matrix P;
+)
+
+
+-------------------------------------------------------------------------
+-- secantCondition modified by FS  on 09.04.08.
+--
+-- l  : list of points
+-- w  : permutation (Schubert condition)
+-- a  : type of flag
+-- n  : dimension of vector space (Fl(a,n))
+-- PermutationList  : optional parameters
+-- if no permutations, just use identity permutation
+--
+
+secantCondition = {PermutationList=>{}} >> o -> (l,w,a,n) -> (
+  F := secantMatrix(l,n);
+  E := localCoordMatrix(a,n,PermutationList=>o.PermutationList);
+  I := ideal(0_R); -- zero ideal in R
+  
+  for i from 0 to (#a-1) do (
+    e := submatrix(E,0..(a_i-1),); --omitting list of columns means pick all columns
+    tmp := sort toList apply(k=0..(a_i-1), k-> w_k);
+    for j from 0 to (a_i-1) do (
+      if ( j==0 and j<tmp_j ) then (
+        k := #w-tmp_j;
+        f := submatrix(F,0..(k-1),);
+        M := f || e; -- vertical concatenation, f on top of e
+        I = I + minors(n+1+j-tmp_j,M);
+      );
+      if ( j > 0 ) then (
+        if ( tmp_(j-1) + 1 < tmp_j ) then (
+          k = #w-tmp_j;
+          f = submatrix(F,0..(k-1),);
+          M = f || e ;
+          I = I + minors(n+1+j-tmp_j,M);
+        );
+      );
+    );
+  );
+  return I;
+)
+
+
+----------------------------------------------------------------------------------
+-- secantIdeal
+-- required arguments:
+--   list of points
+--   list of Schubert conditions
+--   a - type of flag
+--   n - dimension
+-- optional argument: to specify computation type
+-- if optional argument = {} (i.e., absent) then computation type 1
+-- if optional argument = {i} and i=0 then computation type 2 (longest condition at infinity)
+-- if optional argument = {i} and i>0 then computation type 3, and i=index of Schubert condition
+-- to be evaluated at 0 (longest condition at infinity, i'th one at zero)
+
+secantIdeal = {ComputationTypeIndex=>{}} >> o -> (points,conditions,a,n) -> (
+  k := 0;         --  k keeps track of the points for making secant flag
+  begin := 0;     --  begin keeps track of where to begin in the list of Schubert conditions.
+  skip := -1;     --  this is the condition to be skipped (if -1, it will not be skipped)
+  pars := {};     --  This will be the permutations passed as parameters to secantCondition
+  mutablePoints := new MutableList from points;
+   
+  if ( #(o.ComputationTypeIndex) == 1 ) then (
+   pars = append(pars,conditions_0);
+    begin = 1; -- 0th condition is passed as parameter to secantCondition, to be evaluated at infinity
+               -- for the rest of the routine, start at condition_1
+    -- if furthermore (o.ComputationTypeIndex)_0 > 0 then we are in computation type 3
+    --    When we are in computation type 3, one of the points corresponds to the
+    --  condition that should be osculating at zero.  We find that point (zero)
+    --  and subtract it from all the others, and also remember which condition to skip.
+    comptypeindex := (o.ComputationTypeIndex)_0;
+    if ( comptypeindex > 0 ) then (
+      pars = append(pars,conditions_comptypeindex);
+      skip = comptypeindex;
+      j := 0;
+      for i from begin to (skip-1) do ( j = j+numPoints(conditions_i); ) ;
+      zeropoint := points_j;
+      for i from 0 to j-1 do ( mutablePoints#i = points_i - zeropoint ; ) ;
+      for i from j to (#points-2) do ( mutablePoints#i = points_(i+1) - zeropoint ; ) ;
+    );
+  );
+  
+  I := ideal(0_R); -- zero ideal in R
+  l := {};
+  
+  for i from begin to (#conditions-1) do (
+    if ( i != skip ) then (
+      s := numPoints(conditions_i);
+      l = toList apply(t=k..(k+s-1), t-> mutablePoints#t) ;
+      I = I + secantCondition(l,conditions_i,a,n,PermutationList=>pars);
+      k = k+s;
+    );
+  );
+  
+  return(I);
+)
+
+
+----------------------------------------------------------------------------
+
+osculatingMatrix = (p,n) -> (
+  P := mutableMatrix(R,n-1,n);
+  -- In Macaulay2 version 0.9.2, syntax of mutableMatrix is slightly different
+  -- P := mutableMatrix(toList((n-1):toList(n:0_R)));
+  for i from 0 to n-2 do (
+    P_(i,i) = 1;
+    for j from i+1 to n-1 do (
+      P_(i,j) = ((binomial(j,i))_R)*(p_R)^(j-i);
+    );
+  );
+  return matrix P;
+)
+
+----------------------------------------------------------------------
+-- osculatingCondition   written by FS 06.05.10
+-- required arguments:
+--  l - list of points
+--  w - single permutation (Schubert condition)
+--  a - type of flag variety
+--  n - dimension of vector space
+-- optional argument: a list of permutations (one or two)
+--
+
+osculatingCondition = {PermutationList=>{}} >> o -> (l,w,a,n) -> (
+  F := osculatingMatrix(l,n);
+  E := localCoordMatrix(a,n,PermutationList=>o.PermutationList);
+  I := ideal(0_R); -- zero ideal in R
+  
+  for i from 0 to (#a-1) do (
+    e := submatrix(E,0..(a_i-1),);      -- omitting list of columns means pick all columns
+    tmp := sort toList apply(k=0..(a_i-1), k-> w_k);
+    for j from 0 to (a_i-1) do (
+      if ( j==0 and j<tmp_j ) then (
+        k := #w-tmp_j;
+        f := submatrix(F,0..(k-1),);
+        M := f || e;                    -- vertical concatenation, f on top of e
+        I = I + minors(n+1+j-tmp_j,M);
+      );
+      if ( j > 0 ) then (
+        if ( tmp_(j-1) + 1 < tmp_j ) then (
+          k = #w-tmp_j;
+          f = submatrix(F,0..(k-1),);
+          M = f || e ;
+          I = I + minors(n+1+j-tmp_j,M);
+        );
+      );
+    );
+  );
+  return I;
+)
+
+
+
+----------------------------------------------------------------------------------
+-- osculatingIdeal
+-- required arguments:
+--   list of points
+--   list of Schubert conditions
+--   a - type of flag
+--   n - dimension
+
+osculatingIdeal = (points,conditions,a,n) -> (
+  I := ideal(0_R); -- zero ideal in R
+  
+  for i from 1 to (#conditions-1) do (
+    I = I + osculatingCondition(points_(i-1),conditions_i,a,n,PermutationList=>{conditions_0});
+  );
+  
+  return(I);
+)
+
+
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+
+-- uses eliminate1 wrapper supplied by Mike Stillman, see end of this file
+univarpol = (G,i) -> (
+  n := # flatten entries vars(R);
+  if ( i == 0 ) then (
+    J := eliminate1(toList(x_1..x_(n-1)),G);
+    return J_0;
+  );
+  if ( i == n-1 ) then (
+    J = eliminate1(toList(x_0..x_(n-2)),G);
+    return J_0;
+  );
+  J = eliminate1(toList(flatten splice(toList(x_0..x_(i-1)),toList(x_(i+1)..x_(n-1)))),G);
+  return J_0;
+)
+
+-------------------------------------------------------------------------
+--
+--   numPoints  takes a permutation and determines the dimension of the
+--                subspace of the flag needed for its essential conditions.
+--
+-- numPoints   created by fs on 04.08.08.
+
+numPoints = (w) -> (
+  tmp := {};
+  npoints := 0;
+  
+  for i from 1 to (#w-1) do (
+    if ( w_(i-1) > w_i ) then (
+      tmp = sort toList apply(k=0..(i-1), k-> w_k);
+      j := 0;
+      while ( j==tmp_j and j<=i-1 ) do ( j=j+1; ) ;
+      if ( (j<=i-1) and (npoints < #w-tmp_j) ) then (
+        npoints = #w-tmp_j;
+      );
+    );
+  );
+  return npoints;
+)
+
+
+-------------------------------------------------------------------------
+--
+--   permlength    Computes the length of a permutation (its argument).
+--                This is the codimension of the corresponding Schubert variety.
+--
+-- Called permlength because Macaulay2 reserves word "length"
+----------------------------------------------------------------------------
+
+permlength = (w) -> (
+  len := 0;
+  for i from 0 to (#w-2) do (
+    for j from i+1 to (#w-1) do (
+      if ((w)_i > (w)_j) then ( len=len+1; ) ;
+    );
+  );
+  return len;
+)
+
+----------------------------------------------------------------------------
+--
+--  wiggle   This takes a list of points, which presumably has some symmetriy that
+--                  caused the ideal to be ill-behaved, and detroys that symmetry by
+--                  adding small (prime-random) numbers to each.
+--
+--    Fixed by Frank on 30 June 2010
+--
+----------------------------------------------------------------------------
+
+wiggle = (pts) -> (
+  mutablepts := new MutableList from pts;
+  
+  pr := {0, 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73,
+  79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167,
+  173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263,
+  269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367,
+  373, 379, 383, 389, 397}; 
+    -- 0, 1, primes < 400
+ 
+  inc := 1000;
+  --
+  --     In the master list the closest two points are together is 1/90, and we alter the
+  -- points by 1/(1,000+p), where p is a prime number from the above list
+  --
+  
+  for i from 0 to (#pts-1) do (
+    mutablepts#i = mutablepts#i + 1/(pr_i+inc);
+  );
+  
+  return toList mutablepts;
+)
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+
+-- This is a wrapper for 'eliminate', which homogenizes the input
+-- and then eliminates (and then sets homog var to 1).
+-- This should be part of 'eliminate' itself.
+--   by Mike Stillman
+eliminate1 = method()
+eliminate1 (List, Ideal) := (v,I) -> (
+     R := ring I;
+     h := local h;
+     S := (coefficientRing R)[gens R, h, MonomialSize => 8];
+     use R;
+     IS := homogenize(sub(trim I,S), h);
+     phi := map(R,S,vars R | matrix{{1_R}});
+     eS := eliminate(v,IS);
+     return trim phi eS;
+     )
