@@ -42,3 +42,10 @@ completePermutation(w, 9);
 // > The vector (1,4,2,4) is not a partial permutation.
 // > Auf Wiedersehen.
 //
+intvec lambda = 4,2;
+partitionToPermutation(lambda, 3, 8);
+//partitionToPermutation( lambda, 8, 3);
+//partitionToPermutation( intvec(2,1,1), 2, 8);
+//partitionToPermutation( intvec(1,2,1), 2, 8);
+//partitionToPermutation( intvec(5,2), 2, 6);
+
