@@ -113,3 +113,36 @@ example
   intvec flagType = 2, 3, 5;   
   isCondition(w, flagType);   
 } 
+/////////////////////////////////////////////////////////////////////////////////
+//
+//  Make a ring with doubly indexed variables and exports it.  
+// 
+//  indicesOfVariables is a list of integer vectors of length 2, which 
+//
+//  # is a list  "nameOfRing", "characteristic", "variable name", "monomial order"
+//
+//   Note: The generic monomial ordering dp; make sense here as other monomial orderings
+//           may require knowing a bit more about the variables and how they appear in
+//           polynomials
+//
+proc myIndexedRing (list indicesOfVariables, list #)   
+{
+  if (size(#)==0 or size(#)>4) { #[1] = "R"; #[2] = "0"; #[3] = "x"; #[4] = "dp";}   
+  if (size(#)==1) { #[2] = "0"; #[3] = "x"; #[4] = "dp";}   
+  if (size(#)==2) { #[3] = "x"; #[4] = "dp";}   
+  if (size(#)==3) { #[4] = "dp";}   
+
+  intvec pr;
+  int i;
+  string ringConstructor = "ring " + #[1] + " = " + #[2] + ",(" ;
+  for ( i=1; i<=size(indicesOfVariables); i++ )  {
+    pr = indicesOfVariables[i];
+    if ( i>1 ) { ringConstructor = ringConstructor + ","; }
+    ringConstructor =  ringConstructor + #[3] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
+  }   
+  ringConstructor = ringConstructor + ")," + #[4] + ";";   
+  execute(ringConstructor);
+  execute(#[1]);
+  execute("export " + #[1] + ";");
+}
+/////////////////////////////////////////////////////////////////////////////////
