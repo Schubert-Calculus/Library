@@ -33,6 +33,9 @@
 //
 //     ---> This is not yet used
 //
+// proc smallerPermutations ( intvec w )
+//      Generates a list of all permutations less than or equal to the given permutation
+//
 ///////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -144,5 +147,43 @@ proc myIndexedRing (list indicesOfVariables, list #)
   execute(ringConstructor);
   execute(#[1]);
   execute("export " + #[1] + ";");
+}
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+/*      Generates a list of all permutations less than 
+                 or equal to the given permutation        
+             do we want to somehow order them? maybe lex?             
+ To do:
+    (1) Add example
+    (2) Add documentation 
+    (3) Add error catching code */
+
+proc smallerPermutations ( intvec w )
+{
+  int i, j, k, ii;
+  int newPerm;
+  list permList=w;
+
+  for (i=1; i<=size(permList); i++){
+    for (j=1; j<=size(permList[i])-1; j++){
+      for (k=j+1; k<=size(permList[i]); k++){
+        if (permList[i][j] > permList[i][k]){
+          newPerm=1;
+          w=permList[i];
+          w[j]=permList[i][k];
+          w[k]=permList[i][j];
+          for (ii=1; ii<=size(permList); ii++){
+            if (permList[ii] == w){
+              newPerm=0;
+            }
+          }
+          if (newPerm){
+            permList[size(permList)+1]=w;
+          }
+        }
+      }
+    }
+  }
 }
 /////////////////////////////////////////////////////////////////////////////////
