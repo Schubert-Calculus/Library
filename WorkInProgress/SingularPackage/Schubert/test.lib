@@ -21,55 +21,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// proc makeGrassmannianPermutation ( intvec w, int k, int n)
-//       Computes the Grassmannian permutation of a partial permutation w given by 
-//       the first k values of w.  This indexes the Schubert variety of the image  
-//
 // proc lengthOfPermutation ( intvec w )
 //       Computes the Coxeter group length of the partial permutation w 
+//
+//     ---> This is not yet used
 //
 // proc isCondition (intvec w, intvec flagType)   returns a boolean 0 or 1
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
 //
 //     ---> This is not yet used
-//
 // proc smallerPermutations ( intvec w )
 //      Generates a list of all permutations less than or equal to the given permutation
 //
-///////////////////////////////////////////////////////////////////////////
-
 /////////////////////////////////////////////////////////////////////////////////
-/* Computes the Grassmannian permutation of a partial permutation w given by   */
-/*  the first k values of w.  This indexes the Schubert variety of the image   */
-//
-proc makeGrassmannianPermutation ( intvec w, int k, int n)
 
-"USAGE:  makeGrassmannianPermutation( w, k, n);  w intvec, k int, n int
-   
- RETURN: The full permutation in S_n with unique descent at k whose first k values
-           are the first k values of the completion of w to a permutation in S_n,
-	   sorted in order.
-
- NOTE: This does not check that w is a partial permutation.
-   
- Example: example makeGrassmannianPermutation; shows an example"
-{
-  if (size(w)<n) { w = completePermutation ( w, n ); }
-  intvec tmp = w[1];
-  for (int i=2; i<=k; i++) {
-    tmp = tmp, intvec(w[i]);
-  }
-  completePermutation ( sort(tmp)[1], n );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 3,5, 1,6, 2,7;   
-  int k = 4;   
-  int n = 8;   
-  makeGrassmannianPermutation( w, k, n);
-}
-//   The result should be 1,3,5,6, 2,4,7,8
 /////////////////////////////////////////////////////////////////////////////////
 /* Computes the Coxeter group length of the partial permutation w              /*
 proc lengthOfPermutation ( intvec w )
@@ -118,235 +83,8 @@ example
 } 
 
 
-/////////////////////////////////////////////////////////////////////////////////
-//
-// This returns a ring for this package's Stiefel coordinates.
-//
-//  flagType  an integer vector describing the flag manifold
-//
-//  conditions  a list of one or two permutations for flagType (two only when flagType is a Grassmannian)
-//
-//  # is a list "characteristic", "variable name", "monomial order" default = "0","x","dp";
-//
-//   This returns the ring in a list of length 1
-//
-proc makeStiefelCoordinateRing ( intvec flagType, list conditions, list # )
-"USAGE:  list L = makeStiefelCoordinateRing( flagType, conditions, ringData); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
- ringData is a list of strings "characteristic", "variableName", "monomialOder".  It may be 
-    empty, and then the default values are "0", "x", "dp".
-
- RETURN: a list containing the ring. 
-   
- Example: example makeStiefelCoordinateRing; shows an example"
-{
-  if (size(#)<>3) { #[1] = "0"; #[2] = "x"; #[3] = "dp";}
-  list L = makeStiefelPatternMatrix ( flagType, conditions )[2];
-  intvec pr;
-  int i;
-  string ringConstructor = "ring R = " + #[1] + ",(" ;
-  for ( i=1; i<=size(L); i++ )  {
-    pr = L[i];
-    if ( i>1 ) { ringConstructor = ringConstructor + ","; }
-    ringConstructor =  ringConstructor + #[2] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
-  }   
-  ringConstructor = ringConstructor + ")," + #[3] + ";";   
-  execute(ringConstructor);
-  return(list(R));
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 4, 7;
-  intvec w = 2,6, 3,7, 1,4,5;
-  list myConditions = w ;
-  list ringData = "0", "y", "dp";
-  def myRing = makeStiefelCoordinateRing( myFlagType, myConditions, ringData)[1];
-  setring myRing;
-  basering;
-  //   characteristic : 0
-  //   number of vars : 7
-  //        block   1 : ordering dp
-  //                  : names    y(1)(1) y(1)(2) y(3)(1) y(3)(3) y(4)(1) y(4)(3) y(5)(1)
-  //        block   2 : ordering C
-} 
-/////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  This is a helper function for making Stiefel coordinates and the ring in which they
-//    live.  It returns an integer patternMatrix, which is a blueprint for the 
-//    Stiefel coordinates, as well as a list of indices where the variables will go
-//    in the Stiefel coordinates.
-//      
-//  patternMatrix contains  0s, 1s, and 2s with 2s in the positions of 
-//       the variables for Stiefel coordinates.  
-//
-//  This is typically called with a flagType and a list of a single condition w and 
-//    returns data for Steifel coordinates for a Schubert cell X_w, but
-//    if the flagType is a Grassmannian, there may be two conditions and it will  
-//    return Stiefel coordinates for a Richardson variety.
-//
-//  This is an internal procedure and will not be exported.
-//
-//
-proc makeStiefelPatternMatrix ( intvec flagType, list conditions )
-"USAGE:  list L = makeStiefelPatternMatrix( flagType, conditions); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
-
- RETURN: a list containing an integer matrix and a list of integer vectors of length 2. 
-   
- Example: example makeStiefelPatternMatrix; shows an example"
-{
-  int i,j,ii;
-  int n = flagType[nrows(flagType)];
-  int m = flagType[nrows(flagType)-1];
-  intvec extendedFlagType = intvec(0), flagType;
-  intmat patternMatrix[n][m];
-  //
-  //  First, make a square integer matrix of 2s  (2 is a place keeper)
-  //
-  for (i=1; i<=n; i++) {
-    for (j=1; j<=m; j++) {
-      patternMatrix[i,j] = 2;
-    }
-  }
-  //
-  //  Next, place w in the pivots
-  //
-  for  (j=1; j<=m; j++) {
-    patternMatrix[n+1-w[j],j] = 1;
-    for (i=n+2-w[j]; i<=n; i++) {
-      patternMatrix[i,j] = 0;
-    }
-    for (i=j+1; i<=m; i++) {
-      patternMatrix[n+1-w[j],i] = 0;
-    }
-  }
-  //
-  //  Finishes the Stiefel coordinates for X_w I
-  //
-  if (size(conditions) == 1) {
-    for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
-      for (j=extendedFlagType[ii]+1; j<=extendedFlagType[ii+1]; j++) {
-        for (i=extendedFlagType[ii]+1; i<j; i++) {
-          patternMatrix[n+1-w[j],i] = 0;
-        }
-      }
-    }
-  }
-   else
-  //
-  //  In this case, we must have that flagType = (k,n) so that we are on a Grassmannian
-  //
-  {
-    if (nrows(flagType) > 2) {
-      printf("Input failure for makeSteifelCoordinates ( intvec (%s), intvec (%s), intvec (%s) ) :",
-               flagType, conditions[1], conditions[2]);
-      printf("The flag variety is not a Grassmannian, as flagType = (%s), and the Richarson variety",flagType);
-      printf("option requires a Grassmannian.");
-      quit;
-    }
-    intvec v = conditions[2];
-    //
-    //  This returns the pattern for a skew Schubert (Richardson) variety. Must check that it is nonempty,
-    //
-    for (j=1; j<=m; j++) {
-      if ( n+1 < w[j] +v[m+1-j] ) {
-      printf("Input failure for makeSteifelCoordinates ( intvec (%s), intvec (%s), intvec (%s) ) :",
-               flagType, conditions[1], conditions[2]);
-      printf("The conditions (%s) and (%s) define an empty Richardson variety",w,v);
-      quit;
-      }
-      for (i=1; i<v[m+1-j]; i++) {
-        patternMatrix[i,j] = 0;
-      }
-    }
-  }
-  //
-  //  Find the indices of our variables.
-  //
-  list  indicesOfVariables;
-  for (i=n; i>=1; i--) {
-    for (j=m; j>=1; j--) {
-      if (patternMatrix[i,j] == 2) {
-        indicesOfVariables = insert( indicesOfVariables, intvec(i,j) );
-      }
-    }
-  }
- return(list( patternMatrix, indicesOfVariables));
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 3, 6;
-  intvec w = 2,6, 4, 1,3,5;
-  list myConditions = w ;
-  list L  = makeStiefelPatternMatrix( myFlagType, myConditions);
-  print(L[1]);
-  print(L[2]);
-} 
-/////////////////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////////////////////////////////////////////////////////////
-//
-// Makes Stiefel coordinates for the Schubert variety X_w I, where w is a
-//   Schubert condition for the flag variety  flagType and I is the standard
-//   coordinate flag.  This is if there is one permutation w in conditions.
-// When conditions has two permutations (and necessarily the flag variety
-//   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
-//   where I' is the opposite flag.
-// Assumes that the local ring has already been created with makeStiefelCoordinateRing
-//   and the same input parameters (flagType, conditions)
-//
-proc makeStiefelCoordinates ( intvec flagType, list conditions )
-"USAGE:  list L = makeStiefelCoordinates( flagType, conditions); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
-
- RETURN: a matrix of Stiefel coordinates for the Schubert or Richardson variety.
-
- NOTE: This procedure assumes that the base ring has at least as many variables as needed 
-           for the Stiefel coordinates.  Ideally it is the ring created by the command
-           makeStiefelCoordinateRing
-   
- Example: example makeStiefelCoordinates; shows an example"
-{
-  int i;
-  //
-  //  Now we make our ring and plug in indeterminates in to the Stiefel Coordinates
-  //
-  list L = makeStiefelPatternMatrix ( myFlagType, conditions );
-  matrix localCoords = matrix(L[1]);
-  intvec pr;
-  for (i=1; i<= size(L[2]); i++) {
-    pr = L[2][i];
-    localCoords[pr[1],pr[2]] = var(i);
-  }
-  return( localCoords );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 3, 6;
-  intvec w = 2,6, 4, 1,3,5;
-  list myConditions = w ;
-  list myRingData = "0", "y", "dp";
-  def myRing = makeStiefelCoordinateRing(  myFlagType, myConditions , myRingData)[1];
-  setring myRing;
-  matrix StiefelCoordinates  = makeStiefelCoordinates ( myFlagType, conditions, myRingData);
-  print(StiefelCoordinates);
-} 
-/////////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////////
