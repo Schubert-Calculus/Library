@@ -1,16 +1,52 @@
 
 restart
 load ((currentDirectory())|"Test.m2")
-randomFlag(5,FieldChoice=>CC)
+
+w={2,8,3,4,7}
+u={1,3,5,7,2,4,6,8}
+completePermutation(w,8)
+completePermutation(u,8)
+
+getDescents(w)
+getDescents(u)
+
+
+isCondition(w,{2,5,8})
+isCondition(w,{2,8})
+lengthOfPermutation(w)
+lengthOfPermutation({1,2,3,4,20})
+lengthOfPermutation(completePermutation({1,2,3,4,20},100))
+
+w = {1,2,5,3,6,4,7}
+getDescents(w)
+flagType = {1,3,4,5,6,9}
+stiefelCoordinates({w},flagType)
+
+
+makeGP({3,5,1,6,2,7},4,8)
+
+w = {1,3,6}
+v = {1,2,5}
+flagType={3,8}
+stiefelCoordinates({w,v},flagType,MonomOrder=>Lex)
+
+
+sum for i from 0 to 100 list trulyRandom(QQ)
+sum for i from 0 to 100 list random(QQ)
+
+
+randomFlag(5,FieldChoice=>QQ)
+QQ[t]
+F={t^4+t^3+t^2+t+1,t+t^3+3*t,t^7-t^4+t^2}
+osculatingFlag(F,3,1/2)
+
+
+
 
 
 (sum for i from 0 to 100 list trulyRandom(CC))/100.0
 
 
-
-QQ[t]
-F={t^4+t^3+t^2+t+1,t+t^3+3*t,t^7-t^4+t^2}
-osculatingFlag(F,3)
 for f in F list diff(t,f)    
     QQ[t]
 F=t^2+t^3

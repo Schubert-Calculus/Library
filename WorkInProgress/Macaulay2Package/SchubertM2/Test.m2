@@ -1,12 +1,11 @@
-----FIX USING GETDESCENTS IN LOCAL COORDINATES. JUST PULL THE FLAG TYPE. BECAUSE THE PERMUTATION MY NOT INDICATE THE DESCENT
-
-
 newPackage(
   "SchubertIdealsTest",
-  Version => "1.0.0", 
+  Version => "1.2.0", 
   Date => "Novmeber 17, 2016",
   Authors => {
-    {Name => "Taylor Brysiewicz"}
+    {Name => "Taylor Brysiewicz",
+     Name => "Frank Sottile",
+     Name => "Robert Williams"}
   },
   Headline => "Combuting Ideals for Schubert Varieties",
   DebuggingMode => false
@@ -24,13 +23,15 @@ export{
 "isCondition",
 "completePermutation",
 "lengthOfPermutation",
-"makeRing",
-"getStiefelCoordinates",
+"stiefelCoordinates",
 "trulyRandom",
-"randomFlag"
+"randomFlag",
+"osculatingFlag",
+"makeGrassmannianPermutation"
 }
 --partitionToPermutation
---makeGrassmannianPermutation
+--smallerPermutations (the code in the singular side of things doesn't make sense [besides not being commented, it doesn't seem to
+--			return anything...)
 ----user might get error if monomorder chosen is not ubiquitous for many variables (generic monomial ordeirngs only: lex, grevlex,  etc)
 --apply
 --scan
@@ -103,6 +104,20 @@ export{
 --    Description:
 --          Takes a partial permutation and completes it by appending the missing
 --           numbers in order to the end.
+--
+---------------------------------------------------------------------------------
+--  makeGrassmannianPermutation
+--     Input:
+--          [name=w,dataType=List,mathObject=partialPermutation]
+--	    [name=k,dataType=ZZ,mathObject=descent at which to straighten]
+--          [name=n,dataType=ZZ,mathObject=ambient space of flag manifold]
+--     Output:
+--          [name=w,dataType=List,mathObject=fullPermutation w/ unique descent
+--		at k]
+--    Description:
+--       Returns full permutation in S_n with unique descent at k whose first k values
+--         are the first k values of the completion of w to a permutation in S_n,
+--	   sorted in order.
 ---------------------------------------------------------------------------------
 --  getDescents
 --     Input:
@@ -281,6 +296,33 @@ completePermutation(List,ZZ):=(w,n) ->(
 
 
 
+makeGrassmannianPermutation = method()
+---------------------------------------------------------------------------------
+--  makeGrassmannianPermutation
+--     Input:
+--          [name=w,dataType=List,mathObject=partialPermutation]
+--	    [name=k,dataType=ZZ,mathObject=descent at which to straighten]
+--          [name=n,dataType=ZZ,mathObject=ambient space of flag manifold]
+--     Output:
+--          [name=w,dataType=List,mathObject=fullPermutation w/ unique descent
+--		at k]
+--    Description:
+--       Returns full permutation in S_n with unique descent at k whose first k values
+--         are the first k values of the completion of w to a permutation in S_n,
+--	   sorted in order.
+---------------------------------------------------------------------------------
+makeGrassmannianPermutation(List,ZZ,ZZ):=(w,k,n) ->(
+	w=completePermutation(w,n);
+    	beg:=for i from 0 to k-2 list(w#i);
+    	fin:=for i from k to #w-1 list (w#i);
+   	return(join(append(sort(beg),w#(k-1)),sort(fin)));
+	)
+
+
+
+
+
+
 
 getDescents = method()
 ---------------------------------------------------------------------------------
@@ -420,6 +462,9 @@ stiefelCoordinates=method(Options=>{MonomOrder=>GRevLex,VarName=>"x",Characteris
 --          Takes the specified data for a ring and returns a ring with variables
 --		x_{1,1}..x_{n,n}, of characteristic Characteristic, and monomial
 --		order: MonomOrder
+--    NOTES:
+--	    Do we want to return a truncated matrix? Or is it best to give a square
+--	        matrix for ease of programming (computation would be negligible)
 ---------------------------------------------------------------------------------
 stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 --pull, launder, and validate the input
@@ -442,9 +487,8 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 --If there is one Schubert condition given, do this
 ------------------
 	if #conditions==1 then(
---pull the descents (as we will be able to push zeros to the west up to these marks)
-	   descents:=getDescents(w);
-	   descents=join({0},descents);
+--pull the descents [corresponding to flagType](as we will be able to push zeros to the west up to these marks)
+	   descents:=join({0},flagType);
 	   descentFloor:=for i from 0 to n-1 list(max(positions(descents,d->d<=i)));
 --get the biggest space (in the flagType) that the i-th column doesn't belong to
 	   for j from 0 to n-1 do(
@@ -469,7 +513,9 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 		print("Note that we assume "|toString(x_(v#j,j+1))|" is nonzero");
 		),	         
 	    ),
-	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
+--------DO WE WANTT TO RETURN A TRUNCATED MATRIX??
+--	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
+	localMatrix:=restrictRing(new Matrix from genMat,MonomOrder=>o.MonomOrder);
 	return(localMatrix);
 	)
 
@@ -477,11 +523,11 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 --Example:
 --	w = {1,2,5,3,6,4,7}
 --	flagType = {3,5,7}
---	getStiefelCoordinates({w},flagType)
+--	stiefelCoordinates({w},flagType)
 --	w = {1,3,6}
 --	v = {1,2,5}
 --	flagType={3,8}
---	getStiefelCoordinates({w,v},flagType,MonomOrder=>Lex)
+--	stiefelCoordinates({w,v},flagType,MonomOrder=>Lex)
 ---------------------------------------------------------------------------------
 
 
@@ -527,10 +573,10 @@ randomFlag(ZZ):=o->(n)->(
 
 
 osculatingFlag=method()
-osculatingFlag(List,ZZ):=(F,n)->(
+osculatingFlag(List,ZZ,QQ):=(F,n,p)->(
     	funcList:=for i from 0 to n-1 list for j from 0 to n-1 list diff((gens ring(F#i))#0,F#i);
         G:=matrix funcList;
-	subFuncList:=for r in funcList list for f in r list(sub(f,{(gens ring f)#0=>trulyRandom(QQ)}));
+	subFuncList:=for r in funcList list for f in r list(sub(f,{(gens ring f)#0=>p}));
 	M:=matrix(subFuncList);
 	return({M,G})
 	)
@@ -540,7 +586,7 @@ osculatingFlag(List,ZZ):=(F,n)->(
 --Example:
 --	QQ[t]
 --	F={t^4+t^3+t^2+t+1,t+t^3+3*t,t^7-t^4+t^2}
---	osculatingFlag(F,3)
+--	osculatingFlag(F,3,1/2)
 ---------------------------------------------------------------------------------
 
 
