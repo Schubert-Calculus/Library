@@ -2,6 +2,144 @@
 restart
 load ((currentDirectory())|"Test.m2")
 
+
+w = {1,2,5,3,6,4,7}
+flagType = {3,5,7}
+H=stiefelCoordinates({w},flagType)
+F=randomFlag(7)
+G=randomFlag(7)
+r = {1,4,6,2,3,5,7}
+s = {4,5,7,1,2,3,6}
+isCondition(s,flagType)
+
+getEquations(H,{{r,F},{s,G}},flagType)
+
+flagType
+
+
+help select
+
+greaterOrEqual = method()
+greaterOrEqual(List,List):=(w,v) ->(
+    wIsBigger:=true;
+    for i from 0 to #w-1 do(
+	if w#i>v#i then return(true)
+	),
+    return(false)
+    )
+greaterOrEqual({1,2,3,4,5},{2,3,4,5,6})
+
+netList select(subsets({1,2,3,4,5,6,7,8,9},5),f:=(p)->greaterOrEqual({2,4,5,6,7},p))
+
+
+
+allNotGreaterOrEqual = method()
+allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
+    allPartialPerms:=subsets(for i from 1 to n list i, #w);
+    allSmallPerms:=select(allPartialPerms,f:=(p)->greaterOrEqual(w,p));
+    return(allSmallPerms)       
+    )
+
+allNotGreaterOrEqual({1,3,4,5,6},7)
+
+
+getEquations(H,{{{1,2,5,3,6,4,7},F},{{1,4,6,2,7,3,5},F},{{1,5,6,2,7,3,4},G}},{3,5,7})
+
+
+getEquations = method()
+getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
+    n:=last(flagType);
+    --check: the conditions are actually conditions for the flagType
+    	    --That flags were given (otherwise compute random flags)
+	    --That the stiefel matrix is the correct size
+    perms:=for c in conditions list completePermutation(c#0,n);
+    flagInverses:=for c in conditions list inverse(c#1);
+    
+    --Since equations are gotten from equations for projections onto grassmannians, 
+    ----we first index each relevant grassmannian condition w/ pointers to their
+    ----corresponding flags
+    grassmannianPerms:={};
+    for i from 0 to #perms-1 do(
+	for k in getDescents(perms#i) do(
+	    gPerm:=makeGrassmannianPermutation(perms#i,k,n);
+	    vSet:=allNotGreaterOrEqual(gPerm,n);
+	    grassmannianPerms=append(grassmannianPerms,{gPerm,vSet,i});
+	    ),
+	),
+    
+    --Now, for each grassmannianPermutation w corresponding to a flag F, we want the plucker coordinates
+    ----p_v(F^{-1}H) for each v which is not greater than or equal to w.
+    ----Using Cauchy-Binet, this means we are in need of all plucker coordinates of H w/ columns indexedd by v
+    ----And all plucker coordinates of F w/ rows indexed by v.
+    print("A");
+    --so here we pull all the possible v that could (and will) occur.
+    vCollection:=flatten for p in grassmannianPerms list p#1;
+    
+    --we populate a hashtable which holds data corresponding to relevant plucker coordinates of H
+    hMinors:=new MutableHashTable;
+    print("B");
+    for v in vCollection do(
+	betaList:=subsets(for i from 1 to n list i,#v);
+        for beta in betaList do(
+	    vMinus:= for c in v list c-1;
+	    betaMinus:=for b in beta list b-1;
+	    hMinors#(beta,v)=determinant(submatrix(H,betaMinus,vMinus));
+	    ), 
+	),
+    print("C");
+    equations:={};
+    --we now scroll through each grassmannianPermutation
+    for w in grassmannianPerms do(
+	--and each v which is not greater than or equal to w
+	for v in w#1 do(
+	    print("D");
+	    print(flagInverses);
+	    newEquation:=cauchyBinet(flagInverses#(w#2),hMinors,v,n);
+	    equations=append(equations,newEquation);
+	    ),	
+	),
+    return(equations)
+    )
+    
+    
+cauchyBinet=method()
+cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(--DO I NEED TO ASK FOR N? can I just pull from matrix?
+    betas:=subsets(for i from 1 to n list i,#v);
+    print(netList betas);
+    summands:={};
+    print("a");
+    for beta in betas do(
+	betaMinus:=for j in beta list j-1;
+	vMinus:=for j in v list j-1;
+	print({beta,v});
+	newSummand:=(determinant(submatrix(Finv,betaMinus,vMinus)))*(hMinors#(beta,v));
+	summands=append(summands,newSummand);
+	),
+    print("b");
+    minorOfProduct:=sum(summands);
+    print("c");
+    return(minorOfProduct)
+    )    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
 w={2,8,3,4,7}
 u={1,3,5,7,2,4,6,8}
 completePermutation(w,8)

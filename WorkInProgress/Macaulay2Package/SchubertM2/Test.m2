@@ -27,7 +27,11 @@ export{
 "trulyRandom",
 "randomFlag",
 "osculatingFlag",
-"makeGrassmannianPermutation"
+"makeGrassmannianPermutation",
+"greaterOrEqual",
+"allNotGreaterOrEqual",
+"cauchyBinet",
+"getEquations"
 }
 --partitionToPermutation
 --smallerPermutations (the code in the singular side of things doesn't make sense [besides not being commented, it doesn't seem to
@@ -210,6 +214,110 @@ export{
 ---------------------------------------------------------------------------------
 
 
+greaterOrEqual = method()
+greaterOrEqual(List,List):=(w,v) ->(
+    wIsBigger:=true;
+    for i from 0 to #w-1 do(
+	if w#i>v#i then return(true)
+	),
+    return(false)
+    )
+
+
+
+
+
+allNotGreaterOrEqual = method()
+allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
+    allPartialPerms:=subsets(for i from 1 to n list i, #w);
+    allSmallPerms:=select(allPartialPerms,f:=(p)->greaterOrEqual(w,p));
+    return(allSmallPerms)       
+    )
+
+
+
+
+cauchyBinet=method()
+cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(--DO I NEED TO ASK FOR N? can I just pull from matrix?
+    betas:=subsets(for i from 1 to n list i,#v);
+    print(netList betas);
+    summands:={};
+    print("a");
+    for beta in betas do(
+	betaMinus:=for j in beta list j-1;
+	vMinus:=for j in v list j-1;
+	print({beta,v});
+	newSummand:=(determinant(submatrix(Finv,betaMinus,vMinus)))*(hMinors#(beta,v));
+	summands=append(summands,newSummand);
+	),
+    print("b");
+    minorOfProduct:=sum(summands);
+    print("c");
+    return(minorOfProduct)
+    )    
+    
+    
+    
+
+
+
+getEquations = method()
+getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
+    n:=last(flagType);
+    --check: the conditions are actually conditions for the flagType
+    	    --That flags were given (otherwise compute random flags)
+	    --That the stiefel matrix is the correct size
+    perms:=for c in conditions list completePermutation(c#0,n);
+    flagInverses:=for c in conditions list inverse(c#1);
+    
+    --Since equations are gotten from equations for projections onto grassmannians, 
+    ----we first index each relevant grassmannian condition w/ pointers to their
+    ----corresponding flags
+    grassmannianPerms:={};
+    for i from 0 to #perms-1 do(
+	for k in getDescents(perms#i) do(
+	    gPerm:=makeGrassmannianPermutation(perms#i,k,n);
+	    vSet:=allNotGreaterOrEqual(gPerm,n);
+	    grassmannianPerms=append(grassmannianPerms,{gPerm,vSet,i});
+	    ),
+	),
+    
+    --Now, for each grassmannianPermutation w corresponding to a flag F, we want the plucker coordinates
+    ----p_v(F^{-1}H) for each v which is not greater than or equal to w.
+    ----Using Cauchy-Binet, this means we are in need of all plucker coordinates of H w/ columns indexedd by v
+    ----And all plucker coordinates of F w/ rows indexed by v.
+    print("A");
+    --so here we pull all the possible v that could (and will) occur.
+    vCollection:=flatten for p in grassmannianPerms list p#1;
+    
+    --we populate a hashtable which holds data corresponding to relevant plucker coordinates of H
+    hMinors:=new MutableHashTable;
+    print("B");
+    for v in vCollection do(
+	betaList:=subsets(for i from 1 to n list i,#v);
+        for beta in betaList do(
+	    vMinus:= for c in v list c-1;
+	    betaMinus:=for b in beta list b-1;
+	    hMinors#(beta,v)=determinant(submatrix(H,betaMinus,vMinus));
+	    ), 
+	),
+    print("C");
+    equations:={};
+    --we now scroll through each grassmannianPermutation
+    for w in grassmannianPerms do(
+	--and each v which is not greater than or equal to w
+	for v in w#1 do(
+	    print("D");
+	    print(flagInverses);
+	    newEquation:=cauchyBinet(flagInverses#(w#2),hMinors,v,n);
+	    equations=append(equations,newEquation);
+	    ),	
+	),
+    return(equations)
+    )
+    
+
+
 
 
 
@@ -315,7 +423,7 @@ makeGrassmannianPermutation(List,ZZ,ZZ):=(w,k,n) ->(
 	w=completePermutation(w,n);
     	beg:=for i from 0 to k-2 list(w#i);
     	fin:=for i from k to #w-1 list (w#i);
-   	return(join(append(sort(beg),w#(k-1)),sort(fin)));
+   	return(append(sort(beg),w#(k-1)));
 	)
 
 

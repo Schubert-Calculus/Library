@@ -71,7 +71,7 @@ So this is equivalent to
 	    ____
 F^{-1}H \in X_wI (where I is the identity flag)
 or
-p_v(F^{-1}H) = 0 for all v s.t. v is not < or = to w
+p_v(F^{-1}H) = 0 for all v s.t. v is not > or = to w
 
 
 How to write these down? You can multiply F^{-1}H and then expand it out. 
