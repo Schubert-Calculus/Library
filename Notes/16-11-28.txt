@@ -1,0 +1,32 @@
+
+
+
+Bruhat Order on Permutations with a unique descent
+
+Write it up to the descent. Then it's point wise comparison
+
+That is, 1356>1234 since 1>=1, 3>=2, 5>=3 and 6>=4
+
+
+Making Equations:
+--------------------
+
+Input:
+Stiefel Coords & a list of {w_i,F_i}
+
+Output:
+Ideal 
+
+
+
+
+We should have osculating flag allow two standard rational normal curves (1,t,...,) and (1,t,t^2/2,t^3/3!,....)
+Cut the functionality of exporting parametrized osculating flag
+
+
+
+Singular has some issues about procedure not being able to change baseRing. 
+So in our singular library, it will be necessary (and inelegant) to force the user to 
+	make SCring, then define the basering manually as the output of make S.C.ring.
+
+
