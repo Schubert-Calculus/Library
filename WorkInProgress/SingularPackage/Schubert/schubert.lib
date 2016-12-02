@@ -261,6 +261,7 @@ proc getDescents (intvec w)
     if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
   } 
   descents = descents , nrows(w);
+  descents = descents[2..size(descents)];
   return ( descents );
 }
 example   

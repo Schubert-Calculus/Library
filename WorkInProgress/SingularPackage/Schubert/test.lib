@@ -85,42 +85,104 @@ example
 
 
 
-
+/////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-/*      Generates a list of all permutations less than 
-                 or equal to the given permutation        
-             do we want to somehow order them? maybe lex?             
- To do:
-    (1) Add example
-    (2) Add documentation 
-    (3) Add error catching code */
+/*  Gets the set of locations where a permutation w increases by at least two
+      ignores increases after last descent                                    
 
-proc smallerPermutations ( intvec w )
+      To do: 1) Add help documentation
+             2) Add example
+             3) Maybe error catching code, though this is likely static*/
+
+proc criticalConditions (intvec w)
 {
-  int i, j, k, ii;
-  int newPerm;
-  list permList=w;
+  int i, descent;
+  intvec jumps, allDescents;
+  allDescents = getDescents(w);
+  if ( size(allDescents) > 1){
+    descent = allDescents[size(allDescents)-1];
+  }
+  else{
+    descent = allDescents[1];
+  }
+  if (w[1] > 1){
+    jumps[1]=1;
+  }
+  if (descent > 1){
+    for (i=2; i <= descent; i++){
+      if (w[i] > w[i-1]+1){
+        jumps[size(jumps)+1]=i;
+      }
+    }
+    if (jumps[1] == 0){
+      jumps= jumps[2..size(jumps)];
+    }
+  }
+  return(jumps);
+}
 
-  for (i=1; i<=size(permList); i++){
-    for (j=1; j<=size(permList[i])-1; j++){
-      for (k=j+1; k<=size(permList[i]); k++){
-        if (permList[i][j] > permList[i][k]){
-          newPerm=1;
-          w=permList[i];
-          w[j]=permList[i][k];
-          w[k]=permList[i][j];
-          for (ii=1; ii<=size(permList); ii++){
-            if (permList[ii] == w){
-              newPerm=0;
-            }
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+/*  Returns a list of all permutations that are not greater than
+     or equal to the given permutation in the Bruhat order                           
+
+      To do: 1) Add help documentation
+             2) Add example
+             3) Error catching code including check it has unique descent
+             4) Come up with better function name                             */
+
+proc ngeqPermutations (intvec w, list #)
+{
+  // Insert check for unique descent
+  if (size(#) <> 1){
+    #[1]=size(w);
+  }
+  if (size(w) <> #[1]){
+    w = completePermutation (w, #[1]);
+  }
+  if (w == (1..#[1]) ){
+    printf("Given partition is the trivial partition");
+    quit;
+  }
+  int i,j,tooBig;
+  int descent = getDescents[1];
+  intvec jumps;
+  intvec v = 1..descent;
+  list permutations;
+  while (v[1] <= #[1]-descent){
+    tooBig = 1;
+    for (i=1; i <= size(jumps); i++){
+      if ( v[jumps[i]] < w[jumps[i]] ){
+        tooBig = 0;
+        break;
+      }
+    }
+    if (tooBig or (v[descent] > #[1]) ){
+      if (tooBig){
+        i = jumps[1]-1;
+      }
+      else{
+        i = descent-1;
+      }
+      if (not i){
+        break;
+      }
+      for (i=i; i > 0; i = i-1){
+        if (v[i] < #[1]+descent-i){
+          v[i] = v[i]+1;
+          for (i= i+1; i <= descent; i++){
+            v[i] = v[i-1]+1;
           }
-          if (newPerm){
-            permList[size(permList)+1]=w;
-          }
+          break;
         }
       }
     }
+    else{
+      permutations[size(permutations)+1] = completePermutation(v,#1);
+      v[descent] = v[descent]+1;
+    } 
   }
+  return(permutations);
 }
-/////////////////////////////////////////////////////////////////////////////////
