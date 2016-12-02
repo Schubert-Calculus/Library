@@ -224,9 +224,14 @@ greaterOrEqual(List,List):=(w,v) ->(
     )
 
 
+isSchubertProblem = method()
+isSchubertProblem(,):=(,) ->(
+    )
 
 
 
+
+--
 allNotGreaterOrEqual = method()
 allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
     allPartialPerms:=subsets(for i from 1 to n list i, #w);

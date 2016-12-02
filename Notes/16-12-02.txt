@@ -1,0 +1,55 @@
+NOTES!
+-----------------------------------------
+
+When is a schubert problem 0-dimensional (for a generic instance)?
+
+
+
+
+Def: w_1...w_s is a schubert problem for  Fl(a.) if and only if 
+
+1) descents of w_i are contained in a.
+2(*)) sum(l(w_i)) = dim(a.)
+	(*) If user gives Stiefel coordinates S.C. then 
+	    dim(a.) = #indeterminants in the ring of S.C.
+
+
+a=0<a_1<....<a_s=n
+dim(a.):=sum(i=1)^(s-1) (a_i-a_(i-1))(a_s-a_i)
+
+codim(X_w(Fl(a.)))=l(w)
+
+
+
+---Taylor discuss M2 code--------
+
+
+Things to do later:
+Helper flags
+	-Osculating flags
+	-Secant flags
+	-Random flags
+[see older notes file for description of osculating flag. or the .m2 code]
+
+Secant:
+t_1,...,t_n
+f_i(t):=<gamma(t_1),..,gamma(t_i)>
+
+
+
+LIFTING FORMULATION:
+---------------------
+(you can read in the paper and figure this out, but its hard to make sense of)
+
+Take stieffel coordinates and condition  w and flag F
+	add variables & make bilinear equations.
+{seriously look at this paper and work out examples in the grassmannian and try to figure out what it would be in other flag varieties}
+
+
+
+
+
+
+
+
+
