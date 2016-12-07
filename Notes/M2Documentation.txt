@@ -1,0 +1,109 @@
+MACAULAY2 DOCUMENTATION (for schubert)
+
+
+
+
+
+randomNotes:
+--Why provide typical value??? (documentation)
+should indent the exported strings (two spaces)
+
+
+
+
+
+(note for Schubert --Fix monomOrder to MonomialOrder)
+
+
+
+you should put
+end--
+at the end of files.
+
+
+
+
+test files:
+	Tests should be quick.
+
+	should have lots of asserts in it. 
+	assert that it is THE CORRECT ANSWER
+	but maybe the generators are different in an ideal or something like this. So make sure you're really checking the RIGHT THING
+
+	What you want to test is boundary cases too. Make sure it works on things like the zero ideal, empty list, unit ideal.
+	Try to break it.
+
+	The purpose here is backwards compatability. 
+	(personally, did we break it? or did a new M2 version break it?)
+	Also, useful for the user.
+
+
+
+
+
+
+
+
+On asserting for data correctness (and displaying errors regarding them)
+	Use the error command and error out
+	sometimes its expensive to check data, so then use isWellDefined which the user would call if they're willing to spare the time
+
+
+	
+
+
+--needsPackage("SchubertIdeals.m2")
+installPackage("SchubertIdeals.m2")--this will install the package
+needsPackage("SchubertIdeals.m2")--this will then call the installed package (not hte one you may be working on)
+--uninstallPackage("SchubertIdeals.m2")
+peek(loadedFiles) --this will let you know where it is pulling from
+
+
+
+
+
+
+2 ways to do documentation: 
+1) (single file. if not so big (2,3k lines) this is okay.)
+2) put in new doc.m2 file
+
+
+-------------
+Simple Doc
+-------------
+(look at doc.m2 in Schubert2.m2 package)
+
+
+
+in M2 
+
+print packageTemplate "foo"
+print docTemplate
+(Indent in the same way as docTemplate. Key is either a String, or method Name or class or function or something)
+(Headline is name of the doc node)
+(usage is how you call the function)
+(Consequences is typically not there)
+
+CannedExample,Code,Pre,Subnodes (don't use these)
+Text,Example(use theses)
+SeeAlso(super useful, along with caveat)
+
+
+
+
+
+---------------
+Tutorial
+---------------
+
+
+
+
+
+
+
+
+
+
+
+

@@ -11,27 +11,27 @@ newPackage(
   DebuggingMode => false
 )
 
-export{
---Options
-"MonomOrder",
-"Characteristic",
-"VarName",
-"FieldChoice",
---Functions
-"restrictRing",
-"getDescents",
-"isCondition",
-"completePermutation",
-"lengthOfPermutation",
-"stiefelCoordinates",
-"trulyRandom",
-"randomFlag",
-"osculatingFlag",
-"makeGrassmannianPermutation",
-"greaterOrEqual",
-"allNotGreaterOrEqual",
-"cauchyBinet",
-"getEquations"
+export{--indent slightly
+  --Options
+  "MonomOrder",
+  "Characteristic",
+  "VarName",
+  "FieldChoice",
+  --Functions
+  "restrictRing",
+  "getDescents",
+  "isCondition",
+  "completePermutation",
+  "lengthOfPermutation",
+  "stiefelCoordinates",
+  "trulyRandom",
+  "randomFlag",
+  "osculatingFlag",
+  "makeGrassmannianPermutation",
+  "greaterOrEqual",
+  "allNotGreaterOrEqual",
+  "cauchyBinet",
+ "getEquations"
 }
 --partitionToPermutation
 --smallerPermutations (the code in the singular side of things doesn't make sense [besides not being commented, it doesn't seem to
@@ -224,9 +224,6 @@ greaterOrEqual(List,List):=(w,v) ->(
     )
 
 
-isSchubertProblem = method()
-isSchubertProblem(,):=(,) ->(
-    )
 
 
 
