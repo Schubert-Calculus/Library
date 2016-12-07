@@ -93,7 +93,11 @@ example
 
       To do: 1) Add help documentation
              2) Add example
-             3) Maybe error catching code, though this is likely static*/
+             3) Maybe error catching code, though this is likely static
+
+Frank asks:  What is this code for ?
+
+*/
 
 proc criticalConditions (intvec w)
 {
@@ -128,22 +132,37 @@ proc criticalConditions (intvec w)
 /*  Returns a list of all permutations that are not greater than
      or equal to the given permutation in the Bruhat order                           
 
-      To do: 1) Add help documentation
+      To do: 1) Add help documentation  <--- This should have been done while coding this procedure.
              2) Add example
              3) Error catching code including check it has unique descent
-             4) Come up with better function name                             */
+             4) Come up with better function name                           
+
+Frank's comments:   This is an internal procedure and is only called with input
+    a permutation with a single descent.
+
+  */
 
 proc ngeqPermutations (intvec w, list #)
 {
   // Insert check for unique descent
   if (size(#) <> 1){
     #[1]=size(w);
+//
+//   Did you test this?  I do not think that it is good programming to modify parameters,
+//     and maybe that is not allowed.
+//
   }
   if (size(w) <> #[1]){
     w = completePermutation (w, #[1]);
+//
+//   See comment above on modifying parameters.
+//
   }
   if (w == (1..#[1]) ){
-    printf("Given partition is the trivial partition");
+    printf("Given permutation is the identity permutation");
+//
+//   This is not an error !!!!!!!
+//
     quit;
   }
   int i,j,tooBig;
@@ -159,6 +178,10 @@ proc ngeqPermutations (intvec w, list #)
         break;
       }
     }
+//
+// What is this code doing?  It needs an internal comment.  This is a global question
+//   about this procedure.
+//
     if (tooBig or (v[descent] > #[1]) ){
       if (tooBig){
         i = jumps[1]-1;
