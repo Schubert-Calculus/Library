@@ -242,19 +242,14 @@ allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
 cauchyBinet=method()
 cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(--DO I NEED TO ASK FOR N? can I just pull from matrix?
     betas:=subsets(for i from 1 to n list i,#v);
-    print(netList betas);
     summands:={};
-    print("a");
     for beta in betas do(
 	betaMinus:=for j in beta list j-1;
 	vMinus:=for j in v list j-1;
-	print({beta,v});
 	newSummand:=(determinant(submatrix(Finv,betaMinus,vMinus)))*(hMinors#(beta,v));
 	summands=append(summands,newSummand);
 	),
-    print("b");
     minorOfProduct:=sum(summands);
-    print("c");
     return(minorOfProduct)
     )    
     
@@ -288,13 +283,11 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
     ----p_v(F^{-1}H) for each v which is not greater than or equal to w.
     ----Using Cauchy-Binet, this means we are in need of all plucker coordinates of H w/ columns indexedd by v
     ----And all plucker coordinates of F w/ rows indexed by v.
-    print("A");
     --so here we pull all the possible v that could (and will) occur.
     vCollection:=flatten for p in grassmannianPerms list p#1;
     
     --we populate a hashtable which holds data corresponding to relevant plucker coordinates of H
     hMinors:=new MutableHashTable;
-    print("B");
     for v in vCollection do(
 	betaList:=subsets(for i from 1 to n list i,#v);
         for beta in betaList do(
@@ -303,14 +296,11 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
 	    hMinors#(beta,v)=determinant(submatrix(H,betaMinus,vMinus));
 	    ), 
 	),
-    print("C");
     equations:={};
     --we now scroll through each grassmannianPermutation
     for w in grassmannianPerms do(
 	--and each v which is not greater than or equal to w
 	for v in w#1 do(
-	    print("D");
-	    print(flagInverses);
 	    newEquation:=cauchyBinet(flagInverses#(w#2),hMinors,v,n);
 	    equations=append(equations,newEquation);
 	    ),	
