@@ -240,7 +240,7 @@ allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
 
 
 cauchyBinet=method()
-cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(--DO I NEED TO ASK FOR N? can I just pull from matrix?
+cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(
     betas:=subsets(for i from 1 to n list i,#v);
     summands:={};
     for beta in betas do(
@@ -614,8 +614,8 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 		),	         
 	    ),
 --------DO WE WANTT TO RETURN A TRUNCATED MATRIX??
---	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
-	localMatrix:=restrictRing(new Matrix from genMat,MonomOrder=>o.MonomOrder);
+	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomOrder=>o.MonomOrder);
+--	localMatrix:=restrictRing(new Matrix from genMat,MonomOrder=>o.MonomOrder);
 	return(localMatrix);
 	)
 

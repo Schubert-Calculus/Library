@@ -1,5 +1,29 @@
 
 restart
+load (currentDirectory()|"Test.m2")
+w={1,3,2,4}
+flagType={2,4}
+H=stiefelCoordinates({w,w},flagType)
+F=randomFlag(4)
+getEquations(H,{{w,F}},flagType)
+
+
+installPackage "SchubertIdeals"
+needsPackage "SchubertIdeals";
+help restrictRing
+help getEquations
+restrictRing
+docTemplate
+
+R=QQ[x,y]
+f=x^2+x
+restrictRing(f)
+restrictRing
+GrevLex
+Lex
+help MonomialOrder
+
+loadPackage (currentDirectory()|"SchubertIdeals.m2")
 load ((currentDirectory())|"Test.m2")
 
 
