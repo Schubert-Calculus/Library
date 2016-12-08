@@ -89,88 +89,76 @@ example
 
 /////////////////////////////////////////////////////////////////////////////////
 /*  Gets the set of locations where a permutation w increases by at least two
-      ignores increases after last descent                                    
+       includes first entry if w[1] > 1
 
-      To do: 1) Add help documentation
-             2) Add example
-             3) Maybe error catching code, though this is likely static
+    This is a helper function for relevantPermutations()
+     it will only be called on permutations that have such entries
 
-Frank asks:  What is this code for ?
-
+    This is an internal procedure and will not be exported.
 */
 
 proc criticalConditions (intvec w)
+"USAGE:  criticalConditions(w);  w intvec
+
+ RETURN: an intvec of locations where the permutation w increases nontrivially
+
+ NOTE: This function assumes w is not 1..size(w)
+ 
+ Example: example criticalConditions; shows an example"
 {
-  int i, descent;
-  intvec jumps, allDescents;
-  allDescents = getDescents(w);
-  if ( size(allDescents) > 1){
-    descent = allDescents[size(allDescents)-1];
-  }
-  else{
-    descent = allDescents[1];
-  }
+  int i;
+  intvec jumps;
   if (w[1] > 1){
     jumps[1]=1;
   }
-  if (descent > 1){
-    for (i=2; i <= descent; i++){
-      if (w[i] > w[i-1]+1){
-        jumps[size(jumps)+1]=i;
-      }
+  for (i=2; i <= size(w); i++){
+    if (w[i] > w[i-1]+1){
+      jumps[size(jumps)+1]=i;
     }
-    if (jumps[1] == 0){
-      jumps= jumps[2..size(jumps)];
-    }
+  }
+  if (jumps[1] == 0){
+    jumps= jumps[2..size(jumps)];
   }
   return(jumps);
 }
-
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  intvec w = 2,3,5,7,8;
+  criticalConditions(w);
+} 
+// The result should be 1,3,4
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /*  Returns a list of all permutations that are not greater than
      or equal to the given permutation in the Bruhat order                           
 
-      To do: 1) Add help documentation  <--- This should have been done while coding this procedure.
-             2) Add example
-             3) Error catching code including check it has unique descent
-             4) Come up with better function name                           
+    This is an internal procedure and will not be exported.
+*/
 
-Frank's comments:   This is an internal procedure and is only called with input
-    a permutation with a single descent.
+proc relevantPermutations (intvec w, int n)
+"USAGE:  relevantPermutations(w,n);  w intvec, n int
 
-  */
+ RETURN: a list of permutations in S_n that are not greater than or equal to w in the Bruhat order
 
-proc ngeqPermutations (intvec w, list #)
+ NOTE: This function assumes w is only given up to its unique descent
+ 
+ Example: example relevantPermutations; shows an example"
 {
-  // Insert check for unique descent
-  if (size(#) <> 1){
-    #[1]=size(w);
-//
-//   Did you test this?  I do not think that it is good programming to modify parameters,
-//     and maybe that is not allowed.
-//
-  }
-  if (size(w) <> #[1]){
-    w = completePermutation (w, #[1]);
-//
-//   See comment above on modifying parameters.
-//
-  }
-  if (w == (1..#[1]) ){
-    printf("Given permutation is the identity permutation");
-//
-//   This is not an error !!!!!!!
-//
-    quit;
+  list permutations;
+  // if given identity, return null list
+  if (w == (1..size(w)) ){
+    return(permutations);
   }
   int i,j,tooBig;
-  int descent = getDescents[1];
-  intvec jumps;
-  intvec v = 1..descent;
-  list permutations;
-  while (v[1] <= #[1]-descent){
+  // get list of places where permutation has non-trivial increase
+  intvec jumps = criticalConditions(w);
+  intvec v = 1..size(w);
+  // starting with identity perm, search in reverse lex to find all ngeq perms
+  //   while loop breaks after v is no longer permutation in S_n
+  while (v[1] <= n-size(w)){
+    // use tooBig flag to mark if v geq w in Bruhat order
     tooBig = 1;
     for (i=1; i <= size(jumps); i++){
       if ( v[jumps[i]] < w[jumps[i]] ){
@@ -178,34 +166,48 @@ proc ngeqPermutations (intvec w, list #)
         break;
       }
     }
-//
-// What is this code doing?  It needs an internal comment.  This is a global question
-//   about this procedure.
-//
-    if (tooBig or (v[descent] > #[1]) ){
+    // if ( v geq w  OR  v has entry larger than n ) we change v without recording it
+    if (tooBig or (v[size(w)] > n) ){
+      // i will be used as a starting point to search for next position of v to iterate
+      //   if v geq w, then we start with entries that can break that inequality
+      //   otherwise, we just work our way back from the end of v
       if (tooBig){
         i = jumps[1]-1;
       }
       else{
-        i = descent-1;
+        i = size(w)-1;
       }
+      // if i==0, then all permutations larger than v in reverse lex are also larger 
+      //   than w in Bruhat. In this case, we break the while loop
       if (not i){
         break;
       }
+      // find entry of v closest to end that can be increased
+      //  after increasing that entry, make all subsequent entries as small as possible
       for (i=i; i > 0; i = i-1){
-        if (v[i] < #[1]+descent-i){
+        if (v[i] < n+size(w)-i){
           v[i] = v[i]+1;
-          for (i= i+1; i <= descent; i++){
+          for (i= i+1; i <= size(w); i++){
             v[i] = v[i-1]+1;
           }
           break;
         }
       }
     }
+    // else, v is one of our desired permutations
+    //  add it to list and increment to next permutation in reverse lex order
     else{
-      permutations[size(permutations)+1] = completePermutation(v,#1);
-      v[descent] = v[descent]+1;
+      permutations[size(permutations)+1] = v;
+      v[size(w)] = v[size(w)]+1;
     } 
   }
   return(permutations);
 }
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  intvec w = 1,2,4,6;
+  int n = 6;
+  relevantPermutations(w,n);
+} 
+// The result should be (1,2,3,4),(1,2,3,5),(1,2,3,6),(1,2,4,5),(1,3,4,5),(2,3,4,5)

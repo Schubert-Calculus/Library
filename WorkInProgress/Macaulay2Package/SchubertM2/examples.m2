@@ -36,7 +36,9 @@ r = {1,4,6,2,3,5,7}
 s = {4,5,7,1,2,3,6}
 isCondition(s,flagType)
 
-getEquations(H,{{r,F},{s,G}},flagType)
+I = ideal(getEquations(H,{{r,F},{s,G}},flagType));
+gb I;
+
 
 
 myFlagType = {2,5,8};
