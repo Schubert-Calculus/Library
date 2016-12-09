@@ -2,15 +2,25 @@
 restart
 load ((currentDirectory())|"Test.m2")
 
+w = {1,3,2,4,5}
 
-w = {1,3,2,4}
-flagType = {2,4}
-H=stiefelCoordinates({w},flagType)
-F=randomFlag(4)
-G=randomFlag(4)
-GG=randomFlag(4)
-isCondition(w,flagType)
+flagType = {2,5}
+H=stiefelCoordinates({w,w},flagType)
+Eqs = apply( # gens ring H , i -> {w,randomFlag(#w)} );
 
-I = ideal(getEquations(H,{{w,F},{w,G},{w,GG}},flagType));
+I = ideal(getEquations(H,Eqs,flagType));
 gb I
 dim I
+time G = eliminate(I,apply( # V -1, i->V_i))
+(degree G_0)_0
+delete(V_0,V)
+
+for x in V 
+
+time G = eliminate(I,apply( # V -1, i->V_i))
+
+G
+
+
+S = QQ[apply( # V -1, i->V_i)]
+gens S
