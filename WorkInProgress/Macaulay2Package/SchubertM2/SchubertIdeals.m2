@@ -4,6 +4,11 @@
 --Example on key:restrictRing was only allowing me two lines. This seems to be due to something disallowing me from assigning names to any more than two things?
 --
 --
+--THINGS TO DO STILL
+--get VarName to work
+--launder all input so that the user can't give bad input
+--double check that nothing written in the documentation is incorrect...
+--make lifting coordinates
 newPackage(
   "SchubertIdeals",
   Version => "0.0.1", 
@@ -14,7 +19,7 @@ newPackage(
      {Name => "Robert Williams"}
   },
   HomePage => "<FIX>",
-  Headline => "computating ideals of Schubert varieties on the Grassmannian",
+  Headline => "computating ideals of Schubert varieties on flag manifolds",
   DebuggingMode => false
 )
 
@@ -25,23 +30,30 @@ export{
   "FieldChoice",
   
   --Functions
-  "restrictRing",		--internal
-  "getDescents",
+--  "restrictRing",								--internal
+--  "getDescents",								--internal
   "isCondition",
   "completePermutation",
-  "lengthOfPermutation",
+--  "lengthOfPermutation",				--internal
   "stiefelCoordinates",
-  "trulyRandom",
+--  "trulyRandom",									--internal
   "randomFlag",
   "osculatingFlag",
-  "makeGrassmannianPermutation",--internal
-  "greaterOrEqual",		--internal
-  "allNotGreaterOrEqual",	--internal
-  "cauchyBinet",		--internal
+--  "makeGrassmannianPermutation",--internal
+--  "greaterOrEqual",							--internal
+--  "allNotGreaterOrEqual",				--internal
+--  "cauchyBinet",								--internal
   "getEquations"
 }
 
 
+completePermutation = method(TypicalValue=>List)
+completePermutation(List,ZZ):=(w,n) ->(
+    for i from 1 to n do(
+	if isSubset({i},w)==false then w=append(w,i);
+	),
+    return(w)
+    )
 
 greaterOrEqual = method(TypicalValue=>Boolean)
 greaterOrEqual(List,List):=(w,v) ->(
@@ -214,16 +226,12 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	    assert(#conditions==2);
 	    assert(#flagType==2);
 	    v:=reverse for i from 0 to m-1 list((completePermutation(conditions#1,n))#i);
-	    print(v);
     	    for j from 0 to m-1 do(
 --		assert(v#i-1<n-w#i);
 		for i from 0 to v#j-2 do genMat_(i,j)=0;
-		print("Note that we assume "|toString(x_(v#j,j+1))|" is nonzero");
 		),	         
 	    ),
---------DO WE WANTT TO RETURN A TRUNCATED MATRIX??
 	localMatrix:=restrictRing(new Matrix from genMat_(for i from 0 to m-1 list i),MonomialOrder=>o.MonomialOrder);
---	localMatrix:=restrictRing(new Matrix from genMat,MonomialOrder=>o.MonomialOrder);
 	return(localMatrix);
 	)
 
@@ -243,13 +251,30 @@ randomFlag(ZZ):=o->(n)->(
 	return(M)
 	)
 
+
+
 osculatingFlag=method(TypicalValue=>Matrix)
-osculatingFlag(List,ZZ,QQ):=(F,n,p)->(
-    	funcList:=for i from 0 to n-1 list for j from 0 to n-1 list diff((gens ring(F#i))#0,F#i);
-        G:=matrix funcList;
-	subFuncList:=for r in funcList list for f in r list(sub(f,{(gens ring f)#0=>p}));
-	M:=matrix(subFuncList);
-	return({M,G})
+osculatingFlag(List,QQ):=(F,p)->(
+	if numgens ring(F#0) > 1 then error "Too many variables in the ring. Doesn't parametrize a curve in affine space";
+	if (coefficientRing(ring(F#0)) === QQ)==false then error "Ring not over QQ";
+	n:=#F;
+	rows:={F};
+	for i from 1 to n-1 do(
+		newRow:={};		
+		for f in F do(
+			for j from 1 to i do(
+				f=diff((gens ring f)#0,f);
+			),
+		newRow=append(newRow,f);
+		),
+	rows=append(rows,newRow);
+	),
+  M:=transpose sub(matrix rows,{(gens ring F#0)#0=>p});
+  return(M)
+	)
+osculatingFlag(List,ZZ):=(F,p)->(
+	p=promote(p,QQ);
+	return(osculatingFlag(F,p))
 	)
 
 
