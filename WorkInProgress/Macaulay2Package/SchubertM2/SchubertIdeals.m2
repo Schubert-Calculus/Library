@@ -43,6 +43,12 @@ export{
 }
 
 
+------------------------------------
+-- checkFlagType
+------------------------------------
+-- This checks that the flagType as entered by a user is actually a 
+-- flagType; i.e. an increasing sequence of positive integers.
+------------------------------------
 checkFlagType = method()
 checkFlagType(List):=(flagType) ->(
 	if #flagType <2 then error("This flag manifold is trivial");

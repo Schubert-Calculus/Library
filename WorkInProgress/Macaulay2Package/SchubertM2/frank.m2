@@ -72,3 +72,4 @@ Indets = gens ring I
 for var in Indets do (
     time G = eliminate(I, delete(var, Indets) );
     print((degree G_0)_0 == numberOfSolutions)
+)
