@@ -8,6 +8,11 @@
 --check the assertion at the end of stiefel coordinates
 --get VarName to work
 --make lifting coordinates
+--
+--Allow osculatingFlag to work over other characteristic zero base fields (e.g. CC or RR)
+--Allow secantFlag to work over any field
+--
+
 newPackage(
   "SchubertIdeals",
   Version => "0.0.1", 
