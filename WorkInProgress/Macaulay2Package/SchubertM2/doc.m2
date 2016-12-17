@@ -140,9 +140,9 @@ Node
 	 osculatingFlag(F,p)
   Inputs
    F:List
-			a curve given as n univariate polynomials over QQ
-	 p:QQ
-			a point F(p) on the curve given by F to which the outputted flag will osculate
+			a curve given as n univariate polynomials over QQ.
+   p:QQ
+			a point F(p) on the curve given by F to which the outputted flag will osculate.
   Outputs
    M:Matrix
     an n by n matrix with entries in QQ. Its column space gives a flag in QQ^n which osculates the curve given by F at the point F(p).
@@ -167,14 +167,14 @@ Node
 	 getEquations(H,conditions,flagType)
   Inputs
    H:Matrix
-			a Stiefel coordinate matrix.
+			Stiefel coordinate matrix.
    conditions:List
-			a list of Schubert conditions on flagType given by pairs:a partial permutation and a flag.
+			Schubert conditions on flagType given by pairs:a partial permutation and a flag.
    flagType:List
    	$\{a_1<a_2<\cdots<a_{s-1}=m<a_{s}=n\}$ encoding a flag manifold.
   Outputs
    F:List
-     a list of generators for an ideal defining the Schubert variety.
+     generators for an ideal defining the Schubert variety.
   Description
     Text
 			Create equations for an instance of the problem of four lines in $Gr(2,4)$

@@ -12,6 +12,13 @@ help isCondition
 help osculatingFlag
 help randomFlag
 
+R=RR[t]
+F={t,t^2,t^3,t^4}
+osculatingFlag(F,2)
+R=CC[t]
+
+
+
 --Catchable errors
 completePermutation({1,4,2,3},3)
 completePermutation({1,4,4,3},5)
@@ -37,3 +44,11 @@ getEquations(H,{{w,randomFlag(4)},{w}},{2,4}) --you can give specified flags for
 getEquations(H,{{{1,4,3,2},randomFlag(4)},{w}},{2,4})
 getEquations(H,{{w,randomFlag(4)},{w}},{2,4,6})
 getEquations(randomFlag(5),{{w},{w}},{2,4})
+
+
+end
+restart
+loadPackage("SchubertIdeals",DebuggingMode=>true)
+
+
+

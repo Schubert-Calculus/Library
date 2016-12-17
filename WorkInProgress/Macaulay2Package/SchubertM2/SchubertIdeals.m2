@@ -9,9 +9,9 @@
 --get VarName to work
 --make lifting coordinates
 --
---Allow osculatingFlag to work over other characteristic zero base fields (e.g. CC or RR)
---Allow secantFlag to work over any field
---
+--Allow osculatingFlag to work over other characteristic zero base fields (e.g. CC or RR)(it does now, as long as the point is given by an element of QQ or RR. I have to figure out how to let the function take a general 'number' as its second argument)
+--Code secantFlag 
+--Allow secantFlag to work over any field 
 
 newPackage(
   "SchubertIdeals",
@@ -47,21 +47,35 @@ export{
 -- checkFlagType
 ------------------------------------
 -- This checks that the flagType as entered by a user is actually a 
--- flagType; i.e. an increasing sequence of positive integers.
+-- flagType; i.e. an increasing sequence of positive integers which
+-- is not the trivial flagType (just one number).
 ------------------------------------
 checkFlagType = method()
 checkFlagType(List):=(flagType) ->(
+--check that the flag is not trivial
 	if #flagType <2 then error("This flag manifold is trivial");
+--check that each elt of the list is a positive integer
 	for s in flagType do(
 		if (class(s)=!=ZZ) then error(toString(flagType)|" does not describe a flag manifold since not all elements are integers");
 		if s<1 then error(toString(flagType)|" does not describe a flag manifold because not all numbers are greater or equal to one");
 		),
-	if unique(flagType)!=flagType then error(toString(flagType)|" does not describe a flag manifold because a number was repeated");
-	if sort(flagType)!=flagType then error(toString(flagType)|" does not describe a flag manifold because the numbers aren't increasing");
+--checks that the numbers are strictly increasing (implicitely checks for repeated entries)
+	if sort(unique(flagType))!=flagType then error(toString(flagType)|" does not describe a flag manifold because the numbers are not strictly increasing");
 )
+
+
+
+------------------------------------
+-- checkPermutation
+------------------------------------
+-- This checks that a permutation entered
+-- by a user is actually a permutation (potentially partial)
+-- i.e. a list of positive integers with no repeats
+------------------------------------
 
 checkPermutation = method()
 checkPermutation(List):=(w) ->(
+	--checks that each elt of w is an integer, and that it is positive.
 	for s in w do(
 		if (class(s)=!=ZZ) then error(toString(w)|" is not a permutation (not all integers)");
 		if s<1 then error(toString(w)|" is not a permutation because not all numbers in it are greater than or equal to one");
@@ -69,74 +83,167 @@ checkPermutation(List):=(w) ->(
 	if unique(w)!=w then error(toString(w)|" is not a permutation because a number was repeated");
 )
 
+
+
+
+
+------------------------------------
+-- isCondition
+------------------------------------
+-- This checks that a permutation is an admissable 
+-- condition for a given flagType.
+-- i.e. the descent set of the permutation is a subset
+-- of the 'flagType'-list.
+-- Prior to this check, this function
+-- checks that the permutation and flagType given
+-- are valid as well.
+------------------------------------
 isCondition = method(TypicalValue=>Boolean)
 isCondition(List,List):=(w,flagType) ->(
-	--Check Input
+	--Check w is a permutation and flagType is a flagType
 	checkPermutation(w);
 	checkFlagType(flagType);
 
-	--perform function
+	--Check that the descent set of w is a subset of flagType
 	descents:=getDescents(w);
 	return(isSubset(descents,flagType))
 )
 
 
+
+
+------------------------------------
+-- completePermutation
+------------------------------------
+-- Completes a partial permutation, w
+--  to S_n by appending the missing numbers
+--  (in order) to the end of w.
+------------------------------------
 completePermutation = method(TypicalValue=>List)
 completePermutation(List,ZZ):=(w,n) ->(
-	--Check Input
+	--Check permutation is valid and that n is larger than any of the elements of w.
 	checkPermutation(w);
-	if n<max(w) then error("You cannot compute the permutation "|toString(w)|" to S_"|toString(n));
+	if n<max(w) then error("You cannot complete the permutation "|toString(w)|" to S_"|toString(n));
 
-	--perform function
+	--append, in order, any missing integers 1...n to w.
 	for i from 1 to n do(
 		if isSubset({i},w)==false then w=append(w,i);
 	),
   return(w)
 )
 
-greaterOrEqual = method(TypicalValue=>Boolean)
-greaterOrEqual(List,List):=(w,v) ->(
-	wIsBigger:=true;
+
+
+
+------------------------------------
+-- notGreaterOrEqual
+------------------------------------
+-- returns true if the permutation 
+--  v is not greater than or equal to w
+-- Expects partial permutations of the same size
+--  with no descents in their partial descriptions
+--  (the permutation they correspond to has at most
+--  one descent)
+------------------------------------
+notGreaterOrEqual = method(TypicalValue=>Boolean)
+notGreaterOrEqual(List,List):=(w,v) ->(
+	--if any element of w is larger than the corresponding element of v
+	--	then we know that v is not greater than or equal to w.
 	for i from 0 to #w-1 do(
 		if w#i>v#i then return(true)
 	),
+	--however, if every element of w is smaller or equal to  the corresponding
+	--element of v, then we know that v is indeed larger or equal to w.
   return(false)
 )
 
+
+
+
+------------------------------------
+-- allNotGreaterOrEqual
+------------------------------------
+-- This function lists all partial permutatations
+--	of S_n that are NOT greater than or equal to w.
+------------------------------------
 allNotGreaterOrEqual = method(TypicalValue=>List)
 allNotGreaterOrEqual(List,ZZ):=(w,n) ->(
+	--First get a list of all partial permutations.
   allPartialPerms:=subsets(for i from 1 to n list i, #w);
-  allSmallPerms:=select(allPartialPerms,f:=(p)->greaterOrEqual(w,p));
+	--Then select all of those that are not greater than or equal to w
+  allSmallPerms:=select(allPartialPerms,f:=(p)->notGreaterOrEqual(w,p));
   return(allSmallPerms)       
 )
 
 
+
+
+
+------------------------------------
+-- cauchyBinet
+------------------------------------
+-- This function implements the cauchyBinet formula
+-- to find the minor p_v(F^{-1}*H)
+-- Input includes F^{-1} =: Finv and
+-- hMinors is a hashTable of minors of H which may
+-- not include all minors, but perhaps just the relevant
+-- ones for Cauchy binet (This is useful for us because
+-- this hashTable is precomputed for a particular H and
+-- cauchyBinet is called repeatedly for H)
+------------------------------------
 cauchyBinet=method(TypicalValue=>RingElement)
 cauchyBinet(Matrix,HashTable,List,ZZ):=(Finv,hMinors,v,n) ->(
+	--Create indexing set for Cauchy-Binet sum
 	betas:=subsets(for i from 1 to n list i,#v);
 	summands:={};
+	--For each elt in the indexing set, multiply the corresponding minors
+	-- of F^{-1} and H
 	for beta in betas do(
 		betaMinus:=for j in beta list j-1;
 		vMinus:=for j in v list j-1;
 		newSummand:=(determinant(submatrix(Finv,betaMinus,vMinus)))*(hMinors#(beta,v));
 		summands=append(summands,newSummand);
 	),
+	--Add all the summands together and return
   minorOfProduct:=sum(summands);
   return(minorOfProduct)
 )    
     
 
+
+
+
+------------------------------------
+-- trulyRandom
+------------------------------------
+-- Macaulay2 creates positive random numbers
+-- (in CC, both real & imaginary parts are positive)
+-- so this function randomly choses a sign for
+-- numbers over RR or QQ.
+-- For CC, it multiplies the number by a random power
+-- of ii.
+------------------------------------
 trulyRandom=method()
+--For rational/real
 trulyRandom(Ring):=(F)->(
 	k:=(-1)^(random(ZZ));
 	return(k*random(F))
 )
+--For complex
 trulyRandom(InexactFieldFamily):=(F)->(
  	k:=ii^(random(ZZ));
 	return(k*random(F))
 )
 
 
+
+
+------------------------------------
+-- randomFlag
+------------------------------------
+-- Creates a random flag over a field in the
+--  form of a matrix.
+------------------------------------
 randomFlag=method(TypicalValue=>Matrix,Options=>{FieldChoice=>QQ})
 randomFlag(ZZ):=o->(n)->(
 	M:=matrix for i from 0 to n-1 list for j from 0 to n-1 list (trulyRandom(o.FieldChoice));
@@ -145,12 +252,25 @@ randomFlag(ZZ):=o->(n)->(
 
 
 
+
+
+------------------------------------
+-- osculatingFlag
+------------------------------------
+-- Creates an osculating flag to a rational
+--  curve at a point. 
+------------------------------------
 osculatingFlag=method(TypicalValue=>Matrix)
 osculatingFlag(List,QQ):=(F,p)->(
+	--First check that the dimension of the source space is 1 so we have a curve.
 	if numgens ring(F#0) > 1 then error "Too many variables in the ring. Doesn't parametrize a curve in affine space";
-	if (coefficientRing(ring(F#0)) === QQ)==false then error "Ring not over QQ";
+	--Check that the field choice is appropriate
+	if ((coefficientRing(ring(F#0)) === QQ)==false and (coefficientRing(ring(F#0)) === RR)==false and (coefficientRing(ring(F#0)) === CC)==false and (coefficientRing(ring(F#0)) === CC_53)==false and (coefficientRing(ring(F#0)) === RR_53)==false) then error "Ring not over QQ,RR, or CC.";
+	--Pull some information regarding the input	
 	n:=#F;
+	--The first row is the point chosen.
 	rows:={F};
+	--The subsequent rows are gotten by taking derivatives. Here we create them one by one.
 	for i from 1 to n-1 do(
 		newRow:={};		
 		for f in F do(
@@ -161,6 +281,7 @@ osculatingFlag(List,QQ):=(F,p)->(
 		),
 	rows=append(rows,newRow);
 	),
+	--Output the transpose since our flags are given by column space.
   M:=transpose sub(matrix rows,{(gens ring F#0)#0=>p});
   return(M)
 )
@@ -170,6 +291,15 @@ osculatingFlag(List,ZZ):=(F,p)->(
 )
 
 
+
+
+------------------------------------
+-- restrictRing
+------------------------------------
+-- Used to restrict the ring of a polynomial or a matrix.
+--  to only the relevant variables. This fixes codimension problems
+--  after substitutions are made.
+------------------------------------
 restrictRing = method(TypicalValue => RingElement, Options => {MonomialOrder=>GRevLex})
 restrictRing(RingElement):= o-> (f) ->(
 	newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomialOrder]);
@@ -180,6 +310,17 @@ restrictRing(Matrix):= o-> (f) ->(
 	return(newF)    
 )
 
+
+
+
+------------------------------------
+-- makeGrassmannianPermutation
+------------------------------------
+-- From a permutation w on a flag manifold in n-space, produce
+--  a permutation with a single descent at k. This is outputted
+--  as a partial permutation with no descents in its 'partial 
+--  description'.
+------------------------------------
 makeGrassmannianPermutation = method(TypicalValue=>List)
 makeGrassmannianPermutation(List,ZZ,ZZ):=(w,k,n) ->(
 	w=completePermutation(w,n);
@@ -189,6 +330,16 @@ makeGrassmannianPermutation(List,ZZ,ZZ):=(w,k,n) ->(
 )
 
 
+
+
+------------------------------------
+-- getDescents
+------------------------------------
+-- Given a (partial)permutation w, return
+--  a list of its descents. If w is partial
+--  this will first complete w to a permutation
+--  on S_{max(w)}.
+------------------------------------
 getDescents = method(TypicalValue=>List)
 getDescents(List):=(w) ->(
 	w=completePermutation(w,max(w));
@@ -199,10 +350,20 @@ getDescents(List):=(w) ->(
 return(descents)
 )
 
+
+
+------------------------------------
+-- lengthOfPermutation
+------------------------------------
+-- Given a (partial)permutation, outputs the length of the permutation.
+------------------------------------
 lengthOfPermutation = method(TypicalValue=>ZZ)
 lengthOfPermutation(List):=(w) ->(
 	len:=0;
+	--It is enough to complete w to a permutation on S_{max(w)}
 	w=completePermutation(w,max(w));
+	--For each elt of w, check the remaining elts to see if they are bigger. 
+	-- If so, increment descents by one.
   for i from 0 to #w-1 do(
 		for j from i+1 to #w-1 do(
 	    if((w#i)>(w#j)) then len=len+1;--tally length for each descent
@@ -211,9 +372,18 @@ lengthOfPermutation(List):=(w) ->(
 return(len)
 )
 
+
+
+------------------------------------
+-- stiefelCoordinates
+------------------------------------
+-- Produces stiefel coordinates for one (or two) Schubert conditions on a flagType (or Grassmannian)
+------------------------------------
 stiefelCoordinates=method(TypicalValue=>Matrix,Options=>{MonomialOrder=>GRevLex,VarName=>"x",Characteristic=>0})
 stiefelCoordinates(List,List):=o->(conditions,flagType)->(
---Check input given
+	--Check input given
+	-- i.e. Check that the flagType is an actual flagType, that the conditions are valid on the flagType,
+	-- that we are given one or two non-trivial conditions, and that if we are given two, the flagType is a Grassmannian.
 	checkFlagType(flagType);
 	if #conditions==0 then error("No conditions given");
 	if #conditions>2 then error("Too many conditions given. Maximum:2. Make sure that if you have one condition, it is nested in another list.");
@@ -239,7 +409,7 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	if o.Characteristic !=0 then Rfield = GF(o.Characteristic,Variable=>a);
 	R:=Rfield[apply(E,k->x_k)];
 
---make a matrix of zeros.put variables in the places that aren't 1's or SouthEast zeros, then put 1's in the pivots
+--make a matrix of zeros. Put variables in the places that aren't 1's or SouthEast zeros, then put 1's in the pivots
 	genMat:=mutableMatrix(R,n,n);
 	scan(E,k->genMat_(k_0-1,k_1-1)=x_k);
 	scan(w,i->genMat_(n-i,position(w,k->k==i))=1);
@@ -247,14 +417,17 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 --If there is one Schubert condition given, do this
 ------------------------------------------------------
 	if #conditions==1 then(
---pull the descents [corresponding to flagType](as we will be able to push zeros to the west up to these marks)
+		--pull the descents [corresponding to flagType](as we will be able to push zeros to the west up to these marks)
 		descents:=join({0},flagType);
 		descentFloor:=for i from 0 to n-1 list(max(positions(descents,d->d<=i)));
---get the biggest space (in the flagType) that the i-th column doesn't belong to
+
+		--get the biggest space (in the flagType) that the i-th column doesn't belong to
 	  for j from 0 to n-1 do(
---for each column with a pivot in it (all of them)
+
+		--for each column with a pivot in it (all of them)
 	  	for J from descents#(descentFloor#j) to j-1 do(
---put zeros to the West up to the descent mark
+		
+		--put zeros to the West up to the descent mark
 		  genMat_(n-w#j,J)=0;
 		  ),
 		),
@@ -265,7 +438,7 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	if #conditions>1 then(
 		v:=reverse for i from 0 to m-1 list((completePermutation(conditions#1,n))#i);
     for j from 0 to m-1 do(
---		assert(v#i-1<n-w#i);
+			--		assert(v#i-1<n-w#i);
 			for i from 0 to v#j-2 do genMat_(i,j)=0;
 		),	         
 	),
@@ -274,6 +447,17 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	)
 
 
+
+
+
+------------------------------------
+-- getEquations
+------------------------------------
+-- Gets equations in Stiefel coordinates for a Schubert variety.
+--  Conditions are pairs {(partial)permutation, flag}, but are accepted
+--  as singletons as well, in which case we complete the singleton to a
+--  pair by choosing random flags.
+------------------------------------
 getEquations = method(TypicalValue=>List)
 getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
 	--Check input given
@@ -293,7 +477,7 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
 	if (numgens(source(H)) < m or numgens(target(H)) != n) then error("Stiefel coordinate matrix is not "|toString(n)|" by something at least "|toString(m));
 
 
---Organize input. Invert flags.
+	--Organize input. Invert flags.
   perms:=for c in conditions list completePermutation(c#0,n);
   flagInverses:=for c in conditions list inverse(c#1);
 
