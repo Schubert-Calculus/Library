@@ -30,7 +30,7 @@
 //      Checks if partial permutation w is a Schubert condition for manifold of type flagType
 //
 //     ---> This is not yet used
-// proc smallerPermutations ( intvec w )
+// proc relevantPermutations ( intvec w )
 //      Generates a list of all permutations less than or equal to the given permutation
 //
 /////////////////////////////////////////////////////////////////////////////////

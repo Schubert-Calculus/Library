@@ -59,4 +59,69 @@ print(makeStiefelCoordinates ( myFlagType, conditions, myRingData));
 
 quit;
 
+///////////////////////////////////////////////////////////////////////////////////
+//
+//  Placing unfinished code here to preserve work while I test out
+//     native functions. Trying to avoid recoding things already
+//     in Singular.
+//
+////////////////////////////////////////////////////////////////////////////////////
 
+// functions need to add: randomFlag(dimension), cauchyBinet(flags, minors, a relevant perm, n)
+
+//
+// Documentation stuff here
+//                         H
+proc getEquations ( matrix M, list conditions, intvec flagType)
+//
+// Help file stuff here
+//
+{
+  int i,j;
+  int n = flagType[nrows(flagType)];
+  int m = flagType[nrows(flagType)-1];
+  // check and format input
+  if ( (nrows(M) <> n) or (ncols(M) < m) ){
+    printf("Input failure for getEquations ( matrix (%s), list (%s), intvec (%s)) :", M, conditions, flagType);
+    printf("Stiefel coordinate matrix must be %s by m where m is at least %s", n, m); 
+  }
+  // workingConditions stores (complete permutation, inverse of flag)
+  list workingConditions;
+  for (i=1; i <= size(conditions); i++) {
+    if (size(conditions[i] > 2) {
+      printf("Input failure for getEquations ( matrix (%s), list (%s), intvec (%s)) :", M, conditions, flagType);
+      printf("Conditions need to be (permutation, flag) pairs. Input includes condition %s.", conditions[i]);
+      quit;
+    }
+    if ( not isCondition(conditions[i][1], flagType) ) {
+      printf("Input fialure for getEquations ( matrix (%s), list (%s), intvec (%s)) :", M, conditions, flagType);
+      printf("In the condition pair %s, the permutation %s is not a condition on the manifold of type %s.", conditions[i], conditions[i][1], flagType);
+      quit;
+    }
+    if (size(conditions[i] == 2){
+      workingConditions[size(workingConditions)+1] = list(completePermutation(conditions[i][1], n), inverse(conditions[i][2]));
+    }
+    if (size(conditions[i] == 1){
+      workingConditions[size(workingConditions)+1] = list(completePermutation(conditions[i][1]), randomFlag(n));
+    }
+  }
+  // Equations are obtained from equations for projections onto grassmannians
+  // so we list relevant grassmannian conditions together with corresponding flags
+  // grassPerms is list whose elements are (grassmannian condition, all relevant conditions, pointer to corresponding flag)
+  list perm, grassPerms, ngeqPerms;
+  intvec descents;
+  for (i=1; i <= size(workingConditions; i++) {
+    descents= getDescents(workingConditions[i][1]);
+    for (j=1; j <= size(descents); j++) {
+      perm= makeGrassmannianPermutation(workingConditions[i][1],descents[j],n);
+      ngeqPerms= relevantPermutations(workingConditions[i][1]);
+      grassPerms[size(grassPerms)+1]= list(perm,ngeqPerms,i);
+    }
+  }
+  // For each grassPerm w corresponding to a flag F, we want plucker coordinates
+  //   p_v(F^{-1}M) for each v not greater than or equal to w
+  
+ // For next part, experiment with the minors command to make sure things are ordered correctly, then finish writting up
+ // Also, look more for commands for building subsets of certain size
+
+}
