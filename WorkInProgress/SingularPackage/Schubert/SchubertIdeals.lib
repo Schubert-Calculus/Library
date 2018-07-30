@@ -1,9 +1,9 @@
-//schubert.lib 
+//SchubertIdeals.lib 
 // 
-//  schubert.lib is a Singular library for formulating Schubert problems and  
-//                Schubert conditions on Grassmannians and type A flag manifolds 
-//                It builds on an earlier version written by Luis David Garcia-Puente, 
-//                James Ruffo, and Frank Sottile 
+//  SchubertIdeals  is a Singular library for formulating Schubert problems and  
+//                 Schubert conditions on Grassmannians and type A flag manifolds 
+//                 It builds on an earlier version written by Luis David Garcia-Puente, 
+//                 James Ruffo, and Frank Sottile 
 //
 //  This version is being written by Taylor Brysiewicz, Frank Sottile, and Robert Williams
 //
@@ -11,7 +11,7 @@
 //
 //
 ///////////////////////////////////////////////////////////////////////////////   
-version="version SchubertCalculus.lib  1.0.0.0  November_2016 ";   
+version="version SchubertCalculus.lib  1.0.0.0  August_2018 ";   
 category="Algebraic geometry"; 
 info="   
 LIBRARY:  SchubertCalculus.lib  Procedures for formulating Schubert varieties on flag manifolds
@@ -133,7 +133,7 @@ example
 // Makes Stiefel coordinates for the Schubert variety X_w I, where w is a
 //   Schubert condition for the flag variety  flagType and I is the standard
 //   coordinate flag.  This is if there is one permutation w in conditions.
-// When conditions has two permutations (and necessarily the flag variety
+// When conditions has two permutations (and necessarily the flag variety is
 //   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
 //   where I' is the opposite flag.
 // Assumes that the local ring has already been created with makeStiefelCoordinateRing
@@ -202,7 +202,7 @@ example
 //       the first k values of w.  This indexes the Schubert variety of the image  
 //
 // proc makeStiefelPatternMatrix ( intvec flagType, list conditions )   This helper function
-//      Computes an intmat encoding the shape of the Steifel coordinates and a list
+//      returns an intmat encoding the shape of the Steifel coordinates and a list
 //      encoding the positions of the variables in the Stiefel coordinates.
 //
 // proc member (int d, intvec a)   returns a boolean 0 or 1
