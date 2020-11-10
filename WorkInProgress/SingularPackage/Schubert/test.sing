@@ -1,6 +1,6 @@
-//  This is for testing the new schubert.lib
+//  This is for testing the new SchubertIdeals.lib
 //
-// Note schubert.lib calls linalg.lib and matrix.lib
+// Note SchubertIdeals.lib calls linalg.lib and matrix.lib
 //
 //   NOTE: Singular is 1-based: intvec v = 1,2,3;  v[1]=1.
 //
@@ -14,7 +14,7 @@
 //  
 //
 option(redSB); 
-LIB "schubert.lib"; 
+LIB "SchubertIdeals.lib"; 
 LIB "test.lib"; 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -31,14 +31,52 @@ LIB "test.lib";
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
+ring r=0,(a,b,c,d,e,f,g,h,s,t,u,v),dp;
+matrix m[2][6]=a,b,c,d,e,f,g,h,s,t,u,v;
+print(m);
+minor(m,2,-15); //,"Laplace");
+quit;
+intvec w = 1,2,7,8;
+w;
+int n = 8;
+
+int k = size(w);
+
+for (int i=1; i<=k; i=i+1){
+  if (w[k+1-i] < n+1-i) {break;}
+}
+if (i > k)
+  {
+    print("last condition");
+  }
+else
+  {
+    int old = w[k+1-i];
+    for (int j=i; j>=1; j=j-1)
+    {
+      w[k+1-j] = old+i+1-j;
+    }
+  }
+
+w;
+
+quit;
 
 intvec w = 1,4,5;
 int n = 6;
 
+//intvec w = 1,2,5,6;
+//int n = 8;
+
 criticalConditions(w);
 relevantPermutations(w,n);
 
-
+intvec myFlagType = 3,6;
+intvec w = completePermutation( intvec( 1,4,5), 6);
+list myConditions = w ;
+list L  = makeStiefelPatternMatrix( myFlagType, myConditions);
+print(L[1]);
+print(L[2]);
 quit;
 intvec myFlagType =  2, 5, 8;
 intvec w = 2,6, 3,4,7, 1,5,6;

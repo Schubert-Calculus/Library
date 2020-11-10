@@ -1,13 +1,13 @@
 //schubert_tour.sing
 //
-//   This is intended as a tour of the functionality of the schubert package
+//   This is intended as a tour of the functionality of the SchubertIdeals package
 //
 //   Right now, it is for testing purposes.
 //
 //
 /////////////////////////////////////////////////////////////////////////////////
 option(redSB); 
-LIB "schubert.lib"; 
+LIB "SchubertIdeals.lib"; 
 //LIB "test.lib"; 
 
 intvec myFlagType =  2, 5, 8;
@@ -67,7 +67,7 @@ print(L[2]);
 myFlagType =  4,10;
 w = completePermutation( intvec(1,4,5,7), myFlagType[nrows(myFlagType)]);
 intvec v = completePermutation( intvec(1,3,4,8), myFlagType[nrows(myFlagType)]);
- myConditions = w,v ;
+myConditions = w,v ;
 
 
 list myRingData = "0", "y", "dp";
