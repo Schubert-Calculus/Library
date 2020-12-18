@@ -16,11 +16,12 @@
 newPackage(
   "SchubertIdeals",
   Version => "0.0.1", 
-  Date => "December 7, 2016",
+  Date => "December 18, 2020",
   Authors => {
     {Name => "Taylor Brysiewicz", Email => "tbrysiewicz@math.tamu.edu", HomePage => "http://www.math.tamu.edu/~tbrysiewicz"},
      {Name => "Frank Sottile"},
-     {Name => "Robert Williams"}
+     {Name => "C.J. Bott"}
+     {Name => "Nathaniel Welty"}
   },
   HomePage => "<FIX>",
   Headline => "computating ideals of Schubert varieties on flag manifolds",
@@ -82,9 +83,6 @@ checkPermutation(List):=(w) ->(
 		),
 	if unique(w)!=w then error(toString(w)|" is not a permutation because a number was repeated");
 )
-
-
-
 
 
 ------------------------------------
@@ -377,7 +375,7 @@ return(len)
 ------------------------------------
 -- stiefelCoordinates
 ------------------------------------
--- Produces stiefel coordinates for one (or two) Schubert conditions on a flagType (or Grassmannian)
+-- Produces Stiefel coordinates for one (or two) Schubert conditions on a flagType (or Grassmannian)
 ------------------------------------
 stiefelCoordinates=method(TypicalValue=>Matrix,Options=>{MonomialOrder=>GRevLex,VarName=>"x",Characteristic=>0})
 stiefelCoordinates(List,List):=o->(conditions,flagType)->(
