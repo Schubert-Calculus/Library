@@ -5,7 +5,7 @@
 //                 It builds on an earlier version written by Luis David Garcia-Puente, 
 //                 James Ruffo, and Frank Sottile 
 //
-//  This version is being written by Taylor Brysiewicz, Frank Sottile, and Robert Williams
+//  This version is being written by Taylor Brysiewicz, Frank Sottile, C.J. Bott, and Nathaniel Welty
 //
 //   It appears that `StiefelCoordinates' may be a reserved name.  Need to think about this.
 //
@@ -17,7 +17,8 @@ info="
 LIBRARY:  SchubertCalculus.lib  Procedures for formulating Schubert varieties on flag manifolds
 AUTHOR:   Taylor Brysiewicz
           Frank Sottile      sottile@math.tamu.edu
-	  Robert Williams
+	  C.J. Bott
+          Nathaniel Welty
 
 OVERVIEW: This library provides procedures for formulating membership in Schubert varieties
            and Schubert problems on classical flag varieties.
