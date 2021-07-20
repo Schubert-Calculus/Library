@@ -58,6 +58,7 @@ checkFlagType(List):=(flagType) ->(
 --check that each elt of the list is a positive integer
 	for s in flagType do(
 		if (class(s)=!=ZZ) then error(toString(flagType)|" does not describe a flag manifold since not all elements are integers");
+		-- =!= is the opposite of ===, which checks “true” or “false” for classes. == and != don’t work for classes in Macaulay2.
 		if s<1 then error(toString(flagType)|" does not describe a flag manifold because not all numbers are greater or equal to one");
 		),
 --checks that the numbers are strictly increasing (implicitely checks for repeated entries)
