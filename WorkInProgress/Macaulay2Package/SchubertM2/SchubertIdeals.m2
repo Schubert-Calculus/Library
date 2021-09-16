@@ -135,6 +135,24 @@ completePermutation(List,ZZ):=(w,n) ->(
 
 
 
+------------------------------------
+-- getDescents
+------------------------------------
+-- Given a (partial)permutation w, return
+--  a list of its descents. If w is partial
+--  this will first complete w to a permutation
+--  on S_{max(w)}.
+------------------------------------
+getDescents = method(TypicalValue=>List)
+getDescents(List):=(w) ->(
+	w=completePermutation(w,max(w));
+	descents:={};
+	for i from 0 to #w-2 do(
+		if((w#i)>(w#(i+1))) then descents=append(descents,i+1);
+	),
+return(descents)
+)
+
 
 ------------------------------------
 -- notGreaterOrEqual
@@ -330,26 +348,6 @@ makeGrassmannianPermutation(List,ZZ,ZZ):=(w,k,n) ->(
  	return(append(sort(beg),w#(k-1)));
 )
 
-
-
-
-------------------------------------
--- getDescents
-------------------------------------
--- Given a (partial)permutation w, return
---  a list of its descents. If w is partial
---  this will first complete w to a permutation
---  on S_{max(w)}.
-------------------------------------
-getDescents = method(TypicalValue=>List)
-getDescents(List):=(w) ->(
-	w=completePermutation(w,max(w));
-	descents:={};
-	for i from 0 to #w-2 do(
-		if((w#i)>(w#(i+1))) then descents=append(descents,i+1);
-	),
-return(descents)
-)
 
 
 
