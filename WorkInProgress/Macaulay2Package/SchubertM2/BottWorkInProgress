@@ -1,11 +1,28 @@
-#########
+------------------------------------
+-- TypeAStiefelCoords
+------------------------------------
+-- Computes Stiefel Coordinates for a Type A Flag Variety (including Grassmannians as a special case)
+-- Inputs: k, the dimension of the largest proper subspace in our flag variety (if we want 2 planes in 4 planes in 6 space, k = 4)
+--         n, dimension of the ambient affine space (if we want 2 planes in 4 planes in 6 space, n = 6)
+--         alpha, a k element subset of {1,...,n} (descents of alpha imply which flag variety we're working in: 
+--                if we want 2 planes in 4 planes in 6 space, alpha_1 < alpha_2 and alpha_3 < alpha_4, but perhaps alpha_2 > alpha_3)
+--         S, coefficient ring (for example QQ)
+-- Outputs: M, the matrix of Stiefel coordinates
+--          R, the ring of variables used in M (right now, actually more variables than that - can fix?)
+           
 
-PartialFlagCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
+TypeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
+-- Define ring of variables
      R = S[y_(1,1)..y_(n,k)];
+-- Define matrix of correct size (and over the correct ring) that we can manipulate
      M = mutableMatrix(R,n,k);
+-- Set leading ones in kxk identity submatrix with rows indexed by alpha
      for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+-- Set variables above the leading 1's
      for j from 1 to k do
      for i from 1 to alpha_(j-1)-1 do M_(i-1,j-1) = y_(i,j);
+-- Set to 0 all entries below and to the right of leading 1's
      for i from 1 to k do
      for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
+-- Make matrix non-mutable, and return Stiefel coordinates and ring
      {matrix M, R})
