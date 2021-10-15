@@ -3,6 +3,9 @@
 ------------------------------------
 -- Computes Stiefel Coordinates for a Type A Flag Variety (including Grassmannians as a special case)
 -- Inputs: k, the dimension of the largest proper subspace in our flag variety (if we want 2 planes in 4 planes in 6 space, k = 4)
+--            (do I need to specify the other subspaces instead, or is this enough? If no change, how do I really know based off of
+--             alpha which flag variety I'm working in? For example, if k = 4, n = 6, and alpha = {1,2,3,4}, how would I know whether
+--             I am in 2 planes in 4 planes in 6 space vs just 4 planes in 6 space, since there are no descents?)
 --         n, dimension of the ambient affine space (if we want 2 planes in 4 planes in 6 space, n = 6)
 --         alpha, a k element subset of {1,...,n} (descents of alpha imply which flag variety we're working in: 
 --                if we want 2 planes in 4 planes in 6 space, alpha_1 < alpha_2 and alpha_3 < alpha_4, but perhaps alpha_2 > alpha_3)
