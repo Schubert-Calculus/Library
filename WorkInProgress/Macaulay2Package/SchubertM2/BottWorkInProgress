@@ -1,0 +1,11 @@
+#########
+
+PartialFlagCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
+     R = S[y_(1,1)..y_(n,k)];
+     M = mutableMatrix(R,n,k);
+     for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+     for j from 1 to k do
+     for i from 1 to alpha_(j-1)-1 do M_(i-1,j-1) = y_(i,j);
+     for i from 1 to k do
+     for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
+     {matrix M, R})
