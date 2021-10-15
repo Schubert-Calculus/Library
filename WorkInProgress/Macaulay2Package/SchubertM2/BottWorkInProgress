@@ -30,3 +30,41 @@ TypeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
      for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable, and return Stiefel coordinates and ring
      {matrix M, R})
+     
+----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
+----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
+-----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
+     
+     
+     
+notLessThan = method(TypicalValue=>Boolean)
+notLessThan(List,List) := (beta,alpha) -> (
+      NotLessThan = false;
+      for i from 1 to length(beta) do
+      if beta_(i-1) > alpha_(i-1) then NotLessThan = true;
+      return(NotLessThan))
+      
+allNotLessThan = method()
+allNotLessThan(List,ZZ) := (alpha, n) -> (
+      L = {};
+      for beta in subsets(splice {1..n},length(alpha)) do
+      if notLessThan(beta,alpha) then L = append(L,beta);
+      return(L))
+      
+----- NOTE: Need to adjust so that field isn't always QQ for cauchyBinet below
+cauchyBinet = method()
+cauchyBinet(ZZ,ZZ,Matrix,List) := (k,n,F,L) -> (
+      Finv = inverse F;
+      M = mutableMatrix(QQ,length(L),binomial(n,k));
+      subs = subsets(splice {1..n},k);
+      kOnes = splice{k:1};
+      for i from 0 to length(L)-1 do
+      for j from 0 to binomial(n,k)-1 do
+      M_(i,j) = det(submatrix(Finv,L_(i)-kOnes,subs_(j)-kOnes));
+      return(matrix M))
+      
+schubertIdeal = method()
+----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
+----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
+schubertIdeal(k,n,List,List) := (k,n,alphas,flags) -> (
+      
