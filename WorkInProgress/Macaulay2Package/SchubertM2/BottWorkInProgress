@@ -83,7 +83,7 @@ schubertIdeal = method()
 schubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       coords = typeAStiefelCoords(k,n,alphas_(0),QQ);
       R = coords_(1);
-      I = ideal(0);
+      I = ideal(0_R);
       PY = exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
       I = I + ideal(cauchyBinet(k,n,flags_(i-1),allNotLessThan(alphas_(i),n))*PY);
