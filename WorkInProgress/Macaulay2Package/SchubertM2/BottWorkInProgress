@@ -1,3 +1,15 @@
+--- Stole From Taylor's Code for Now
+
+restrictRing = method(TypicalValue => RingElement, Options => {MonomialOrder=>GRevLex})
+restrictRing(RingElement):= o-> (f) ->(
+	newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomialOrder]);
+	return(newF)    
+)
+restrictRing(Matrix):= o-> (f) ->(
+	newF:=sub(f,coefficientRing(ring f)[support(f),MonomialOrder=>o.MonomialOrder]);
+	return(newF)    
+)
+
 ------------------------------------
 -- typeAStiefelCoords
 ------------------------------------
@@ -15,9 +27,9 @@
 --          R, the ring of variables used in M (right now, actually more variables than that - can fix?)
            
 typeAStiefelCoords = method()
-typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
+typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
 -- Define ring of variables
-     R = S[y_(1,1)..y_(n,k)];
+     R = K[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
      M = mutableMatrix(R,n,k);
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
@@ -28,8 +40,11 @@ typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
 -- Set to 0 all entries below and to the right of leading 1's
      for i from 1 to k do
      for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
+     M = matrix M;
+     S = K[support M];
+     M = sub(M,S);
 -- Make matrix non-mutable, and return Stiefel coordinates and ring
-     {matrix M, R})
+     {M, S})
      
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
