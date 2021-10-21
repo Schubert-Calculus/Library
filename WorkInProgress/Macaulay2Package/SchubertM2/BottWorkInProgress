@@ -10,7 +10,7 @@
 --         n, dimension of the ambient affine space (if we want 2 planes in 4 planes in 6 space, n = 6)
 --         alpha, a k element subset of {1,...,n} (descents of alpha imply which flag variety we're working in: 
 --                if we want 2 planes in 4 planes in 6 space, alpha_1 < alpha_2 and alpha_3 < alpha_4, but perhaps alpha_2 > alpha_3)
---         S, coefficient ring (for example QQ)
+--         K, coefficient ring (for example QQ)
 -- Outputs: M, the matrix of Stiefel coordinates
 --          R, the ring of variables used in M (right now, actually more variables than that - can fix?)
            
@@ -32,7 +32,7 @@ typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
      R = K[support M];
      M = sub(M,R);
 -- Make matrix non-mutable, and return Stiefel coordinates and ring
-     {M, S})
+     {M, R})
      
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
