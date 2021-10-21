@@ -28,10 +28,13 @@ typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
 -- Set to 0 all entries below and to the right of leading 1's
      for i from 1 to k do
      for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
+-- Make matrix non-mutable
      M = matrix M;
+-- Create a new ring with variables only those that show up in the matrix M
      R = K[support M];
+-- Make it so that M is a matrix over the new ring
      M = sub(M,R);
--- Make matrix non-mutable, and return Stiefel coordinates and ring
+-- Return Stiefel coordinates and new ring
      {M, R})
      
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
