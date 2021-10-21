@@ -1,5 +1,5 @@
 ------------------------------------
--- TypeAStiefelCoords
+-- typeAStiefelCoords
 ------------------------------------
 -- Computes Stiefel Coordinates for a Type A Flag Variety (including Grassmannians as a special case)
 -- Inputs: k, the dimension of the largest proper subspace in our flag variety (if we want 2 planes in 4 planes in 6 space, k = 4)
@@ -14,8 +14,8 @@
 -- Outputs: M, the matrix of Stiefel coordinates
 --          R, the ring of variables used in M (right now, actually more variables than that - can fix?)
            
-TypeAStiefelCoords = method()
-TypeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
+typeAStiefelCoords = method()
+typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,S) -> (
 -- Define ring of variables
      R = S[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
@@ -67,7 +67,7 @@ schubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
 schubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      coords = TypeAStiefelCoords(k,n,alphas_(0),QQ);
+      coords = typeAStiefelCoords(k,n,alphas_(0),QQ);
       R = coords_(1);
       I = ideal(0);
       PY = exteriorPower(k,coords_(0));
