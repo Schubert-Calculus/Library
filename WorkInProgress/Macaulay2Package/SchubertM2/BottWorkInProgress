@@ -17,7 +17,7 @@
 typeAStiefelCoords = method()
 typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
 -- Define ring of variables
-     R = K[y_(1,1)..y_(n,k)];
+     S = K[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
      M = mutableMatrix(R,n,k);
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
@@ -29,8 +29,8 @@ typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
      for i from 1 to k do
      for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
      M = matrix M;
-     S = K[support M];
-     M = sub(M,S);
+     R = K[support M];
+     M = sub(M,R);
 -- Make matrix non-mutable, and return Stiefel coordinates and ring
      {M, S})
      
