@@ -44,11 +44,25 @@ notLessThan(List,List) := (beta,alpha) -> (
       if beta_(i-1) > alpha_(i-1) then NotLessThan = true;
       return(NotLessThan))
       
+notGreaterThan = method(TypicalValue=>Boolean)
+notGreaterThan(List,List) := (beta,alpha) -> (
+      NotGreaterThan = false;
+      for i from 1 to length(beta) do
+      if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
+      return(NotGreaterThan))
+      
 allNotLessThan = method()
 allNotLessThan(List,ZZ) := (alpha, n) -> (
       L = {};
       for beta in subsets(splice {1..n},length(alpha)) do
       if notLessThan(beta,alpha) then L = append(L,beta);
+      return(L))
+      
+allNotGreaterThan = method()
+allNotGreaterThan(List,ZZ) := (alpha, n) -> (
+      L = {};
+      for beta in subsets(splice {1..n},length(alpha)) do
+      if notGreaterThan(beta,alpha) then L = append(L,beta);
       return(L))
       
 ----- NOTE: Need to adjust so that field isn't always QQ for cauchyBinet below
