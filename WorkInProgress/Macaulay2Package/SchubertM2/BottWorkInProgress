@@ -19,7 +19,7 @@ typeAStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
 -- Define ring of variables
      S = K[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
-     M = mutableMatrix(R,n,k);
+     M = mutableMatrix(S,n,k);
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
      for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
 -- Set variables above the leading 1's
