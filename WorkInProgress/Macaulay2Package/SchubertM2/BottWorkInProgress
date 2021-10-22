@@ -85,3 +85,14 @@ numSols = method()
 numSols(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       I = schubertIdeal(k,n,alphas,flags);
       return (dim I, degree I))
+
+all2SchubertProblemSols = method()
+all2SchubertProblemSols(ZZ,ZZ) := (k,n) -> (
+      AllAlphas = subsets(splice({1..n}),k);
+      l = length(AllAlphas);
+      for i from 1 to l do
+            for j from i to l do
+                  if (numSols(k,n,{AllAlphas_(i-1),AllAlphas_(j-1)},{random(QQ^n,QQ^n)}))_(0) == 0 
+                         then print(AllAlphas_(i-1),AllAlphas_(j-1),(numSols(k,n,{AllAlphas_(i-1),AllAlphas_(j-1)},{random(QQ^n,QQ^n)}))_(1));
+      )
+      
