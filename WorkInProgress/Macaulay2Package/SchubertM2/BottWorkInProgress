@@ -80,3 +80,8 @@ schubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       for i from 1 to length(alphas)-1 do 
       I = I + ideal(cauchyBinet(k,n,flags_(i-1),allNotLessThan(alphas_(i),n))*PY);
       return(I))
+
+numSols = method()
+numSols(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
+      I = schubertIdeal(k,n,alphas,flags);
+      return (dim I, degree I))
