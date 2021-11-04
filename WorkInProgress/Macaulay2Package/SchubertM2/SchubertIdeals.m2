@@ -465,7 +465,7 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
 	m:=flagType#(#flagType-2);
 	for c in conditions do(
 		if #c>2 then error("Remember that conditions need to be pairs: a permutation and a flag. You gave "|toString(c));
-		if isCondition(c,flagType)==false then error(toString(c#0)|" is not a condition on the flag "| toString(flagType));
+		if isCondition(c#0,flagType)==false then error(toString(c#0)|" is not a condition on the flag "| toString(flagType));
 	),
 	launderedConditions:={};
 	for c in conditions do(
