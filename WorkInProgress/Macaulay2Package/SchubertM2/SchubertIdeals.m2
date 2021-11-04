@@ -389,7 +389,7 @@ stiefelCoordinates(List,List):=o->(conditions,flagType)->(
 	if #conditions==2 and #flagType>2 then error("You can only give two conditions if the flag manifold is the Grassmannian, not "|toString(flagType));
 	for c in conditions do(
 		if #c ==0 then error("A condition is trivial");
-		if isCondition(c,flagType)==false then error(toString(c)|" is not a condition on "|toString(flagType));
+		if isCondition(c#0,flagType)==false then error(toString(c)|" is not a condition on "|toString(flagType));
 		),
 
 --Pull input given
