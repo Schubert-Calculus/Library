@@ -124,7 +124,7 @@ completePermutation(List,ZZ):=(w,n) ->(
 	checkPermutation(w);
 	if n<max(w) then error("You cannot complete the permutation "|toString(w)|" to S_"|toString(n));
 	-- If w is already complete, then just return w.
-	if n=max(w) then return(w);
+	if n==max(w) then return(w);
 
 	--append, in order, any missing integers 1...n to w.
 	for i from 1 to n do(
