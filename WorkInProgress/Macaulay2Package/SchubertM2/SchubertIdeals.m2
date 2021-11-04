@@ -24,7 +24,7 @@ newPackage(
      {Name => "Nathaniel Welty"}
   },
   HomePage => "<FIX>",
-  Headline => "computating ideals of Schubert varieties on flag manifolds",
+  Headline => "computing ideals of Schubert varieties on flag manifolds",
   DebuggingMode => false
 )
 
@@ -493,7 +493,7 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
 	),   
   --Now, for each grassmannianPermutation w corresponding to a flag F, we want the plucker coordinates
   ----p_v(F^{-1}H) for each v which is not greater than or equal to w.
-  ----Using Cauchy-Binet, this means we are in need of all plucker coordinates of H w/ columns indexedd by v
+  ----Using Cauchy-Binet, this means we are in need of all plucker coordinates of H w/ columns indexed by v
   ----And all plucker coordinates of F w/ rows indexed by v.
   --so here we pull all the possible v that could (and will) occur.
   vCollection:=flatten for p in grassmannianPerms list p#1;
