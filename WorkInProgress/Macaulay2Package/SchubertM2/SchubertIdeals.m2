@@ -1,3 +1,6 @@
+-- Figure out what's going on at the end of "getEquations" with indexing. Is this fixable?
+-- Make it so that "getEquations" returns an ideal instead of a list. Or would we prefer a list, and make it an ideal by ourselves every time?
+
 --Notes for dan.
 --It yells at me if my website doesn't have http:// in it
 --I need to install in order for documentation examples to actually evaluate
@@ -506,6 +509,7 @@ getEquations(Matrix,List,List):=(H,conditions,flagType) ->(
     for beta in betaList do(
 	    vMinus:= for c in v list c-1;
 	    betaMinus:=for b in beta list b-1;
+	    -- The below line is having problems with indexing. 
 	    hMinors#(beta,v)=determinant(submatrix(H,betaMinus,vMinus));
     ), 
 	),
