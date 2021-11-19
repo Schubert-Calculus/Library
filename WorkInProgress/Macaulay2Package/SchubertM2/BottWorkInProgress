@@ -106,7 +106,7 @@ typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
       for a in subspaces do
            conds = {take(conditions#0,a)};
            for i from 1 to s do
-                conds = conds + append(conds,sort(take(conditions#i,a)));
+                conds = append(conds,sort(take(conditions#i,a)));
            eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing);
       return(eqns))
 
