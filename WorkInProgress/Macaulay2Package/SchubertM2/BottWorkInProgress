@@ -96,3 +96,16 @@ all2SchubertProblemSols(ZZ,ZZ) := (k,n) -> (
                          then print(AllAlphas_(i-1),AllAlphas_(j-1),(numSols(k,n,{AllAlphas_(i-1),AllAlphas_(j-1)},{random(QQ^n,QQ^n)}))_(1));
       )
       
+typeASchubertIdeal = method()
+typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
+      n = last(flagType);
+      s = length(flags);
+      subspaces = delete(n,flagType);
+      bigRing = typeAStiefelCoords(last(subspaces),n,conditions#0,QQ);
+      eqns = ideal(0);
+      for a in subspaces do
+           conds = {take(conditions#0,a)};
+           for i from 1 to s do
+                conds = conds + append(conds,sort(take(conditions#i,a)));
+           eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing);
+      return(eqns))
