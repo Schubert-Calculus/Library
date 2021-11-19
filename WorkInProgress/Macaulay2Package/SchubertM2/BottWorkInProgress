@@ -103,11 +103,11 @@ typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
       subspaces = delete(n,flagType);
       bigRing = (typeAStiefelCoords(last(subspaces),n,conditions#0,QQ))#1;
       eqns = ideal(0_bigRing);
-      for a in subspaces do
+      for a in subspaces do(
            conds = {take(conditions#0,a)};
-           for i from 1 to s do
-                conds = append(conds,sort(take(conditions#i,a)));
-           eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing);
+           for i from 1 to s do(
+                conds = append(conds,sort(take(conditions#i,a))));
+           eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing));
       return(eqns))
 
 numSolsA = method()
