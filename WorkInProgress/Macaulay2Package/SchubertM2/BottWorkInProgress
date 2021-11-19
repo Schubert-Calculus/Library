@@ -111,6 +111,6 @@ typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
       return(eqns))
 
 numSolsA = method()
-numSolsA(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      I = typeASchubertIdeal(k,n,alphas,flags);
+numSolsA(ZZ,ZZ,List,List) := (flagType,conditions,flags) -> (
+      I = typeASchubertIdeal(flagType,conditions,flags);
       return (dim I, degree I))
