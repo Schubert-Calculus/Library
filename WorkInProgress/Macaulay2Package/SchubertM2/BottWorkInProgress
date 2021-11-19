@@ -101,7 +101,7 @@ typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
       n = last(flagType);
       s = length(flags);
       subspaces = delete(n,flagType);
-      bigRing = typeAStiefelCoords(last(subspaces),n,conditions#0,QQ);
+      bigRing = typeAStiefelCoords(last(subspaces),n,conditions#0,QQ)#1;
       eqns = ideal(0);
       for a in subspaces do
            conds = {take(conditions#0,a)};
