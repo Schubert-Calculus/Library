@@ -109,3 +109,8 @@ typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
                 conds = conds + append(conds,sort(take(conditions#i,a)));
            eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing);
       return(eqns))
+
+numSolsA = method()
+numSolsA(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
+      I = typeASchubertIdeal(k,n,alphas,flags);
+      return (dim I, degree I))
