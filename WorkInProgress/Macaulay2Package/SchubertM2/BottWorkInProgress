@@ -114,3 +114,36 @@ numSolsA = method()
 numSolsA(List,List,List) := (flagType,conditions,flags) -> (
       I = typeASchubertIdeal(flagType,conditions,flags);
       return (dim I, degree I))
+      
+typeCStiefelCoords = method()
+typeCStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
+-- Define ring of variables
+     S = K[y_(1,1)..y_(n,k)];
+-- Define matrix of correct size (and over the correct ring) that we can manipulate
+     M = mutableMatrix(S,n,k);
+-- Set variables above where leading 1's will be
+     for j from 1 to k do
+     for i from 1 to alpha_(j-1)-1 do M_(i-1,j-1) = y_(i,j);
+-- Set to 0 all entries in rows indexed by alpha
+     for i from 1 to k do
+     for j from 1 to k do M_(alpha_(i-1)-1,j-1) = 0;
+-- Set leading ones in kxk identity submatrix with rows indexed by alpha
+     for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+-- Make matrix non-mutable
+     M = matrix M;
+-- Create a new ring with variables only those that show up in the matrix M
+     R = K[support M];
+-- Make it so that M is a matrix over the new ring
+     M = sub(M,R);
+-- Create the symplectic form J
+     J = mutableMatrix(R,n,n);
+     half_n = sub(n/2,ZZ);
+     for i from 1 to half_n do J_(n-i,i-1) = 1;
+     for j from half_n+1 to n do J_(n-j,j-1) = -1;
+     J = matrix J;
+-- Create ideal of symplectic relations
+     rels = ideal(0_R);
+     for i from 1 to k do 
+     for j from i to k do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
+-- Return Stiefel coordinates and new ring
+     {M, R, rels})
