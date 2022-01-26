@@ -114,3 +114,43 @@ numSolsA = method()
 numSolsA(List,List,List) := (flagType,conditions,flags) -> (
       I = typeASchubertIdeal(flagType,conditions,flags);
       return (dim I, degree I))
+
+permutationMatrix = method()
+permutationMatrix(List) := (perm) -> ( --takes a complete permutation (1,2,3,4,5,6)->(pi(1),pi(2),...,pi(6))
+     permMatrix = matrix(for i in perm list entries(id_(ZZ^(#perm))_(i-1)))
+)
+
+
+permRank = method()
+permRank(List) := (perm) -> (
+     mat= permutationMatrix(perm);
+     rankMat = matrix(for i to (#perm-1) list (for j to (#perm-1) list sum(sum(entries(submatrix(mat, 0..i,0..j))))));
+     return rankMat;
+)
+
+essentialSet = method()
+essentialSet(List) := (perm) -> ( 
+     mat = permutationMatrix(perm);
+     rankMat= permRank(perm);
+     setOfOnes = flatten(for i to #perm-1 list (for j to #perm-1 list (if mat_(i,j)==0 then continue; {i,j})));
+     --To do: make a mutableMatrix from rankMat, replace anything weakly below or to the right of the indices
+     --in setOfOnes with -1s. Then, essentialSet will be the result of a for loop listing only when both i+1 
+     --and j+1 are negative. Will have to sanitize so that i+1, j+1< #perm
+     mutRankMat = mutableMatrix(rankMat);
+     
+     for i in setOfOnes do (
+          
+          for j from i_(0) to #perm-1 do (
+               --if j==#perm then break;
+               mutRankMat_(j,i_(1)) = -1;
+          );
+          for k from i_(1) to #perm-1 do (
+               mutRankMat_(i_(0),k) = -1;
+          );
+     );
+     diagram = matrix mutRankMat;
+     print diagram;
+     essential = flatten(for i to #perm-1 list (for j to #perm-1 list(if diagram_(i,j)==-1 then continue; if i< #perm-1  then(if diagram_(i+1,j)>=0 then continue); if j< #perm-1 then (if diagram_(i,j+1)>=0 then continue); {i,j,diagram_(i,j)})));
+     return essential;
+)
+
