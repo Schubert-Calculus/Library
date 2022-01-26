@@ -117,6 +117,8 @@ numSolsA(List,List,List) := (flagType,conditions,flags) -> (
       
 typeCStiefelCoords = method()
 typeCStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
+-- Reverse alpha convention for Type C
+     alpha = reverse(alpha);
 -- Define ring of variables
      S = K[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
@@ -145,5 +147,33 @@ typeCStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
      rels = ideal(0_R);
      for i from 1 to k do 
      for j from i to k do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
--- Return Stiefel coordinates and new ring
-     {M, R, rels})
+-- Return Stiefel coordinates and new ring, along with the ideal of relations among the variables and the dimension of that ideal
+     {M, R, rels, dim(rels)})
+     
+notGreaterThan = method(TypicalValue=>Boolean)
+notGreaterThan(List,List) := (beta,alpha) -> (
+      NotGreaterThan = false;
+      for i from 1 to length(beta) do
+      if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
+      return(NotGreaterThan))
+      
+allNotGreaterThan = method()
+allNotGreaterThan(List,ZZ) := (alpha, n) -> (
+      L = {};
+      for beta in subsets(splice {1..n},length(alpha)) do
+      if notGreaterThan(beta,alpha) then L = append(L,beta);
+      return(L))
+
+------ BELOW DOESN'T WORK! ------
+typeCGrassmannianSchubertIdeal = method()
+----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
+----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
+
+typeCGrassmannianSchubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
+      coords = typeCStiefelCoords(k,n,alphas_(0),QQ);
+      R = coords_(1);
+      I = coords_(2);
+      PY = exteriorPower(k,coords_(0));
+      for i from 1 to length(alphas)-1 do 
+      I = I + ideal(cauchyBinet(k,n,flags_(i-1),allNotLessThan(alphas_(i),n))*PY);
+      return(I))
