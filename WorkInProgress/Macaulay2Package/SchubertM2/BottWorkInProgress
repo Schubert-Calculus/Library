@@ -171,7 +171,7 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       for j from 1 to n-1 do 
       for k from j to n-1 do
       F_(k,j) = F_(k-1,j-1);
-      for l from sub(n/2,ZZ) to n-1 do if odd i then do
+      for l from sub(n/2,ZZ) to n-1 do if odd l then
       for m from 0 to n-1 do
       F_(l,m) = -1*F_(l,m);
       return matrix(F))
