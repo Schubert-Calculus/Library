@@ -174,7 +174,27 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       for l from sub(n/2,ZZ) to n-1 do if odd l then
       for m from 0 to n-1 do
       F_(l,m) = -1*F_(l,m);
-      return matrix(F))
+      F = matrix F;
+      return F)
+      
+symplectifyFour = method()
+symplectifyFour(Matrix) := (F) -> (
+      F = mutableMatrix F;
+      F_(0,1) = (-F_(2,0)*F_(1,1)+F_(1,0)*F_(2,1)+F_(0,0)*F_(3,1))/F_(3,0);
+      F_(0,2) = (-F_(2,0)*F_(1,2)+F_(1,0)*F_(2,2)+F_(0,0)*F_(3,2))/F_(3,0);
+      F = matrix F;
+      return F)
+      
+symplectifySix = method()
+symplectifySix(Matrix) := (F) -> (
+      F = mutableMatrix F;
+      F_(0,1) = (-F_(4,0)*F_(1,1)-F_(3,0)*F_(2,1)+F_(2,0)*F_(3,1)+F_(1,0)*F_(4,1)+F_(0,0)*F_(5,1))/F_(5,0);
+      F_(0,4) = (-F_(4,0)*F_(1,4)-F_(3,0)*F_(2,4)+F_(2,0)*F_(3,4)+F_(1,0)*F_(4,4)+F_(0,0)*F_(5,4))/F_(5,0);
+      F_(0,3) = (-F_(4,1)*F_(1,3)-F_(3,1)*F_(2,3)+F_(2,1)*F_(3,3)+F_(1,1)*F_(4,3)+F_(0,1)*F_(5,3))/F_(5,1);
+      F_(1,2) = ((F_(3,0)*F_(5,1)-F_(3,1)*F_(5,0))*F_(2,2)+(-F_(2,0)*F_(5,1)+F_(2,1)*F_(5,0))*F_(3,2)+(-F_(1,0)*F_(5,1)+F_(1,1)*F_(5,0))*F_(4,2)+(-F_(0,0)*F_(5,1)+F_(0,1)*F_(5,0))*F_(5,2))/(-F_(4,0)*F_(5,1)+F_(4,1)*F_(5,0));
+      F_(0,2) = (-F_(4,0)*F_(1,2)-F_(3,0)*F_(2,2)+F_(2,0)*F_(3,2)+F_(1,0)*F_(4,2)+F_(0,0)*F_(5,2))/F_(5,0);
+      F = matrix F;
+      return F)
 
 ------ BELOW ONLY WORKS IF SYMPLECTIC FLAGS ARE USED! ------
 typeCGrassmannianSchubertIdeal = method()
