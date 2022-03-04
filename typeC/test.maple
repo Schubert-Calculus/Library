@@ -1,0 +1,13 @@
+interface(quiet=true):
+read(BruhatProcedures):
+read(Procedures):
+
+
+
+
+interface(quiet=false):
+
+X:=TopClass([2,4,6]);
+X:=TopClass([2,2]);
+
+

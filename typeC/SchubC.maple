@@ -1,0 +1,144 @@
+#SchubC.maple
+#
+#  This file will do compute the Schubert polynomials im type C, and write them to a data file for future computation.
+#
+interface(quiet=true):
+n:=2:
+
+W:=[]:
+V:=[]:
+Vr:=[]:
+for i from 1 to n do
+ V:=[V[],x||i]:
+ Vr:=[x||i,Vr[]]:
+od:
+
+###############################################################
+#
+#  This procedure computes the divided differences
+#
+d := proc(i,f)
+ local A:
+ if (i<n) then 
+    simplify((f-subs(V[i+1]=V[i],A=V[i+1],subs(V[i]=A,f)))/(V[i]-V[i+1]))
+   elif (i=n) then
+    simplify((f-subs(V[n]=-V[n],f))/(2*V[n]))
+  else
+    print("error");
+    quit:
+ end if:
+end:
+#################################################################
+
+#######################################################################
+#
+# Initialization of Groebner basis & elementary symmetric polynomials
+#
+Elem:=[]:
+for i from 1 to n do
+ ei:=0:
+ for Set in combinat[choose](V,i) do
+  t:=1:
+  for var in Set do
+   t:=t*var^2:
+  od:
+  ei:=ei+t:
+ od:
+ Elem:=[Elem[],ei]:
+od:
+
+Gb:=Groebner[Basis](Elem,plex(Vr[])):
+
+
+#######################################################################
+#
+# This code walks down the weak order, beginning with the top element.
+# Cn :=  the set of pi with C[pi] computed
+# Done :=  Those pi with *all* d(i,C[pi]) computed
+#
+#  Make longest element  according to Fulton
+pi:=[seq(2*n+1-ii,ii=1..n)]:
+# Make the class of a point.   First the determinant of the elementary symmetric functions
+Elem:=[]:
+for i from 1 to n do
+ ei:=0:
+ for Set in combinat[choose](V,i) do
+  t:=1:
+  for var in Set do
+   t:=t*var:
+  od:
+  ei:=ei+t:
+ od:
+ Elem:=[Elem[],ei]:
+od:
+c := ii ->  if (ii<0 or ii>n) then 0
+            elif (ii=0) then 1
+            else Elem[ii]
+	    end if:
+C[pi]:=LinearAlgebra[Determinant](Matrix([seq([seq(c(ii+1+n-2*jj), ii=1..n)], jj=1..n)])):
+
+
+################################################################################
+#
+#  Now we walk down the weak order
+#
+#
+for i from 1 to n-1 do
+ C[pi]:=C[pi]*x||i^(n-i):
+od:
+C[pi]:= Groebner[NormalForm](C[pi],Gb,plex(Vr[])):
+
+#
+#  Make representatives of Scshubert classes
+#
+Cn:={pi}:
+Done:={}:
+while ((Cn minus Done) <> {}) do
+ pi := op(1,Cn minus Done):
+ for i from 1 to n do
+   descentAti:=0:
+#  Check of there is a descent at i
+   if i<n then
+     if pi[i]>pi[i+1] then
+      descentAti:=1:
+      p := eval(pi):
+      p[i]:=pi[i+1]:
+      p[i+1]:=pi[i]:
+     end if:
+    else
+     if pi[i]>n then 
+      descentAti:=1:
+      p := eval(pi):
+      p[i]:=2*n+1-pi[i]:
+     end if:
+   end if:
+   if (descentAti = 1) and not member(p,Cn) then 
+     C[p]:= Groebner[NormalForm](d(i,C[pi]),Gb,plex(Vr[])): 
+     Cn := Cn union {p}:
+   fi:
+ od:
+ Done := Done union {pi}:
+od:
+########################################
+
+for i from 0 to n^2 do Rank[i]:={}: od:
+
+for pi in Cn do
+ rank:=0:
+ for i from 1 to n do 
+  for j from i to n do
+   if i<j and pi[i]>pi[j] then rank:=rank+1 fi:
+   if pi[i]+pi[j]>2*n then rank:=rank+1 fi:
+ od:od:
+ Rank[rank]:=Rank[rank] union {pi}:
+od:
+
+file := fopen(sprintf("SchubertC.%d.data",n),WRITE):
+fprintf(file," Gb:=%a:\n",Gb):
+fprintf(file," Vr:=%a:\n W:=%a:\n",Vr,W):
+fprintf(file," C:=%a:\n", eval(Cn)):
+fprintf(file," Rank:=%a:\n",eval(Rank)):
+fprintf(file," SchubPoly:=%a:\n",eval(C)):
+fclose(file):
+
+quit;

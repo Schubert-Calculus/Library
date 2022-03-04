@@ -1,0 +1,104 @@
+#Procedures.maple
+#
+#  This file contains procedures to help search for interesting 
+# Enumerative problems to study in type C flag manifolds
+#
+#  We use Exponential notation for an enumerative problem
+# Enumerative Problem := [[1,3,2], 4], [[1,2,4], 4]]
+#
+#  Partitions(m,a)      List of partitions of m with largest part at most a
+#  GoodPartitionsc(m)   Partitions of m in exponent notation with at least three parts and with largest part at most m-2
+#
+############################################################
+Partitions := proc(m,a)
+#
+#  List of partitions of m with largest part at most a
+#
+ local q, i, lambda:
+ if m=0 then 
+   return([[]]): 
+  else
+   q:=[]:
+   for i from 1 to a do 
+    for lambda in Partitions(m-i,min(i,m-i)) do 
+     q:=[q[], [i, lambda[]]]:
+    end do:
+   end do:
+   return(q):
+ end if:
+end proc:
+####################################################################################################
+GoodPartitions := proc(m)
+#
+#  Returns partitions of m in exponent notation with at least three  
+#  parts and with largest part at most m-1
+#
+local p,lambda,mu,idx,i:
+ p:=[]:
+ for lambda in Partitions(m,m-2) do 
+  if nops(lambda)>2 then  
+   mu:=[seq(0,idx=1..m-2)]:
+   for i in lambda do 
+    mu[i]:=mu[i]+1:
+   end do:
+   p:=[p[],mu]:
+  end if:
+ end do:
+ return(p):
+end proc:
+####################################################################################################
+Name_of_File:=proc(FlagManifold,Extra)
+#
+#   Creates name of temporary file containing data for Schubert problems
+#
+local File, d:
+ File:="raw_problems/C":
+ for d in FlagManifold do 
+  File:=sprintf("%s%d",File,d):
+ end do:
+ if _params['Extra'] <> NULL then
+  File:=sprintf("%s.%s",File,Extra):
+ end if:
+ return(File)
+end proc:
+####################################################################################################
+TopClass:=proc(FlagManifold)
+#
+#  Computes the index of the top class of the partial FlagManifold
+#
+local FM, FlM, top, n, ii, i, j, k:
+
+ FlM := FlagManifold[1..nops(FlagManifold)-1]:
+ n:=FlagManifold[nops(FlagManifold)]:
+ FM:=[0,FlM[], seq(2*n-FlM[nops(FlM)+1-ii], ii=1..nops(FlM)),2*n]:
+ top:=[]:
+ for j from 1 to nops(FM)-1 do 
+  i:=FM[j+1]:
+  for k from FM[j]+1 to FM[j+1] do 
+   top:=[top[],i]:
+   i:=i-1:
+  end do:
+ end do:
+ return(top[1..n]):
+end proc:
+####################################################################################################
+Number := proc(EnumerativeProblem,FlagManifold)
+#
+#  Computes the intersection number of the given enumerative problem
+#
+local n, Poly, Condition:
+global SchubPoly, GB, Vr:
+
+ Poly:=2*SchubPoly[TopClass(FlagManifold)]:
+
+ for Condition in EnumerativeProblem do 
+  Poly:=Poly*SchubPoly[Condition[1]]^Condition[2]:
+ od:
+ Poly:=Groebner[NormalForm](Poly,Gb,plex(Vr[])):
+ if Poly=0 then 
+   return(0)
+  else
+   return(op(1,Poly)/2):
+ end if:
+end proc:
+####################################################################################################

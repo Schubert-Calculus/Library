@@ -1,0 +1,29 @@
+
+Notes.txt
+
+These files can create a list of *all* Schubert problems on a given type C flag manifold.
+Currently, these are only done on a flag manifolds in C^4 and C^6, and on a given flag manifold, F
+ it computes those that pull back from smaller flag manifolds.   We need to correct for that,
+ which is a job for the future.
+
+
+Elements w of the Weyl group C_n are represented by sequences  [w(1),...,w(n)].
+These satisfy w(i)+w(j)\neq 2n+1 ( as w(2n+1-i)=2n+1-w(i) , as w_0ww_0 = w in S_{2n} ).
+
+Note that this differs from the representation as signed permutations.
+
+The length of such a Weyl group element is
+ # { i < j | w(i)>w(j) }  + # { i\leq j | w(i)+w(j) > 2n }
+
+
+The descent set of w is
+
+ { 1\leqi<n | w(i)<w(i+1) } \cup { n | if w(n)>n }
+
+A flagManifold is represented by [a_1< ... < a_r \leq n]
+
+To understand its dimension, consider the projection to
+ [a_r \leq n]
+ Its fiber is the variety of (type A) flags a_1<...<a_{r-1} in C^{a_r}
+ Projection is a_r(n-a_r) + n + (n-1) + ... + (n-a_r+)
+ Fiber is sum_i=1 ^r-1 (a_{i+1}-a_i)(a_r - a_{i+1})

@@ -1,0 +1,72 @@
+#BruhatProcedures
+#
+# Frank Sottile
+# 2 March 2022
+# College Station, TX
+#
+#   These are procedures to compute in the Bruhat order of C_n
+#
+###################################################################
+#
+# Ell(w)      Computes the length of w
+#? LT(v,w)     determines if v <= w in the Bruhat order
+#? LX(v,w)     determines if v < w in the lexicographic order
+#? Descents(w) Returns the descents of w
+#? MakeC(n)    Creates the Weyl group
+#
+# Here, C_n is the subgroup of S_{2n} consisting of permutations w such that 2n+1-w(i)=w(2n+1-i).
+#        We represent elements of Cn by their first n values
+#
+###################################################################
+Ell := proc(pi)
+ local ell,n,i,j ;
+ ell:=0:
+ n := nops(pi):
+ for i from 1 to n do 
+  for j from i to n do
+   if i<j and pi[i]>pi[j] then ell:=ell+1 fi:
+   if pi[i]+pi[j]>2*n then ell:=ell+1 fi:
+  od: 
+ od:
+ ell
+end:
+####################################################################################################
+Belongs := proc(w,descents)
+#
+# Computes the descent set of w and checks if it is a subset of the set descents
+#
+local belongs, j:
+ global n:
+ ####################
+ belongs:=true:
+ j:=1:
+ while (belongs and j<n) do 
+  if not(member(j,descents)) and w[j]>w[j+1] then belongs:=false: end if:
+  j:=j+1:
+ end do:
+ if not(member(n,descents)) and w[n]>n then belongs:=false: end if:
+ return(belongs):
+end proc: 
+####################################################################################################
+Dimension:=proc(FlagManifold)
+#
+#   Computs the dimension of the flag manifold:
+#   dimension of Grassmannian projection + dimension of flagmanifold fibre
+#
+ local dim, FM, i, n, a, r:
+ 
+ n := FlagManifold[nops(FlagManifold)]:  # Parameter for flag manifold: Ambient dimension is 2n.  
+ r := nops(FlagManifold)-1:              # length of the partial flag
+ a := FlagManifold[r]:                   # parameter of largest isotropic Grassmannian projection
+ 
+ dim := 2*a*n-(3*a^2-a)/2:               # Dimension of largest isotropic Grassmannian projection
+ # Dimension of Ggrassmannian projection
+
+ FM:=[0,FlagManifold[1..r][]];
+
+ for i from 1 to nops(FM)-2 do 
+  dim:=dim+(FM[i+1]-FM[i])*(a-FM[i+1]):
+ end do:
+ return(dim):
+end proc:
+####################################################################################################xs

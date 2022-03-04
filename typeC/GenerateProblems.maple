@@ -1,0 +1,125 @@
+#makeProblems.maple
+#
+#  This makes all Schubert problems in type C_n flag manifolds.
+#
+# FlagManifold is a list [a_1,...,a_r,n] where a_1<...<a_r\leq n
+#
+#
+interface(quiet=true):
+read(BruhatProcedures):
+read(Procedures):
+####################################################################################################
+FlagManifold:=[1,2,3,3]:
+FlagManifold:=[1,3,4]:
+FlagManifold:=[1,2,3,3]:
+####################################################################################################
+threshold:=2:
+tooBig:=1000:
+####################################################################################################
+n:=FlagManifold[nops(FlagManifold)]:
+read(sprintf("SchubertC.%d.data",n)):
+####################################################################################################
+#
+####################################################################################################
+file:=open(Name_of_File(FlagManifold),WRITE):
+#
+fprintf(file,"interface(quiet=true):\n FlagManifold:=%a:\n",FlagManifold):
+fprintf(file,"Problems:=[\n"):
+####################################################################################################
+
+####################################################################################################
+#
+#    Make the list of possible SchubertConditions & Betti Numbers for the given flag manifold
+descents:={FlagManifold[1..nops(FlagManifold)-1][]}:
+#
+#  uses the precomputed group C_n and precomputed dorting by rank, length
+#
+for rank from 0 to Dimension(FlagManifold) do
+ SchubertConditions[rank]:=[]:
+ for w in Rank[rank] do 
+  if Belongs(w,descents) then 
+   SchubertConditions[rank]:=[SchubertConditions[rank][],w]:
+  end if:
+ end do:
+ Betti[rank]:=nops(SchubertConditions[rank]):
+end do:
+#####################################################################################################
+
+#####################################################################################################
+#  Given a partition mu in exponential notation (determining how many conditions
+#  of rank i for a given enumerative problem), we create all possible
+#  enumerative problems with that partition.  This is stored in Conditions
+#
+#  Conditions[i] consists of a list of all possible lists
+#    [ [ u, fu ],  [ v, fv ], ....  [ w, fw ] ], 
+#    where fu + fv + ... + fw = mu[j] and the permutations u, v, ..., w
+#    all have length j.  Here mu[j] is the ith nonzero component in the 
+#    exponential way of listing mu
+#
+for mu in GoodPartitions(Dimension(FlagManifold)) do 
+
+ Conditions:=[]:
+ #
+ #  This next loop constructs Conditions[i]
+ #
+ for i from 1 to nops(mu) do 
+  if mu[i]>0 then 
+   Conds:=[]:
+   for C in combinat[composition](Betti[i]+mu[i],Betti[i]) do 
+    A:=[]:
+    for j from 1 to Betti[i] do 
+     if C[j]>1 then 
+      A:=[A[],[SchubertConditions[i][j],C[j]-1]]: 
+     end if:
+    end do: 
+    #
+    #  Need to only allow those A with a single mixed consition ?
+    #
+    Conds:=[Conds[],A]:
+   end do:
+  Conditions:=[Conditions[],Conds]:
+  end if:
+ end do:
+ ################################    This is OK ^^^^^^
+ #
+ #  Now we want to create the enumerative problems, consisting of one
+ #  choice from each of Conditions[i] for each i
+ #
+ A:=[seq(nops(Conditions[idx]),idx=1..nops(Conditions))]:
+ S:=[0,seq(1,idx=2..nops(A))]:
+
+
+ for i from 1 to mul(A[idx],idx=1..nops(A)) do 
+  #
+  #   This is a lexicographic walk through the choices S of conditions
+  #
+  j:=1:
+  while S[j]=A[j] do
+   S[j]:=1:
+   j:=j+1:
+  end do:
+  S[j]:=S[j]+1:
+
+  EP:=[seq(Conditions[idx][S[idx]][],idx=1..nops(S))];
+  #
+  #  Compute the intersection number
+  # 
+  IntersectionNumber := Number(EP,FlagManifold):
+  #
+  #  Right now, we just see if it is greater than 1 
+  #
+  if IntersectionNumber >= threshold then  #and IntersectionNumber <= tooBig then
+#    lprint( IntersectionNumber, EP);
+    fprintf(file," [ %d, %a],\n",IntersectionNumber,EP):
+##  
+  end if:
+##  if CheckProblem(EP,FlagManifold,projection_ok) then 
+##   if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then 
+##    EP:=fixEP(EP,FlagManifold):
+##    fprintf(file," [\"%s\", %d, %a],\n", makeString(EP),IntersectionNumber,EP):
+##   end if:
+##  end if:
+   
+ end do:
+
+end do:
