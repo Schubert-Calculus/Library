@@ -117,20 +117,18 @@ numSolsA(List,List,List) := (flagType,conditions,flags) -> (
       
 typeCStiefelCoords = method()
 typeCStiefelCoords(ZZ,ZZ,List,Ring) := (k,n,alpha,K) -> (
--- Reverse alpha convention for Type C
-     alpha = reverse(alpha);
 -- Define ring of variables
      S = K[y_(1,1)..y_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
      M = mutableMatrix(S,n,k);
--- Set variables above where leading 1's will be
-     for j from 1 to k do
-     for i from 1 to alpha_(j-1)-1 do M_(i-1,j-1) = y_(i,j);
--- Set to 0 all entries in rows indexed by alpha
-     for i from 1 to k do
-     for j from 1 to k do M_(alpha_(i-1)-1,j-1) = 0;
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
      for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+-- Set variables above the leading 1's
+     for j from 1 to k do
+     for i from 1 to alpha_(j-1)-1 do M_(i-1,j-1) = y_(i,j);
+-- Set to 0 all entries below and to the right of leading 1's
+     for i from 1 to k do
+     for j from i+1 to k do M_(alpha_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable
      M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
@@ -210,8 +208,8 @@ typeCGrassmannianSchubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       I = I + ideal(cauchyBinet(k,n,flags_(i-1),allNotLessThan(alphas_(i),n))*PY);
       return(I))
 
-numSolsC = method()
-numSolsC(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
+numSolsGrassmannianC = method()
+numSolsGrassmannianC(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       I = typeCGrassmannianSchubertIdeal(k,n,alphas,flags);
       return (dim I, degree I))
 
@@ -228,3 +226,8 @@ typeCSchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
                 conds = append(conds,sort(take(conditions#i,a))));
            eqns = eqns + sub(typeCGrassmannianSchubertIdeal(a,n,conds,flags),bigRing));
       return(eqns))
+      
+numSolsC = method()
+numSolsC(List,List,List) := (flagType,conditions,flags) -> (
+      I = typeCSchubertIdeal(flagType,conditions,flags);
+      return (dim I, degree I))
