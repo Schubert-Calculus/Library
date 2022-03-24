@@ -176,7 +176,8 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       F_(l,m) = -1*F_(l,m);
       F = matrix F;
       return F)
-      
+
+---- NOT GENERAL ----
 symplectifyFour = method()
 symplectifyFour(Matrix) := (F) -> (
       F = mutableMatrix F;
@@ -185,6 +186,7 @@ symplectifyFour(Matrix) := (F) -> (
       F = matrix F;
       return F)
       
+---- NOT GENERAL ----
 symplectifySix = method()
 symplectifySix(Matrix) := (F) -> (
       F = mutableMatrix F;
