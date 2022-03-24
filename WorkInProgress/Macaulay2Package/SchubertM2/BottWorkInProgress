@@ -72,8 +72,10 @@ cauchyBinet(ZZ,ZZ,Matrix,List) := (k,n,F,L) -> (
 schubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
-schubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      coords = typeAStiefelCoords(k,n,alphas_(0),QQ);
+schubertIdeal(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
+      k = flagType_(0)
+      n = flagType_(1)
+      coords = typeAStiefelCoords(k,n,alphas_(0),K);
       R = coords_(1);
       I = ideal(0_R);
       PY = exteriorPower(k,coords_(0));
@@ -82,8 +84,8 @@ schubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       return(I))
 
 numSols = method()
-numSols(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      I = schubertIdeal(k,n,alphas,flags);
+numSols(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
+      I = schubertIdeal(flagType,alphas,flags,K);
       return (dim I, degree I))
 
 all2SchubertProblemSols = method()
@@ -97,22 +99,22 @@ all2SchubertProblemSols(ZZ,ZZ) := (k,n) -> (
       )
       
 typeASchubertIdeal = method()
-typeASchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
+typeASchubertIdeal(List,List,List,Ring) := (flagType,conditions,flags,K) -> (
       n = last(flagType);
       s = length(flags);
       subspaces = delete(n,flagType);
-      bigRing = (typeAStiefelCoords(last(subspaces),n,conditions#0,QQ))#1;
+      bigRing = (typeAStiefelCoords(last(subspaces),n,conditions#0,K))#1;
       eqns = ideal(0_bigRing);
       for a in subspaces do(
            conds = {take(conditions#0,a)};
            for i from 1 to s do(
                 conds = append(conds,sort(take(conditions#i,a))));
-           eqns = eqns + sub(schubertIdeal(a,n,conds,flags),bigRing));
+           eqns = eqns + sub(schubertIdeal({a,n},conds,flags,K),bigRing));
       return(eqns))
 
 numSolsA = method()
-numSolsA(List,List,List) := (flagType,conditions,flags) -> (
-      I = typeASchubertIdeal(flagType,conditions,flags);
+numSolsA(List,List,List,Ring) := (flagType,conditions,flags,K) -> (
+      I = typeASchubertIdeal(flagType,conditions,flags,K);
       return (dim I, degree I))
       
 typeCStiefelCoords = method()
@@ -199,8 +201,10 @@ typeCGrassmannianSchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
 
-typeCGrassmannianSchubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      coords = typeCStiefelCoords(k,n,alphas_(0),QQ);
+typeCGrassmannianSchubertIdeal(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
+      k = flagType_(0);
+      n = flagType_(1);
+      coords = typeCStiefelCoords(k,n,alphas_(0),K);
       R = coords_(1);
       I = coords_(2);
       PY = exteriorPower(k,coords_(0));
@@ -209,27 +213,27 @@ typeCGrassmannianSchubertIdeal(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
       return(I))
 
 numSolsGrassmannianC = method()
-numSolsGrassmannianC(ZZ,ZZ,List,List) := (k,n,alphas,flags) -> (
-      I = typeCGrassmannianSchubertIdeal(k,n,alphas,flags);
+numSolsGrassmannianC(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
+      I = typeCGrassmannianSchubertIdeal(flagType,alphas,flags,K);
       return (dim I, degree I))
 
 typeCSchubertIdeal = method()
-typeCSchubertIdeal(List,List,List) := (flagType,conditions,flags) -> (
+typeCSchubertIdeal(List,List,List,Ring) := (flagType,conditions,flags,K) -> (
       n = last(flagType);
       s = length(flags);
       subspaces = delete(n,flagType);
-      bigRing = (typeCStiefelCoords(last(subspaces),n,conditions#0,QQ))#1;
+      bigRing = (typeCStiefelCoords(last(subspaces),n,conditions#0,K))#1;
       eqns = ideal(0_bigRing);
       for a in subspaces do(
            conds = {take(conditions#0,a)};
            for i from 1 to s do(
                 conds = append(conds,sort(take(conditions#i,a))));
-           eqns = eqns + sub(typeCGrassmannianSchubertIdeal(a,n,conds,flags),bigRing));
+           eqns = eqns + sub(typeCGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
       return(eqns))
       
 numSolsC = method()
-numSolsC(List,List,List) := (flagType,conditions,flags) -> (
-      I = typeCSchubertIdeal(flagType,conditions,flags);
+numSolsC(List,List,List,Ring) := (flagType,conditions,flags,K) -> (
+      I = typeCSchubertIdeal(flagType,conditions,flags,K);
       return (dim I, degree I))
       
 secantFlag = method()
