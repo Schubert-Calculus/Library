@@ -231,3 +231,12 @@ numSolsC = method()
 numSolsC(List,List,List) := (flagType,conditions,flags) -> (
       I = typeCSchubertIdeal(flagType,conditions,flags);
       return (dim I, degree I))
+      
+secantFlag = method()
+secantFlag(List,Ring) := (L,R) -> (
+      n = length(L);
+      secantflag = mutableMatrix(R,n,n);
+      for i from 1 to n do
+      for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
+      secantflag = matrix secantflag;
+      return(secantflag))
