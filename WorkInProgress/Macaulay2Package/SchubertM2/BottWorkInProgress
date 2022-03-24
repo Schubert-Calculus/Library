@@ -240,3 +240,12 @@ secantFlag(List,Ring) := (L,R) -> (
       for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
       secantflag = matrix secantflag;
       return(secantflag))
+
+randomSecantFlag = method()
+randomSecantFlag(ZZ,Ring) := (n,R) -> (
+      L = {};
+      for i from 1 to n do
+      L = append(L,random(R));
+      return(secantFlag(L,R)))
+
+
