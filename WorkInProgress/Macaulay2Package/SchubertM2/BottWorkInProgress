@@ -254,4 +254,39 @@ randomSecantFlag(ZZ,Ring) := (n,R) -> (
       L = append(L,random(R));
       return(secantFlag(L,R)))
 
+completePermutation = method(TypicalValue=>List)
+completePermutation(List,ZZ):=(w,n) ->(
+	for i from 1 to n do(
+		if isSubset({i},w)==false then w=append(w,i);
+	),
+  return(w)
+)
+
+typeALength = method()
+typeALength(List,ZZ) := (w,n) -> (
+      w = completePermutation(w,n);
+      count = 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      return(count)
+)
+
+typeCLength = method()
+typeCLength(List) := (w) -> (
+      n = length(w);
+      count = 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      for i from 1 to n do
+            for j from i to n do
+                  if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
+      return(count)
+)
+
+
+
+
+
 
