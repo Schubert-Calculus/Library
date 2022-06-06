@@ -285,8 +285,18 @@ typeCLength(List) := (w) -> (
       return(count)
 )
 
+typeALeastLength = method()
+typeALeastLength(List,ZZ) := (conditions,n) -> (
+      least = conditions_(0);
+      for alpha in conditions do
+            if typeALength(alpha,n) < typeALength(least,n) then least = alpha;
+      return(least))
 
-
-
+typeCLeastLength = method()
+typeCLeastLength(List) := (conditions) -> (
+      least = conditions_(0);
+      for alpha in conditions do
+            if typeCLength(alpha) < typeCLength(least) then least = alpha;
+      return(least))
 
 
