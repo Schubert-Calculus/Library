@@ -176,8 +176,18 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       F_(l,m) = -1*F_(l,m);
       F = matrix F;
       return F)
-
----- NOT GENERAL ----
+    
+antiTri = method()
+antiTri(Matrix) := (M) -> (
+n = numgens target M;
+M = mutableMatrix M;
+for i from 1 to n do(
+      M_(i-1,n-i) = 1;
+      for j from i to (n-1) do(
+            M_(j,n-i) = 0));
+M = matrix M;
+return(M))
+    
 symplectifyFour = method()
 symplectifyFour(Matrix) := (F) -> (
       F = mutableMatrix F;
@@ -195,7 +205,7 @@ symplectifyFour(Matrix) := (F) -> (
       F_(1,0) = F_(0,1)+F_(2,0)*F_(1,1);
       F = matrix F;
       return F)
-      
+
 ---- NOT GENERAL ----
 symplectifySix = method()
 symplectifySix(Matrix) := (F) -> (
