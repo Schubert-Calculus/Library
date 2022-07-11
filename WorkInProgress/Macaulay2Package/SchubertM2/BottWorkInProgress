@@ -179,47 +179,27 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
     
 symplectify = method()
 symplectify(Matrix) := (M) -> (
-n = numgens target M;
-M = mutableMatrix M;
+      n = numgens target M;
+      M = mutableMatrix M;
 -- Make anti-upper triangular
-for i from 1 to n do(
-      M_(i-1,n-i) = 1;
-      for j from i to (n-1) do(
-            M_(j,n-i) = 0));
+      for i from 1 to n do(
+            M_(i-1,n-i) = 1;
+            for j from i to (n-1) do(
+                  M_(j,n-i) = 0));
 -- f_i and f_(n-i) are "orthogonal" under skew-symmetric bilinear form
-for i from 0 to ((n/2)-2) do M_(n-i-2,i) = (-1)*M_(i,n-i-2);
-M = matrix M;
-return(M))
-    
-symplectifyFour = method()
-symplectifyFour(Matrix) := (F) -> (
-      F = mutableMatrix F;
-      F_(3,0) = 1;
-      F_(2,1) = 1;
-      F_(1,2) = 1;
-      F_(0,3) = 1;
-      F_(3,1) = 0;
-      F_(3,2) = 0;
-      F_(3,3) = 0;
-      F_(2,2) = 0;
-      F_(2,3) = 0;
-      F_(1,3) = 0;
-      F_(2,0) = -1*F_(0,2);
-      F_(1,0) = F_(0,1)+F_(2,0)*F_(1,1);
-      F = matrix F;
-      return F)
-
----- NOT GENERAL ----
-symplectifySix = method()
-symplectifySix(Matrix) := (F) -> (
-      F = mutableMatrix F;
-      F_(0,1) = (-F_(4,0)*F_(1,1)-F_(3,0)*F_(2,1)+F_(2,0)*F_(3,1)+F_(1,0)*F_(4,1)+F_(0,0)*F_(5,1))/F_(5,0);
-      F_(0,4) = (-F_(4,0)*F_(1,4)-F_(3,0)*F_(2,4)+F_(2,0)*F_(3,4)+F_(1,0)*F_(4,4)+F_(0,0)*F_(5,4))/F_(5,0);
-      F_(0,3) = (-F_(4,1)*F_(1,3)-F_(3,1)*F_(2,3)+F_(2,1)*F_(3,3)+F_(1,1)*F_(4,3)+F_(0,1)*F_(5,3))/F_(5,1);
-      F_(1,2) = ((F_(3,0)*F_(5,1)-F_(3,1)*F_(5,0))*F_(2,2)+(-F_(2,0)*F_(5,1)+F_(2,1)*F_(5,0))*F_(3,2)+(-F_(1,0)*F_(5,1)+F_(1,1)*F_(5,0))*F_(4,2)+(-F_(0,0)*F_(5,1)+F_(0,1)*F_(5,0))*F_(5,2))/(-F_(4,0)*F_(5,1)+F_(4,1)*F_(5,0));
-      F_(0,2) = (-F_(4,0)*F_(1,2)-F_(3,0)*F_(2,2)+F_(2,0)*F_(3,2)+F_(1,0)*F_(4,2)+F_(0,0)*F_(5,2))/F_(5,0);
-      F = matrix F;
-      return F)
+      for i from 0 to (sub(n/2,ZZ)-2) do M_(n-i-2,i) = (-1)*M_(i,n-i-2);
+-- Create the symplectic form J
+      J = mutableMatrix(QQ,n,n);
+      half_n = sub(n/2,ZZ);
+      for i from 1 to half_n do J_(n-i,i-1) = 1;
+      for j from half_n+1 to n do J_(n-j,j-1) = -1;
+-- Make 1st half of columns symplectic via J
+      for j from 0 to (sub(n/2,ZZ)-2) do(
+            r = sub(n/2,ZZ)-2-j;
+	    for i from (r+1) to (sub(n/2,ZZ)-1) do(
+	          M_(i,r) = M_(i,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{i}))_(0,0)));
+      M = matrix M;
+      return M)
 
 ------ BELOW ONLY WORKS IF SYMPLECTIC FLAGS ARE USED! ------
 typeCGrassmannianSchubertIdeal = method()
