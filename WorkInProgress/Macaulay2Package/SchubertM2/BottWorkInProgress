@@ -177,14 +177,17 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       F = matrix F;
       return F)
     
-antiTri = method()
-antiTri(Matrix) := (M) -> (
+symplectify = method()
+symplectify(Matrix) := (M) -> (
 n = numgens target M;
 M = mutableMatrix M;
+-- Make anti-upper triangular
 for i from 1 to n do(
       M_(i-1,n-i) = 1;
       for j from i to (n-1) do(
             M_(j,n-i) = 0));
+-- f_i and f_(n-i) are "orthogonal" under skew-symmetric bilinear form
+for i from 0 to ((n/2)-2) do M_(n-i-2,i) = (-1)*M_(i,n-i-2);
 M = matrix M;
 return(M))
     
