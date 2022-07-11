@@ -73,9 +73,9 @@ schubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
 schubertIdeal(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
-      k = flagType_(0)
-      n = flagType_(1)
-      coords = typeAStiefelCoords(k,n,alphas_(0),K);
+      k = flagType_(0);
+      n = flagType_(1);
+      coords = typeAStiefelCoords(k,n,alphas_(0),k);
       R = coords_(1);
       I = ideal(0_R);
       PY = exteriorPower(k,coords_(0));
