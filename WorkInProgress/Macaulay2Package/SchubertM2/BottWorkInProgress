@@ -196,8 +196,9 @@ symplectify(Matrix) := (M) -> (
 -- Make 1st half of columns symplectic via J
       for j from 0 to (sub(n/2,ZZ)-2) do(
             r = sub(n/2,ZZ)-2-j;
-	    for i from (r+1) to (sub(n/2,ZZ)-1) do(
-	          M_(i,r) = M_(i,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{i}))_(0,0)));
+            for i from 0 to (sub(n/2,ZZ)-r-2) do(
+                  s = sub(n/2,ZZ)-1-i;
+	          M_(s,r) = M_(s,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{s}))_(0,0)));
       M = matrix M;
       return M)
 
@@ -302,4 +303,15 @@ typeCLeastLength(List) := (conditions) -> (
             if typeCLength(alpha) < typeCLength(least) then least = alpha;
       return(least))
 
+bubbleSort(List) := (L) -> (
+      n = length(L);
+      sorted = sort(L);
+      swaps = {};
+      while (L != sorted) do(
+            for i from 0 to (n-2) do(
+                  if L_(i) > L_(i+1) then(
+                        swaps = prepend(i,swaps);
+                        L = switch(i,i+1,L);
+                        break)));
+      return(swaps))
 
