@@ -339,3 +339,6 @@ polyRep(List,List) := (S,w) -> (
       for i in w do(
       polyrep = sub(S_(i)(polyrep),QQ[a,b,c,d]));
       return(polyrep))
+
+-- Test: polyRep(S,bubbleSort({1,4,3,2})) 
+-- Returns: a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
