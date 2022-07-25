@@ -315,4 +315,27 @@ bubbleSort(List) := (L) -> (
                         L = switch(i,i+1,L);
                         break)));
       return(swaps))
+      
+----------- NEED TO GENERALIZE --------------
+R = QQ[a,b,c,d]
 
+delta1 = method()
+delta1(Thing) := (f) -> (
+      return (f-sub(f,{a=>b,b=>a}))/(a-b))
+
+delta2 = method()
+delta2(Thing) := (f) -> (
+      return (f-sub(f,{b=>c,c=>b}))/(b-c))
+   
+delta3 = method()
+delta3(Thing) := (f) -> (
+      return (f-sub(f,{c=>d,d=>c}))/(c-d))
+
+S = {delta1,delta2,delat3}
+
+polyRep = method()
+polyRep(List,List) := (S,w) -> (
+      polyrep = a^3*b^2*c;
+      for i in w do(
+      polyrep = sub(S_(i)(polyrep),QQ[a,b,c,d]));
+      return(polyrep))
