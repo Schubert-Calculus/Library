@@ -303,13 +303,14 @@ typeCLeastLength(List) := (conditions) -> (
             if typeCLength(alpha) < typeCLength(least) then least = alpha;
       return(least))
 
+bubbleSort = method()
 bubbleSort(List) := (L) -> (
       n = length(L);
-      sorted = sort(L);
+      sorted = reverse(sort(L));
       swaps = {};
       while (L != sorted) do(
             for i from 0 to (n-2) do(
-                  if L_(i) > L_(i+1) then(
+                  if L_(i) < L_(i+1) then(
                         swaps = prepend(i,swaps);
                         L = switch(i,i+1,L);
                         break)));
