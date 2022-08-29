@@ -164,6 +164,7 @@ allNotGreaterThan(List,ZZ) := (alpha, n) -> (
       if notGreaterThan(beta,alpha) then L = append(L,beta);
       return(L))
 
+-- Osculating Flags
 parametrizedSymplecticFlag = method()
 parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       F = mutableMatrix(QQ,n,n);
