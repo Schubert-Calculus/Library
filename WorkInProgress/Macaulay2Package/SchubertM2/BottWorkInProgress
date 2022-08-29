@@ -75,7 +75,7 @@ schubertIdeal = method()
 schubertIdeal(List,List,List,Ring) := (flagType,alphas,flags,K) -> (
       k = flagType_(0);
       n = flagType_(1);
-      coords = typeAStiefelCoords(k,n,alphas_(0),k);
+      coords = typeAStiefelCoords(k,n,alphas_(0),K);
       R = coords_(1);
       I = ideal(0_R);
       PY = exteriorPower(k,coords_(0));
@@ -315,30 +315,29 @@ bubbleSort(List) := (L) -> (
                         L = switch(i,i+1,L);
                         break)));
       return(swaps))
+
+deltaSwap = method()
+deltaSwap(Thing,Ring,ZZ) := (f,R,k) -> (
+      ringVars = gens R;
+      return sub((f-sub(f,{ringVars_(k)=>ringVars_(k+1),ringVars_(k+1)=>ringVars_(k)}))/(ringVars_(k)-ringVars_(k+1)),R))
       
------------ NEED TO GENERALIZE --------------
-R = QQ[a,b,c,d]
-
-delta1 = method()
-delta1(Thing) := (f) -> (
-      return (f-sub(f,{a=>b,b=>a}))/(a-b))
-
-delta2 = method()
-delta2(Thing) := (f) -> (
-      return (f-sub(f,{b=>c,c=>b}))/(b-c))
-   
-delta3 = method()
-delta3(Thing) := (f) -> (
-      return (f-sub(f,{c=>d,d=>c}))/(c-d))
-
-S = {delta1,delta2,delat3}
-
-polyRep = method()
-polyRep(List,List) := (S,w) -> (
-      polyrep = a^3*b^2*c;
-      for i in w do(
-      polyrep = sub(S_(i)(polyrep),QQ[a,b,c,d]));
-      return(polyrep))
-
--- Test: polyRep(S,bubbleSort({1,4,3,2})) 
+polyRep = method();
+      polyRep(List,Ring) := (w,R) -> (
+            ringVars = gens R;
+            n = length(ringVars);
+            pointclass = 1;
+            for i from 1 to (n-1) do(
+                  pointclass = pointclass*(ringVars_(i-1))^(n-i));
+            polyrep = pointclass;
+            for i in w do(
+            polyrep = deltaSwap(polyrep,R,i));
+            return(polyrep))
+	    
+-- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
 -- Returns: a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
+
+-- Test for printing out all permutations at once:
+-- for perm in permutations({1,2,3,4}) do(
+--       print(perm);
+--       print(polyRep(bubbleSort(perm),QQ[a,b,c,d])))
+-- Returns: All 24 Schubert polynomials for S_4
