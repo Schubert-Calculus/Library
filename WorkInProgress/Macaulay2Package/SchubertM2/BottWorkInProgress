@@ -342,3 +342,16 @@ polyRep = method();
 --       print(perm);
 --       print(polyRep(bubbleSort(perm),QQ[a,b,c,d])))
 -- Returns: All 24 Schubert polynomials for S_4
+
+--------------------- Create the Cohomology Ring for Full Type A Flag Manifolds -----------------------------------
+elementarySymmetricIdeal = method()
+elementarySymmetricIdeal(ZZ) := (n) -> (
+      R = QQ[y_(1)..y_(n)][t];
+      f =1_R;
+      for i from 1 to n do(
+      f = f*(y_(i)+t));
+      coeffs = (coefficients (f-t^n))_(1);
+      S = QQ[y_(1)..y_(n)];
+      I = sub(ideal(coeffs),S);
+      return(S,I,S/I))
+      
