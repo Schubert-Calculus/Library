@@ -381,8 +381,8 @@ elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
       I = sub(ideal(coeffs),S);
       return(S,I,S/I))
       
-elementarySchurDeterminant = method()
-elementarySchurDeterminant(List,ZZ) := (lambda,n) -> (
+elementarySchurDeterminantC = method()
+elementarySchurDeterminantC(List,ZZ) := (lambda,n) -> (
       R = QQ[y_(1)..y_(n)][t];
       f =1_R;
       for i from 1 to n do(
@@ -391,6 +391,23 @@ elementarySchurDeterminant(List,ZZ) := (lambda,n) -> (
       S = QQ[y_(1)..y_(n)];
       fixedElemPolys = {};
       for i from 1 to n do fixedElemPolys = append(fixedElemPolys,sub(elempolys_(i-1),S));
+      M = mutableMatrix(S,n,n);
+      for i from 1 to n do(
+            for j from 1 to n do(
+                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
+                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
+      return determinant(matrix M))
+
+elementarySchurDeterminantB = method()
+elementarySchurDeterminantB(List,ZZ) := (lambda,n) -> (
+      R = QQ[y_(1)..y_(n)][t];
+      f =1_R;
+      for i from 1 to n do(
+            f = f*(y_(i)+t));
+      elempolys = ((coefficients (f-t^n))_(1))_(0);
+      S = QQ[y_(1)..y_(n)];
+      fixedElemPolys = {};
+      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,(1/2)*(sub(elempolys_(i-1),S)));
       M = mutableMatrix(S,n,n);
       for i from 1 to n do(
             for j from 1 to n do(
@@ -426,3 +443,13 @@ signedBubbleSort(List) := (L) -> (
                         L = switch(i,i+1,L);
                         break)));
       return(L,swaps))
+
+deltaSwapC = method()
+deltaSwapC(Thing,Ring) := (f,R) -> (
+      ringVars = gens R;
+      return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(2*ringVars_(-1)),R))
+      
+deltaSwapB = method()
+deltaSwapB(Thing,Ring) := (f,R) -> (
+      ringVars = gens R;
+      return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-1)),R))
