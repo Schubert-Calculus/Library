@@ -397,3 +397,32 @@ elementarySchurDeterminant(List,ZZ) := (lambda,n) -> (
                   if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
                   if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
       return determinant(matrix M))
+
+signedToNot = method()
+signedToNot(List) := (perm) -> (
+      n = length(perm);
+      wnew = {};
+      for i from 1 to n do(
+            if perm_(i-1) > 0 then wnew = append(wnew,perm_(i-1));
+	    if perm_(i-1) < 0 then wnew = append(wnew,2*n+1+perm_(i-1)));
+      return wnew)
+      
+signedBubbleSort = method()
+signedBubbleSort(List) := (L) -> (
+      n = length(L);
+      eventual = {};
+      for i from 1 to n do(
+            eventual = append(eventual,2*n+1-i));
+      swaps = {};
+      while (L != eventual) do(
+            if L == reverse(sort(L)) then(
+	          smallest = L_(-1);
+	          L = drop(L,-1);
+		  L = append(L,2*n+1-smallest);
+		  swaps = prepend(n,swaps));
+            for i from 0 to (n-2) do(
+                  if L_(i) < L_(i+1) then(
+                        swaps = prepend(i,swaps);
+                        L = switch(i,i+1,L);
+                        break)));
+      return(L,swaps))
