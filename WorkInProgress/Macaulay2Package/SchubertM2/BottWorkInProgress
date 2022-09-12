@@ -419,7 +419,7 @@ signedBubbleSort(List) := (L) -> (
 	          smallest = L_(-1);
 	          L = drop(L,-1);
 		  L = append(L,2*n+1-smallest);
-		  swaps = prepend(n,swaps));
+		  swaps = prepend(n-1,swaps));
             for i from 0 to (n-2) do(
                   if L_(i) < L_(i+1) then(
                         swaps = prepend(i,swaps);
