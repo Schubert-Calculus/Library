@@ -355,3 +355,16 @@ elementarySymmetricIdeal(ZZ) := (n) -> (
       I = sub(ideal(coeffs),S);
       return(S,I,S/I))
       
+------------------- Computes intersection numbers of Type A Full Flag Varieties Using Cohomology ---------------------------
+intA = method()
+intA(List,Ring,Ideal) := (alphas,S,I) -> (
+f = 1_S;
+for alpha in alphas do(
+f = f*polyRep(bubbleSort(alpha),S));
+f = f % I;
+return (((coefficients f)_(1))_(0))_(0))
+-- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
+-- Tests: elementarySymmetricIdeal(4) (sets up S and I)
+--       intA({{2,1,3,4},{3,4,2,1}},S,I) (gives 1)
+--       intA({{2,1,3,4},{4,3,1,2}},S,I) (gives error, should be 0)
+--       intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) (gives 2)
