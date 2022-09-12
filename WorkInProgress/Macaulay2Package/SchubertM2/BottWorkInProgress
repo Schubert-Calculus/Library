@@ -331,7 +331,7 @@ polyRep = method();
                   pointclass = pointclass*(ringVars_(i-1))^(n-i));
             polyrep = pointclass;
             for i in w do(
-            polyrep = deltaSwap(polyrep,R,i));
+                  polyrep = deltaSwap(polyrep,R,i));
             return(polyrep))
 	    
 -- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
@@ -442,7 +442,7 @@ signedBubbleSort(List) := (L) -> (
                         swaps = prepend(i,swaps);
                         L = switch(i,i+1,L);
                         break)));
-      return(L,swaps))
+      return(swaps))
 
 deltaSwapC = method()
 deltaSwapC(Thing,Ring) := (f,R) -> (
@@ -453,3 +453,41 @@ deltaSwapB = method()
 deltaSwapB(Thing,Ring) := (f,R) -> (
       ringVars = gens R;
       return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-1)),R))
+
+polyRepC = method()
+polyRepC(List,Ring) := (w,R) -> (
+      ringVars = gens R;
+      n = length(ringVars);
+      pointclass = 1;
+      for i from 1 to (n-1) do(
+            pointclass = pointclass*(ringVars_(i-1))^(n-i));
+      lambda = {};
+      for i from 1 to n do(
+	    lambda = prepend(i,lambda));
+      delta = sub(elementarySchurDeterminantC(lambda,n),R);
+      polyrep = pointclass*delta;
+      for i in w do(
+	    if (i != n-1) then(
+                  polyrep = deltaSwap(polyrep,R,i));
+            if (i == n-1) then(
+		  polyrep = deltaSwapC(polyrep,R)));
+      return(polyrep))
+      
+polyRepB = method()
+polyRepB(List,Ring) := (w,R) -> (
+      ringVars = gens R;
+      n = length(ringVars);
+      pointclass = 1;
+      for i from 1 to (n-1) do(
+            pointclass = pointclass*(ringVars_(i-1))^(n-i));
+      lambda = {};
+      for i from 1 to n do(
+	    lambda = prepend(i,lambda));
+      delta = sub(elementarySchurDeterminantB(lambda,n),R);
+      polyrep = pointclass*delta;
+      for i in w do(
+	    if (i != n-1) then(
+                  polyrep = deltaSwap(polyrep,R,i));
+            if (i == n-1) then(
+		  polyrep = deltaSwapB(polyrep,R)));
+      return(polyrep))
