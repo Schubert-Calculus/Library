@@ -491,3 +491,19 @@ polyRepB(List,Ring) := (w,R) -> (
             if (i == n-1) then(
 		  polyrep = deltaSwapB(polyrep,R)));
       return(polyrep))
+
+intC = method()
+intC(List,Ring,Ideal) := (alphas,S,I) -> (
+f = 1_S;
+for alpha in alphas do(
+f = f*polyRepC(signedBubbleSort(signedToNot(alpha)),S));
+f = f % I;
+return (((coefficients f)_(1))_(0))_(0))
+
+intB = method()
+intB(List,Ring,Ideal) := (alphas,S,I) -> (
+f = 1_S;
+for alpha in alphas do(
+f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
+f = f % I;
+return (((coefficients f)_(1))_(0))_(0))
