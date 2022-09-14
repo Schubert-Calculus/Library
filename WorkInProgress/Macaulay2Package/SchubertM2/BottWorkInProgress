@@ -383,8 +383,8 @@ elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
       
 elementarySchurDeterminantC = method()
 elementarySchurDeterminantC(List,ZZ) := (lambda,n) -> (
-      R = QQ[y_(1)..y_(n)][t];
-      f =1_R;
+      Rt = QQ[y_(1)..y_(n)][t];
+      f =1_(Rt);
       for i from 1 to n do(
             f = f*(y_(i)+t));
       elempolys = ((coefficients (f-t^n))_(1))_(0);
@@ -400,8 +400,8 @@ elementarySchurDeterminantC(List,ZZ) := (lambda,n) -> (
 
 elementarySchurDeterminantB = method()
 elementarySchurDeterminantB(List,ZZ) := (lambda,n) -> (
-      R = QQ[y_(1)..y_(n)][t];
-      f =1_R;
+      Rt = QQ[y_(1)..y_(n)][t];
+      f =1_(Rt);
       for i from 1 to n do(
             f = f*(y_(i)+t));
       elempolys = ((coefficients (f-t^n))_(1))_(0);
