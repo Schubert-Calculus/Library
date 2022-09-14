@@ -548,7 +548,6 @@ signedBubbleSortD(List) := (L) -> (
                         swaps = prepend(i,swaps);
                         L = switch(i,i+1,L);
                         break)));
-      print(L);
       return(swaps))
 
 deltaSwapD = method()
