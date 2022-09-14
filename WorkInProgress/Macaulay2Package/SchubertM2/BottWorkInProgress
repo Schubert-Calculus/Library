@@ -559,6 +559,24 @@ deltaSwapD(Thing,Ring) := (f,R) -> (
       
 ----- NOTE: NEED TO MAKE A SCHUR DETERMINANT FOR TYPE D TO BE ABLE TO USE polyRepD PROPERLY! -----      
       
+elementarySchurDeterminantD = method()
+elementarySchurDeterminantD(List,ZZ) := (lambda,n) -> (
+      Rt = QQ[y_(1)..y_(n)][t];
+      f =1_(Rt);
+      for i from 1 to n do(
+            f = f*(y_(i)+t));
+      elempolys = ((coefficients (f-t^n))_(1))_(0);
+      S = QQ[y_(1)..y_(n)];
+      fixedElemPolys = {};
+      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,(1/2)*(sub(elempolys_(i-1),S)));
+      M = mutableMatrix(S,n-1,n-1);
+      for i from 1 to (n-1) do(
+            for j from 1 to (n-1) do(
+                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
+                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
+      print(M);
+      return determinant(matrix M))      
+      
 polyRepD = method()
 polyRepD(List,Ring) := (w,R) -> (
       ringVars = gens R;
@@ -569,7 +587,7 @@ polyRepD(List,Ring) := (w,R) -> (
       lambda = {};
       for i from 1 to (n-1) do(
 	    lambda = prepend(i,lambda));
-      delta = sub(elementarySchurDeterminantB(lambda,n-1),R);
+      delta = sub(elementarySchurDeterminantD(lambda,n),R);
       polyrep = pointclass*delta;
       for i in w do(
 	    if (i != n-1) then(
