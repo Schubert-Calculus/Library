@@ -494,19 +494,19 @@ polyRepB(List,Ring) := (w,R) -> (
 
 intC = method()
 intC(List,Ring,Ideal) := (alphas,S,I) -> (
-f = 1_S;
-for alpha in alphas do(
-f = f*polyRepC(signedBubbleSort(signedToNot(alpha)),S));
-f = f % I;
-return (((coefficients f)_(1))_(0))_(0))
+      f = 1_S;
+      for alpha in alphas do(
+            f = f*polyRepC(signedBubbleSort(signedToNot(alpha)),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
 
 intB = method()
 intB(List,Ring,Ideal) := (alphas,S,I) -> (
-f = 1_S;
-for alpha in alphas do(
-f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
-f = f % I;
-return (((coefficients f)_(1))_(0))_(0))
+      f = 1_S;
+      for alpha in alphas do(
+            f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
 
 ---------------------------- Type D Version of Everything ---------------------------------------
 
@@ -524,3 +524,61 @@ elementarySymmetricDIdeal(ZZ) := (n) -> (
       S = QQ[y_(1)..y_(n)];
       I = sub(ideal(coeffs,prod),S);
       return(S,I,S/I))
+
+signedBubbleSortD = method()
+signedBubbleSortD(List) := (L) -> (
+      n = length(L);
+      eventual = {};
+      for i from 1 to (n-1) do(
+            eventual = append(eventual,2*n+1-i));
+      if (n % 2 == 0) then eventual = append(eventual,n+1);
+      if (n % 2 != 0) then eventual = append(eventual,n);
+      swaps = {};
+      while (L != eventual) do(
+            if L == reverse(sort(L)) then(
+	          smallest = L_(-1);
+		  nextSmallest = L_(-2);
+	          L = drop(L,-1);
+		  L = drop(L,-1);
+		  L = append(L,2*n+1-smallest);
+		  L = append(L,2*n+1-nextSmallest);
+		  swaps = prepend(n-1,swaps));
+            for i from 0 to (n-2) do(
+                  if L_(i) < L_(i+1) then(
+                        swaps = prepend(i,swaps);
+                        L = switch(i,i+1,L);
+                        break)));
+      print(L);
+      return(swaps))
+
+deltaSwapD = method()
+deltaSwapD(Thing,Ring) := (f,R) -> (
+      ringVars = gens R;
+      return sub((f-sub(f,{ringVars_(-2)=>(-1)*ringVars_(-1),ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-2)+ringVars_(-1)),R))
+      
+polyRepD = method()
+polyRepD(List,Ring) := (w,R) -> (
+      ringVars = gens R;
+      n = length(ringVars);
+      pointclass = 1;
+      for i from 1 to (n-1) do(
+            pointclass = pointclass*(ringVars_(i-1))^(n-i));
+      lambda = {};
+      for i from 1 to (n-1) do(
+	    lambda = prepend(i,lambda));
+      delta = sub(elementarySchurDeterminantB(lambda,n-1),R);
+      polyrep = pointclass*delta;
+      for i in w do(
+	    if (i != n-1) then(
+                  polyrep = deltaSwap(polyrep,R,i));
+            if (i == n-1) then(
+		  polyrep = deltaSwapD(polyrep,R)));
+      return(polyrep))
+  
+intD = method()
+intD(List,Ring,Ideal) := (alphas,S,I) -> (
+      f = 1_S;
+      for alpha in alphas do(
+            f = f*polyRepD(signedBubbleSortD(signedToNot(alpha)),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
