@@ -375,7 +375,7 @@ elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
       R = QQ[y_(1)..y_(n)][t];
       f =1_R;
       for i from 1 to n do(
-      f = f*(y_(i)^2+t));
+            f = f*(y_(i)^2+t));
       coeffs = (coefficients (f-t^n))_(1);
       S = QQ[y_(1)..y_(n)];
       I = sub(ideal(coeffs),S);
@@ -507,3 +507,20 @@ for alpha in alphas do(
 f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
 f = f % I;
 return (((coefficients f)_(1))_(0))_(0))
+
+---------------------------- Type D Version of Everything ---------------------------------------
+
+elementarySymmetricDIdeal = method()
+elementarySymmetricDIdeal(ZZ) := (n) -> (
+      R = QQ[y_(1)..y_(n)][t];
+      f =1_R;
+      squareProd = 1_R;
+      prod = 1_R;
+      for i from 1 to n do(
+            f = f*(y_(i)^2+t);
+	    squareProd = squareProd*((y_(i))^2);
+	    prod = prod*(y_(i)));
+      coeffs = (coefficients (f-t^n-squareProd))_(1);
+      S = QQ[y_(1)..y_(n)];
+      I = sub(ideal(coeffs,prod),S);
+      return(S,I,S/I))
