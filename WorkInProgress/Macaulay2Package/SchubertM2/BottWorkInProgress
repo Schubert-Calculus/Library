@@ -514,10 +514,10 @@ intB(List,Ring,Ideal) := (alphas,S,I) -> (
 
 elementarySymmetricDIdeal = method()
 elementarySymmetricDIdeal(ZZ) := (n) -> (
-      R = QQ[y_(1)..y_(n)][t];
-      f =1_R;
-      squareProd = 1_R;
-      prod = 1_R;
+      Rt = QQ[y_(1)..y_(n)][t];
+      f =1_(Rt);
+      squareProd = 1_(Rt);
+      prod = 1_(Rt);
       for i from 1 to n do(
             f = f*(y_(i)^2+t);
 	    squareProd = squareProd*((y_(i))^2);
