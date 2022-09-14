@@ -555,7 +555,7 @@ signedBubbleSortD(List) := (L) -> (
 deltaSwapD = method()
 deltaSwapD(Thing,Ring) := (f,R) -> (
       ringVars = gens R;
-      return sub((f-sub(f,{ringVars_(-2)=>(-1)*ringVars_(-1),ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-2)+ringVars_(-1)),R))
+      return sub((f-sub(f,{ringVars_(-2)=>(-1)*ringVars_(-1),ringVars_(-1)=>(-1)*ringVars_(-2)}))/(ringVars_(-2)+ringVars_(-1)),R))
       
 ----- NOTE: NEED TO MAKE A SCHUR DETERMINANT FOR TYPE D TO BE ABLE TO USE polyRepD PROPERLY! -----      
       
