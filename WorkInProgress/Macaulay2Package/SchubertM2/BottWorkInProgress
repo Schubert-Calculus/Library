@@ -574,7 +574,6 @@ elementarySchurDeterminantD(List,ZZ) := (lambda,n) -> (
             for j from 1 to (n-1) do(
                   if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
                   if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
-      print(M);
       return determinant(matrix M))      
       
 polyRepD = method()
