@@ -274,8 +274,7 @@ typeALength(List,ZZ) := (w,n) -> (
       for i from 1 to n do
             for j from i+1 to n do
                   if w_(i-1) > w_(j-1) then count = count+1;
-      return(count)
-)
+      return(count))
 
 typeCLength = method()
 typeCLength(List) := (w) -> (
@@ -287,8 +286,7 @@ typeCLength(List) := (w) -> (
       for i from 1 to n do
             for j from i to n do
                   if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
-      return(count)
-)
+      return(count))
 
 typeALeastLength = method()
 typeALeastLength(List,ZZ) := (conditions,n) -> (
@@ -510,6 +508,18 @@ intB(List,Ring,Ideal) := (alphas,S,I) -> (
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
 
+typeBLength = method()
+typeBLength(List) := (w) -> (
+      n = length(w);
+      count = 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      for i from 1 to n do
+            for j from i to n do
+                  if w_(i-1) + w_(j-1) > 2*n+2 then count = count+1;
+      return(count))
+
 ---------------------------- Type D Version of Everything ---------------------------------------
 
 elementarySymmetricDIdeal = method()
@@ -602,3 +612,15 @@ intD(List,Ring,Ideal) := (alphas,S,I) -> (
             f = f*polyRepD(signedBubbleSortD(signedToNot(alpha)),S));
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
+
+typeDLength = method()
+typeDLength(List) := (w) -> (
+      n = length(w);
+      count = 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
+      return(count))
