@@ -624,3 +624,23 @@ typeDLength(List) := (w) -> (
             for j from i+1 to n do
                   if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
       return(count))
+
+---------------------------- PARTIAL FLAG SCHUBERT COMPUTATIONS ------------------------------------
+
+-- flagType a list of the form {a_1,a_2,...,a_s,n}
+partialIntA = method()
+partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l = length(flagType);
+      first = flagType_(0);
+      n = flagType_(-1);
+      newAlphas = {};
+      for alpha in alphas do(
+            newAlphas = append(newAlphas,completePermutation(alpha)));
+      dualClass = {};
+      for i from 1 to first do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (l-1) do(
+            for j from (flagType_(i-1) + 1) to flagType_(i) do(
+	          dualClass = prepend(j,dualClass));
+      newAlphas = append(newAlphas,dualClass);
+      return(intA(newAlphas,S,I)))
