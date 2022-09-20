@@ -637,10 +637,10 @@ partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
       for alpha in alphas do(
             newAlphas = append(newAlphas,completePermutation(alpha)));
       dualClass = {};
+      for k from 1 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass));
       for i from 1 to first do(
             dualClass = prepend(i,dualClass));
-      for i from 1 to (l-1) do(
-            for j from (flagType_(i-1) + 1) to flagType_(i) do(
-	          dualClass = prepend(j,dualClass));
       newAlphas = append(newAlphas,dualClass);
       return(intA(newAlphas,S,I)))
