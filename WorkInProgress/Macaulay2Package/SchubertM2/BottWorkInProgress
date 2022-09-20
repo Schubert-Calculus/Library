@@ -631,16 +631,16 @@ typeDLength(List) := (w) -> (
 partialIntA = method()
 partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
       l = length(flagType);
-      first = flagType_(0);
       n = flagType_(-1);
       newAlphas = {};
       for alpha in alphas do(
-            newAlphas = append(newAlphas,completePermutation(alpha)));
+            newAlpha = completePermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
       dualClass = {};
       for k from 1 to (l-1) do(
             for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
-	          dualClass = prepend(j,dualClass));
-      for i from 1 to first do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
             dualClass = prepend(i,dualClass));
       newAlphas = append(newAlphas,dualClass);
       return(intA(newAlphas,S,I)))
