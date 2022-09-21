@@ -262,10 +262,8 @@ randomSecantFlag(ZZ,Ring) := (n,R) -> (
 completePermutation = method(TypicalValue=>List)
 completePermutation(List,ZZ):=(w,n) ->(
 	for i from 1 to n do(
-		if isSubset({i},w)==false then w=append(w,i);
-	),
-  return(w)
-)
+		if isSubset({i},w)==false then w=append(w,i));
+        return(w))
 
 typeALength = method()
 typeALength(List,ZZ) := (w,n) -> (
@@ -644,3 +642,9 @@ partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
             dualClass = prepend(i,dualClass));
       newAlphas = append(newAlphas,dualClass);
       return(intA(newAlphas,S,I)))
+
+completeSignedPermutation = method()
+completeSignedPermutation(List,ZZ) := (w,n) -> (
+      for i from 1 to n do(
+		if (isSubset({i},w)==false and isSubset({-i},w)==false) then w=append(w,i));
+      return(w))
