@@ -648,3 +648,62 @@ completeSignedPermutation(List,ZZ) := (w,n) -> (
       for i from 1 to n do(
 		if (isSubset({i},w)==false and isSubset({-i},w)==false) then w=append(w,i));
       return(w))
+
+partialIntC = method()
+partialIntC(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l = length(flagType);
+      n = flagType_(-1);
+      newAlphas = {};
+      for alpha in alphas do(
+            newAlpha = completeSignedPermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass = {};
+      for k from 2 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (n-flagType_(-2)) do(
+            dualClass = append(dualClass,-i));
+      newAlphas = append(newAlphas,dualClass);
+      return(intC(newAlphas,S,I)))
+      
+partialIntB = method()
+partialIntB(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l = length(flagType);
+      n = flagType_(-1);
+      newAlphas = {};
+      for alpha in alphas do(
+            newAlpha = completeSignedPermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass = {};
+      for k from 2 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (n-flagType_(-2)) do(
+            dualClass = append(dualClass,-i));
+      newAlphas = append(newAlphas,dualClass);
+      return(intB(newAlphas,S,I)))
+      
+partialIntD = method()
+partialIntD(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l = length(flagType);
+      n = flagType_(-1);
+      newAlphas = {};
+      for alpha in alphas do(
+            newAlpha = completeSignedPermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass = {};
+      for k from 2 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (n-flagType_(-2)-1) do(
+            dualClass = append(dualClass,-i));
+      if (n-flagType_(-2) % 2 == 0) then dualClass = append(dualClass,n-flagType_(-2));
+      if (n-flagType_(-2) % 2 != 0) then dualClass = append(dualClass,flagType_(-2)-n);
+      newAlphas = append(newAlphas,dualClass);
+      return(intC(newAlphas,S,I)))
