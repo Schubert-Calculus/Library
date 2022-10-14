@@ -24,7 +24,7 @@
 -- and their Schubert subvarieties into larger flag varieties, while dimension is not. 
 
 -- Inputs: 
--- (1) flagshape, a list {a_1,...,a_s,n}
+-- (1) flagshape, a list {a_1,...,a_s,n}.
 -- (2) alpha, a list {alpha_1,...,alpha_(a_s)} giving a Schubert condition of that shape.
 
 -- Outputs:
@@ -61,3 +61,15 @@ dimToCodim(List,List) := (flagshape,alpha) -> (
 -- with respect to how that variety intersects the standard opposite flag (reverse identity on anti-diagonal, all other entries zero). In particular,
 -- these coordinates are given in terms of a matrix with identity matrix in rows indexed by the Schubert condition, and with zeros above and to the 
 -- left of the leading ones. Here we use codimension convention, and index rows from top to bottom.
+
+-- Inputs:
+-- (1) flagshape, a list {a_1,...,a_s,n}.
+-- (2) alpha, a list {alpha_1,...,alpha_(a_s)} giving a Schubert condition of that shape.
+-- (3) K, a coefficient field for our polynomial ring.
+
+-- Outputs:
+-- (1) M, a matrix giving Stiefel coordinates for the Schubert variety given by flagshape and alpha.
+-- (2) R, a minimal polynomial ring whose generators are the intdeterminates in M, with number of generators the dimension of the Schubert variety.
+
+-- Code:
+
