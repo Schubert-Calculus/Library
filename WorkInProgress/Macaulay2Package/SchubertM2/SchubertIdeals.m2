@@ -53,3 +53,11 @@ dimToCodim(List,List) := (flagshape,alpha) -> (
 --     (just to have a more complicated example)
 
 ------------------------------
+-- typeAStiefelCoords --
+
+-- Function: 
+-- Takes in a flag shape and Schubert condition for that shape, along with a coefficient field K, and returns the Stiefel coordinates for the 
+-- correspoding type A Schubert variety. These Stiefel coordinates are specific local coordinates for the (smooth) points of the Schubert variety
+-- with respect to how that variety intersects the standard opposite flag (reverse identity on anti-diagonal, all other entries zero). In particular,
+-- these coordinates are given in terms of a matrix with identity matrix in rows indexed by the Schubert condition, and with zeros above and to the 
+-- left of the leading ones. Here we use codimension convention, and index rows from top to bottom.
