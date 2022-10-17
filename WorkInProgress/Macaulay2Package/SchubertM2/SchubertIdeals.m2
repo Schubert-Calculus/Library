@@ -101,3 +101,6 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
 -----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
+
+-- Tests:
+-- (1) typeAStiefelCoords({2,4},{1,2},QQ)
