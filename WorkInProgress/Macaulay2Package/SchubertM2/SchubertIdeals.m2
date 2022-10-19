@@ -92,22 +92,37 @@ splitPermutation(List,List) := (flagshape,alpha) -> (
 
 typeAStiefelCoords = method()
 typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
--- Define ring of variables
-      k = flagshape_(-2);
       n = flagshape_(-1);
-      S = K[x_(1,1)..x_(n,k)];
--- Define matrix of correct size (and over the correct ring) that we can manipulate
+      a_s = flagshape_(-2);
+      S = K[x_(1,1)..x_(n,a_s)];
+      alphalist = splitPermutation(flagshape,alpha);
+      firstalpha = alphalist_(0);
+      k = length(firstalpha);
+-- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subalpha
       M = mutableMatrix(S,n,k);
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
-      for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+      for i from 1 to k do M_(firstalpha_(i-1)-1,i-1) = 1;
 -- Set variables below the leading 1's
       for j from 1 to k do
-      for i from alpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
+      for i from firstalpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
 -- Set to 0 all entries above and to the left of leading 1's
       for i from 1 to k do
-      for j from 1 to i-1 do M_(alpha_(i-1)-1,j-1) = 0;
+      for j from 1 to i-1 do M_(firstalpha_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable
       M = matrix M;
+-- Remove firstalpha from alphalist
+      alphalist = delete(firstalpha,alphalist);
+-- Now repeat and concatenate
+      for subalpha in alphalist do(
+            k = length(subalpha);
+            N = mutableMatrix(S,n,k);
+            for i from 1 to k do N_(subalpha_(i-1)-1,i-1) = 1;
+            for j from 1 to k do
+            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j);
+            for i from 1 to k do
+            for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
+            N = matrix N;
+            M = M | N);
 -- Create a new ring with variables only those that show up in the matrix M
       R = K[support M];
 -- Make it so that M is a matrix over the new ring
@@ -118,6 +133,6 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
 -----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
-
+      
 -- Tests:
 -- (1) typeAStiefelCoords({2,4},{1,2},QQ)
