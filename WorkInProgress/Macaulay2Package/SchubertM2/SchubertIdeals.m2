@@ -71,32 +71,49 @@ dimToCodim(List,List) := (flagshape,alpha) -> (
 -- (1) M, a matrix giving Stiefel coordinates for the Schubert variety given by flagshape and alpha.
 -- (2) R, a polynomial ring whose generators are the intdeterminates in M, with number of generators the dimension of the Schubert variety.
 
+-- Helper Function:
+
+splitPermutation = method()
+splitPermutation(List,List) := (flagshape,alpha) -> (
+      gaps = {flagshape_(0)};
+      for i from 1 to (length(flagshape)-2) do(
+            gaps = append(gaps,flagshape_(i)-flagshape_(i-1)));
+      splitperm = {};
+      copyalpha = alpha;
+      for gap in gaps do(
+            subalpha = {};
+            for i from 0 to (gap-1) do(
+                  subalpha = append(subalpha,copyalpha_(0));
+                  copyalpha = delete(copyalpha_(0),copyalpha));
+            splitperm = append(splitperm,subalpha));
+      return(splitperm))
+
 -- Code:
 
 typeAStiefelCoords = method()
 typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 -- Define ring of variables
-     k = flagshape_(-2);
-     n = flagshape_(-1);
-     S = K[x_(1,1)..x_(n,k)];
+      k = flagshape_(-2);
+      n = flagshape_(-1);
+      S = K[x_(1,1)..x_(n,k)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
-     M = mutableMatrix(S,n,k);
+      M = mutableMatrix(S,n,k);
 -- Set leading ones in kxk identity submatrix with rows indexed by alpha
-     for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
+      for i from 1 to k do M_(alpha_(i-1)-1,i-1) = 1;
 -- Set variables below the leading 1's
-     for j from 1 to k do
-     for i from alpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
+      for j from 1 to k do
+      for i from alpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
 -- Set to 0 all entries above and to the left of leading 1's
-     for i from 1 to k do
-     for j from 1 to i-1 do M_(alpha_(i-1)-1,j-1) = 0;
+      for i from 1 to k do
+      for j from 1 to i-1 do M_(alpha_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable
-     M = matrix M;
+      M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
-     R = K[support M];
+      R = K[support M];
 -- Make it so that M is a matrix over the new ring
-     M = sub(M,R);
+      M = sub(M,R);
 -- Return Stiefel coordinates and new ring
-     {M, R})
+      return({M, R}))
      
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
