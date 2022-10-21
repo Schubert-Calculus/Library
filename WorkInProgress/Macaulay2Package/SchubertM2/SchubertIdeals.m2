@@ -113,17 +113,19 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       M = matrix M;
 -- Remove firstalpha from alphalist
       alphalist = delete(firstalpha,alphalist);
--- Now repeat and concatenate
+-- Now repeat and concatenate the matrices
+      indexshift = length(firstalpha);
       for subalpha in alphalist do(
             k = length(subalpha);
             N = mutableMatrix(S,n,k);
             for i from 1 to k do N_(subalpha_(i-1)-1,i-1) = 1;
             for j from 1 to k do
-            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j);
+            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
             for i from 1 to k do
             for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
             N = matrix N;
             M = M | N);
+            indexshift = indexshift + k;
 -- Create a new ring with variables only those that show up in the matrix M
       R = K[support M];
 -- Make it so that M is a matrix over the new ring
