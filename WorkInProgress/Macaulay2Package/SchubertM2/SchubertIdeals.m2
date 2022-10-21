@@ -124,8 +124,8 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
             for i from 1 to k do
             for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
             N = matrix N;
-            M = M | N);
-            indexshift = indexshift + k;
+            M = M | N;
+            indexshift = indexshift + k);
 -- Create a new ring with variables only those that show up in the matrix M
       R = K[support M];
 -- Make it so that M is a matrix over the new ring
