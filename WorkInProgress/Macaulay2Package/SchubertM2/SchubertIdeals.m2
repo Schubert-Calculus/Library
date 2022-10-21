@@ -72,6 +72,7 @@ dimToCodim(List,List) := (flagshape,alpha) -> (
 -- (2) R, a polynomial ring whose generators are the intdeterminates in M, with number of generators the dimension of the Schubert variety.
 
 -- Helper Function:
+-- (splits alpha up into a list of lists determined by flagshape)
 
 splitPermutation = method()
 splitPermutation(List,List) := (flagshape,alpha) -> (
