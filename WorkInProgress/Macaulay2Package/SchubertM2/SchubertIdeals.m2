@@ -135,4 +135,12 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 -----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
       
 -- Tests:
--- (1) typeAStiefelCoords({2,4},{1,2},QQ)
+-- (All big cells in 4-space)
+-- (1) typeAStiefelCoords({1,4},{1},QQ)
+-- (2) typeAStiefelCoords({2,4},{1,2},QQ)
+-- (3) typeAStiefelCoords({1,2,4},{1,2},QQ)
+-- (4) typeAStiefelCoords({3,4},{1,2,3},QQ)
+-- (5) typeAStiefelCoords({1,3,4},{1,2,3},QQ)
+-- (6) typeAStiefelCoords({2,3,4},{1,2,3},QQ)
+-- (7) typeAStiefelCoords({1,2,3,4},{1,2,3},QQ)
+-- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ)
