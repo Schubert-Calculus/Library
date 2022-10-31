@@ -98,16 +98,16 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       S = K[x_(1,1)..x_(n,a_s)];
       alphalist = splitPermutation(flagshape,alpha);
       firstalpha = alphalist_(0);
-      k = length(firstalpha);
+      l = length(firstalpha);
 -- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subalpha
-      M = mutableMatrix(S,n,k);
--- Set leading ones in kxk identity submatrix with rows indexed by alpha
-      for i from 1 to k do M_(firstalpha_(i-1)-1,i-1) = 1;
+      M = mutableMatrix(S,n,l);
+-- Set leading ones in lxl identity submatrix with rows indexed by alpha
+      for i from 1 to l do M_(firstalpha_(i-1)-1,i-1) = 1;
 -- Set variables below the leading 1's
-      for j from 1 to k do
+      for j from 1 to l do
       for i from firstalpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
 -- Set to 0 all entries above and to the left of leading 1's
-      for i from 1 to k do
+      for i from 1 to l do
       for j from 1 to i-1 do M_(firstalpha_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable
       M = matrix M;
@@ -116,16 +116,16 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 -- Now repeat and concatenate the matrices
       indexshift = length(firstalpha);
       for subalpha in alphalist do(
-            k = length(subalpha);
-            N = mutableMatrix(S,n,k);
-            for i from 1 to k do N_(subalpha_(i-1)-1,i-1) = 1;
-            for j from 1 to k do
+            l = length(subalpha);
+            N = mutableMatrix(S,n,l);
+            for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
+            for j from 1 to l do
             for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
-            for i from 1 to k do
+            for i from 1 to l do
             for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
             N = matrix N;
             M = M | N;
-            indexshift = indexshift + k);
+            indexshift = indexshift + l);
 -- Create a new ring with variables only those that show up in the matrix M
       R = K[support M];
 -- Make it so that M is a matrix over the new ring
@@ -147,3 +147,65 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 -- (6) typeAStiefelCoords({2,3,4},{1,2,3},QQ)
 -- (7) typeAStiefelCoords({1,2,3,4},{1,2,3},QQ)
 -- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ)
+
+------------------------------
+notGreaterThan = method(TypicalValue=>Boolean)
+notGreaterThan(List,List) := (beta,alpha) -> (
+      NotGreaterThan = false;
+      for i from 1 to length(beta) do
+      if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
+      return(NotGreaterThan))
+      
+allNotGreaterThan = method()
+allNotGreaterThan(List,ZZ) := (alpha, n) -> (
+      L = {};
+      for beta in subsets(splice {1..n},length(alpha)) do
+      if notGreaterThan(beta,alpha) then L = append(L,beta);
+      return(L))
+
+cauchyBinetCoefficients = method()
+cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) -> (
+      k = grassmannianshape_(0);
+      n = grassmannianshape_(1);
+      Finv = inverse F;
+      M = mutableMatrix(K,length(betas),binomial(n,k));
+      subs = subsets(splice {1..n},k);
+      kOnes = splice{k:1};
+      for i from 0 to length(betas)-1 do(
+            for j from 0 to binomial(n,k)-1 do(
+                  M_(i,j) = det(submatrix(Finv,betas_(i)-kOnes,subs_(j)-kOnes))));
+      return(matrix M))
+      
+grassmannianSchubertIdeal = method()
+----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
+----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
+grassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
+      k = grassmannianshape_(0);
+      n = grassmannianshape_(1);
+      coords = typeAStiefelCoords(grassmannianshape,alphas_(0),K);
+      R = coords_(1);
+      I = ideal(0_R);
+      PY = exteriorPower(k,coords_(0));
+      for i from 1 to length(alphas)-1 do 
+      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
+      return(I))
+
+typeASchubertIdeal = method()
+typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
+      n = last(flagshape);
+      s = length(flags);
+      subspaces = delete(n,flagshape);
+      matrixshape = {last(subspaces),n};
+      bigRing = (typeAStiefelCoords(matrixshape,alphas_(0),K))#1;
+      eqns = ideal(0_bigRing);
+      for a in subspaces do(
+           conds = {take(alphas_(0),a)};
+           for i from 1 to s do(
+                conds = append(conds,sort(take(alphas_(i),a))));
+           eqns = eqns + sub(grassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
+      return(eqns))
+
+numSolsA = method()
+numSolsA(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
+      I = typeASchubertIdeal(flagshape,alphas,flags,K);
+      return (dim I, degree I))
