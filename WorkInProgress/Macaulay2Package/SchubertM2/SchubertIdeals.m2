@@ -126,6 +126,11 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
             N = matrix N;
             M = M | N;
             indexshift = indexshift + l);
+      M = mutableMatrix M;
+      for i from 1 to a_s do(
+            for j from i to a_s-1 do(
+                  M_(alpha_(i-1)-1,j) = 0));
+      M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
       R = K[support M];
 -- Make it so that M is a matrix over the new ring
