@@ -1,6 +1,6 @@
 ------------------------------------
 -- typeAStiefelCoords
-------------------------------------
+-----------------------------------
 -- Computes Stiefel Coordinates for a Type A Flag Variety (including Grassmannians as a special case)
 -- Inputs: k, the dimension of the largest proper subspace in our flag variety (if we want 2 planes in 4 planes in 6 space, k = 4)
 --            (do I need to specify the other subspaces instead, or is this enough? If no change, how do I really know based off of
