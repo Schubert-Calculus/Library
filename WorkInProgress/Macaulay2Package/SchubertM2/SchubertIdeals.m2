@@ -181,10 +181,10 @@ cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) 
                   M_(i,j) = det(submatrix(Finv,betas_(i)-kOnes,subs_(j)-kOnes))));
       return(matrix M))
       
-grassmannianSchubertIdeal = method()
+typeAGrassmannianSchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
-grassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
+typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
       k = grassmannianshape_(0);
       n = grassmannianshape_(1);
       coords = typeAStiefelCoords(grassmannianshape,alphas_(0),K);
@@ -206,7 +206,7 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
            conds = {take(alphas_(0),a)};
            for i from 1 to s do(
                 conds = append(conds,sort(take(alphas_(i),a))));
-           eqns = eqns + sub(grassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
+           eqns = eqns + sub(typeAGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
       return(eqns))
 
 numSolsA = method()
@@ -271,6 +271,22 @@ n = flagshape_(-1);
 -- Return Stiefel coordinates and new ring, along with the ideal of relations among the variables and the dimension of that ideal
      {M, R, rels, dim(rels)})
      
+secantFlag = method()
+secantFlag(List,Ring) := (L,R) -> (
+      n = length(L);
+      secantflag = mutableMatrix(R,n,n);
+      for i from 1 to n do
+      for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
+      secantflag = matrix secantflag;
+      return(secantflag))
+
+randomSecantFlag = method()
+randomSecantFlag(ZZ,Ring) := (n,R) -> (
+      L = {};
+      for i from 1 to n do
+      L = append(L,random(R));
+      return(secantFlag(L,R)))
+
 -- Osculating Flags
 parametrizedSymplecticFlag = method()
 parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
@@ -309,3 +325,33 @@ symplectify(Matrix) := (M) -> (
 	          M_(s,r) = M_(s,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{s}))_(0,0)));
       M = matrix M;
       return M)
+
+typeCGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
+      k = grassmannianshape_(0);
+      n = grassmannianshape_(1);
+      coords = typeCStiefelCoords(grassmannianshape,alphas_(0),K);
+      R = coords_(1);
+      I = coords_(2);
+      PY = exteriorPower(k,coords_(0));
+      for i from 1 to length(alphas)-1 do 
+      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),flags_(i-1),n))*PY);
+      return(I))
+      
+typeCSchubertIdeal = method()
+typeCSchubertIdeal(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
+      n = last(flagshape);
+      s = length(flags);
+      subspaces = delete(n,flagshape);
+      bigRing = (typeCStiefelCoords(flagshape,conditions#0,K))#1;
+      eqns = ideal(0_bigRing);
+      for a in subspaces do(
+           conds = {take(conditions#0,a)};
+           for i from 1 to s do(
+                conds = append(conds,sort(take(conditions#i,a))));
+           eqns = eqns + sub(typeCGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
+      return(eqns))
+      
+numSolsC = method()
+numSolsC(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
+      I = typeCSchubertIdeal(flagshape,conditions,flags,K);
+      return (dim I, degree I))
