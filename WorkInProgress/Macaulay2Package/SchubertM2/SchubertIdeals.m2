@@ -1,15 +1,15 @@
-newPackage(
-  "SchubertIdeals",
-  Version => "0.0.1", 
-  Date => "November 11, 2022",
-  Authors => {
-    {Name => "C.J. Bott", Email => "cbott2@tamu.edu"},
-     {Name => "Frank Sottile"},
-  },
-  HomePage => "<FIX>",
-  Headline => "computing ideals of Schubert varieties on flag manifolds",
-  DebuggingMode => false
-)
+--newPackage(
+--  "SchubertIdeals",
+--  Version => "0.0.1", 
+--  Date => "November 11, 2022",
+--  Authors => {
+--    {Name => "C.J. Bott", Email => "cbott2@tamu.edu"},
+--     {Name => "Frank Sottile"},
+--  },
+--  HomePage => "<FIX>",
+--  Headline => "computing ideals of Schubert varieties on flag manifolds",
+--  DebuggingMode => false
+--)
 
 export{
   --Functions
