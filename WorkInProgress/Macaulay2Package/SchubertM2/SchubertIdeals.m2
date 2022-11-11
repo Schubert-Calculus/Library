@@ -91,8 +91,6 @@ splitPermutation(List,List) := (flagshape,alpha) -> (
             splitperm = append(splitperm,subalpha));
       return(splitperm))
 
--- Code:
-
 typeAStiefelCoords = method()
 typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       n = flagshape_(-1);
