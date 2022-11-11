@@ -200,8 +200,7 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       n = last(flagshape);
       s = length(flags);
       subspaces = delete(n,flagshape);
-      matrixshape = {last(subspaces),n};
-      bigRing = (typeAStiefelCoords(matrixshape,alphas_(0),K))#1;
+      bigRing = (typeAStiefelCoords(flagshape,alphas_(0),K))#1;
       eqns = ideal(0_bigRing);
       for a in subspaces do(
            conds = {take(alphas_(0),a)};
