@@ -122,9 +122,9 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
             N = mutableMatrix(S,n,l);
             for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
             for j from 1 to l do
-            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
+                  for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
             for i from 1 to l do
-            for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
+                  for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
             N = matrix N;
             M = M | N;
             indexshift = indexshift + l);
@@ -144,14 +144,14 @@ notGreaterThan = method(TypicalValue=>Boolean)
 notGreaterThan(List,List) := (beta,alpha) -> (
       NotGreaterThan = false;
       for i from 1 to length(beta) do
-      if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
+            if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
       return(NotGreaterThan))
       
 allNotGreaterThan = method()
 allNotGreaterThan(List,ZZ) := (alpha, n) -> (
       L = {};
       for beta in subsets(splice {1..n},length(alpha)) do
-      if notGreaterThan(beta,alpha) then L = append(L,beta);
+            if notGreaterThan(beta,alpha) then L = append(L,beta);
       return(L))
 
 cauchyBinetCoefficients = method()
@@ -178,7 +178,7 @@ typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas
       I = ideal(0_R);
       PY = exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
-      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
+            I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
 
 typeASchubertIdeal = method()
@@ -229,9 +229,9 @@ n = flagshape_(-1);
             N = mutableMatrix(S,n,l);
             for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
             for j from 1 to l do
-            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
+                  for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
             for i from 1 to l do
-            for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
+                  for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
             N = matrix N;
             M = M | N;
             indexshift = indexshift + l);
@@ -262,7 +262,7 @@ secantFlag(List,Ring) := (L,R) -> (
       n = length(L);
       secantflag = mutableMatrix(R,n,n);
       for i from 1 to n do
-      for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
+            for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
       secantflag = matrix secantflag;
       return(secantflag))
 
@@ -270,7 +270,7 @@ randomSecantFlag = method()
 randomSecantFlag(ZZ,Ring) := (n,R) -> (
       L = {};
       for i from 1 to n do
-      L = append(L,random(R));
+            L = append(L,random(R));
       return(secantFlag(L,R)))
 
 -- Osculating Flags
@@ -278,12 +278,12 @@ parametrizedSymplecticFlag = method()
 parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
       F = mutableMatrix(QQ,n,n);
       for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
-      for j from 1 to n-1 do 
-      for k from j to n-1 do
-      F_(k,j) = F_(k-1,j-1);
+            for j from 1 to n-1 do 
+                  for k from j to n-1 do
+                        F_(k,j) = F_(k-1,j-1);
       for l from sub(n/2,ZZ) to n-1 do if odd l then
-      for m from 0 to n-1 do
-      F_(l,m) = -1*F_(l,m);
+            for m from 0 to n-1 do
+                  F_(l,m) = -1*F_(l,m);
       F = matrix F;
       return F)
     
@@ -321,7 +321,7 @@ typeCGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas
       I = coords_(2);
       PY = exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
-      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
+            I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
       
 typeCSchubertIdeal = method()
@@ -423,17 +423,7 @@ polyRep = method();
             for i in w do(
                   polyrep = deltaSwap(polyrep,R,i));
             return(polyrep))
-	    
--- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
--- Returns: a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
 
--- Test for printing out all permutations at once:
--- for perm in permutations({1,2,3,4}) do(
---       print(perm);
---       print(polyRep(bubbleSort(perm),QQ[a,b,c,d])))
--- Returns: All 24 Schubert polynomials for S_4
-
---------------------- Create the Cohomology Ring for Full Type A Flag Manifolds -----------------------------------
 elementarySymmetricIdeal = method()
 elementarySymmetricIdeal(ZZ) := (n) -> (
       R = QQ[y_(1)..y_(n)][t];
@@ -445,21 +435,14 @@ elementarySymmetricIdeal(ZZ) := (n) -> (
       I = sub(ideal(coeffs),S);
       return(S,I,S/I))
       
-------------------- Computes intersection numbers of Type A Full Flag Varieties Using Cohomology ---------------------------
 intA = method()
 intA(List,Ring,Ideal) := (alphas,S,I) -> (
-f = 1_S;
-for alpha in alphas do(
-f = f*polyRep(bubbleSort(alpha),S));
-f = f % I;
-return (((coefficients f)_(1))_(0))_(0))
--- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
--- Tests: elementarySymmetricIdeal(4) (sets up S and I)
---       intA({{2,1,3,4},{3,4,2,1}},S,I) (gives 1)
---       intA({{2,1,3,4},{4,3,1,2}},S,I) (gives error, should be 0)
---       intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) (gives 2)
+      f = 1_S;
+      for alpha in alphas do(
+            f = f*polyRep(bubbleSort(alpha),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
 
----------------------------- Type B and C Versions of Everything ---------------------------------------
 elementarySymmetricSquaresIdeal = method()
 elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
       R = QQ[y_(1)..y_(n)][t];
@@ -544,8 +527,6 @@ deltaSwapB(Thing,Ring) := (f,R) -> (
       ringVars = gens R;
       return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-1)),R))
 
----- NOTE: all polyRepB/C/D methods require R to be in terms of variables y_1..y_n, not a,b,c, etc. FIX THIS! ---
-
 polyRepC = method()
 polyRepC(List,Ring) := (w,R) -> (
       ringVars = gens R;
@@ -599,8 +580,6 @@ intB(List,Ring,Ideal) := (alphas,S,I) -> (
             f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
-
----------------------------- Type D Version of Everything ---------------------------------------
 
 elementarySymmetricDIdeal = method()
 elementarySymmetricDIdeal(ZZ) := (n) -> (
