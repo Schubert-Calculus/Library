@@ -73,3 +73,20 @@
 -- (6) typeAStiefelCoords({2,3,4},{1,2,3},QQ)
 -- (7) typeAStiefelCoords({1,2,3,4},{1,2,3},QQ)
 -- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ)
+
+-- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
+-- Returns: a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
+
+-- Test for printing out all permutations at once:
+-- for perm in permutations({1,2,3,4}) do(
+--       print(perm);
+--       print(polyRep(bubbleSort(perm),QQ[a,b,c,d])))
+-- Returns: All 24 Schubert polynomials for S_4
+
+-- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
+-- Tests: elementarySymmetricIdeal(4) (sets up S and I)
+--       intA({{2,1,3,4},{3,4,2,1}},S,I) (gives 1)
+--       intA({{2,1,3,4},{4,3,1,2}},S,I) (gives error, should be 0)
+--       intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) (gives 2)
+
+---- NOTE: all polyRepB/C/D methods require R to be in terms of variables y_1..y_n, not a,b,c, etc. FIX THIS! ---
