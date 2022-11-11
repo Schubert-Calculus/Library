@@ -334,7 +334,7 @@ typeCGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas
       I = coords_(2);
       PY = exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
-      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),flags_(i-1),n))*PY);
+      I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
       
 typeCSchubertIdeal = method()
