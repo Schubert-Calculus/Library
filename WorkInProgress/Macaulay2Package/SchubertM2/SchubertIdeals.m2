@@ -213,3 +213,99 @@ numSolsA = method()
 numSolsA(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       I = typeASchubertIdeal(flagshape,alphas,flags,K);
       return (dim I, degree I))
+
+typeCStiefelCoords = method()
+typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
+n = flagshape_(-1);
+      a_s = flagshape_(-2);
+      S = K[x_(1,1)..x_(n,a_s)];
+      alphalist = splitPermutation(flagshape,alpha);
+      firstalpha = alphalist_(0);
+      l = length(firstalpha);
+-- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subalpha
+      M = mutableMatrix(S,n,l);
+-- Set leading ones in lxl identity submatrix with rows indexed by alpha
+      for i from 1 to l do M_(firstalpha_(i-1)-1,i-1) = 1;
+-- Set variables below the leading 1's
+      for j from 1 to l do
+      for i from firstalpha_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
+-- Set to 0 all entries above and to the left of leading 1's
+      for i from 1 to l do
+      for j from 1 to i-1 do M_(firstalpha_(i-1)-1,j-1) = 0;
+-- Make matrix non-mutable
+      M = matrix M;
+-- Remove firstalpha from alphalist
+      alphalist = delete(firstalpha,alphalist);
+-- Now repeat and concatenate the matrices
+      indexshift = length(firstalpha);
+      for subalpha in alphalist do(
+            l = length(subalpha);
+            N = mutableMatrix(S,n,l);
+            for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
+            for j from 1 to l do
+            for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
+            for i from 1 to l do
+            for j from 1 to i-1 do N_(subalpha_(i-1)-1,j-1) = 0;
+            N = matrix N;
+            M = M | N;
+            indexshift = indexshift + l);
+      M = mutableMatrix M;
+      for i from 1 to a_s do(
+            for j from i to a_s-1 do(
+                  M_(alpha_(i-1)-1,j) = 0));
+      M = matrix M;
+-- Create a new ring with variables only those that show up in the matrix M
+      R = K[support M];
+-- Make it so that M is a matrix over the new ring
+      M = sub(M,R);
+-- Create the symplectic form J
+     J = mutableMatrix(R,n,n);
+     half_n = sub(n/2,ZZ);
+     for i from 1 to half_n do J_(n-i,i-1) = 1;
+     for j from half_n+1 to n do J_(n-j,j-1) = -1;
+     J = matrix J;
+-- Create ideal of symplectic relations
+     rels = ideal(0_R);
+     for i from 1 to k do 
+     for j from i to k do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
+-- Return Stiefel coordinates and new ring, along with the ideal of relations among the variables and the dimension of that ideal
+     {M, R, rels, dim(rels)})
+     
+-- Osculating Flags
+parametrizedSymplecticFlag = method()
+parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
+      F = mutableMatrix(QQ,n,n);
+      for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
+      for j from 1 to n-1 do 
+      for k from j to n-1 do
+      F_(k,j) = F_(k-1,j-1);
+      for l from sub(n/2,ZZ) to n-1 do if odd l then
+      for m from 0 to n-1 do
+      F_(l,m) = -1*F_(l,m);
+      F = matrix F;
+      return F)
+    
+symplectify = method()
+symplectify(Matrix) := (M) -> (
+      n = numgens target M;
+      M = mutableMatrix M;
+-- Make anti-upper triangular
+      for i from 1 to n do(
+            M_(i-1,n-i) = 1;
+            for j from i to (n-1) do(
+                  M_(j,n-i) = 0));
+-- f_i and f_(n-i) are "orthogonal" under skew-symmetric bilinear form
+      for i from 0 to (sub(n/2,ZZ)-2) do M_(n-i-2,i) = (-1)*M_(i,n-i-2);
+-- Create the symplectic form J
+      J = mutableMatrix(QQ,n,n);
+      half_n = sub(n/2,ZZ);
+      for i from 1 to half_n do J_(n-i,i-1) = 1;
+      for j from half_n+1 to n do J_(n-j,j-1) = -1;
+-- Make 1st half of columns symplectic via J
+      for j from 0 to (sub(n/2,ZZ)-2) do(
+            r = sub(n/2,ZZ)-2-j;
+            for i from 0 to (sub(n/2,ZZ)-r-2) do(
+                  s = sub(n/2,ZZ)-1-i;
+	          M_(s,r) = M_(s,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{s}))_(0,0)));
+      M = matrix M;
+      return M)
