@@ -1,3 +1,71 @@
+newPackage(
+  "SchubertIdeals",
+  Version => "0.0.1", 
+  Date => "November 11, 2022",
+  Authors => {
+    {Name => "C.J. Bott", Email => "cbott2@tamu.edu"},
+     {Name => "Frank Sottile"},
+  },
+  HomePage => "<FIX>",
+  Headline => "computing ideals of Schubert varieties on flag manifolds",
+  DebuggingMode => false
+)
+
+export{
+  --Functions
+  "dimToCodim",
+  "splitPermutation",
+  "typeAStiefelCoords",
+  "notGreaterThan",
+  "allNotGreaterThan",
+  "cauchyBinetCoefficients",
+  "typeAGrassmannianSchubertIdeal",
+  "typeASchubertIdeal",
+  "numSolsA",
+  "typeCStiefelCoords",
+  "secantFlag",
+  "randomSecantFlag",
+  "parametrizedSymplecticFlag",
+  "symplectify",
+  "typeCGrassmannianSchubertIdeal",
+  "typeCSchubertIdeal",
+  "numSolsC",
+  "completePermutation",
+  "typeALength",
+  "typeBLength",
+  "typeCLength",
+  "typeDLength",
+  "bubbleSort",
+  "deltaSwap",
+  "polyRep",
+  "elementarySymmetricIdeal",
+  "intA",
+  "elementarySymmetricSquaresIdeal",
+  "elementarySchurDeterminantC",
+  "elementarySchurDeterminantB",
+  "signedToNot",
+  "signedBubbleSort",
+  "deltaSwapC",
+  "deltaSwapB",
+  "polyRepC",
+  "polyRepB",
+  "intC",
+  "intB",
+  "elementarySymmetricDIdeal",
+  "signedBubbleSortD",
+  "deltaSwapD",
+  "elementarySchurDeterminantD",
+  "polyRepD",
+  "intD",
+  "partialIntA",
+  "completeSignedPermutation",
+  "partialIntC",
+  "partialIntB",
+  "partialIntD"
+}
+
+
+
 --------------------------------------------------
 -- NOTES:
 
