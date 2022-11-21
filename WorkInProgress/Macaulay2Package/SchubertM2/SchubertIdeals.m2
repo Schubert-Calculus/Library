@@ -752,5 +752,3 @@ partialIntD(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
       if (n-flagType_(-2) % 2 != 0) then dualClass = append(dualClass,flagType_(-2)-n);
       newAlphas = append(newAlphas,dualClass);
       return(intC(newAlphas,S,I)))
-
-dimToCodim({2,4},{3,4})
