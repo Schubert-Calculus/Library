@@ -13,6 +13,7 @@
 -- unique permutation in S_n, which is obtained by appending the remaining elements of [n] in increasing order.
 
 --------------------------------------------------
+
 -- dimToCodim --
 
 -- Function: 
@@ -38,6 +39,7 @@
 --     (just to have a more complicated example)
 
 ------------------------------
+
 -- typeAStiefelCoords --
 
 -- Function: 
@@ -76,6 +78,7 @@
 -- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ)
 
 ------------------------------
+
 -- notGreaterThan --
 
 -- Function: Determines whether a partial permutation, beta, is NOT greater than or equal to another partial permutation, alpha, in the Bruhat
@@ -88,6 +91,7 @@
 -- notGreaterThan({1,2},{1,2}) returns "false"
 
 ------------------------------
+
 -- allNotGreaterThan --
 
 -- Function: For a fixed partial permutation, alpha, lists all other partial permutations of the same shape as alpha that are NOT greater than
@@ -101,10 +105,50 @@
 -- allNotGreaterThan({2,3},4) returns "{{1,2},{1,3},{1,4}}"
 -- allNotGreaterThan({2,4},4) returns "{{1,2},{1,3},{2,3},{1,4}}"
 -- allNotGreaterThan({3,4},4) returns "{{1,2},{1,3},{2,3},{1,4},{2,4}}"
+
 ------------------------------
+
 -- cauchyBinetCoefficients --
 
--- Function: 
+-- Function: Creates the matrix of coefficients from the Cauchy-Binet formula P(alpha)(F^{-1}). See Theorem 1.3 and the preceeding discussion in 
+-- "Numerical Schubert Calculus via the Littlewood-Richardson Homotopy Algorithm" (Leykin, del Campo, Sottile, Vakil, Verschelde).
+
+-- Test: cauchyBinetCoefficients({2,4},allNotGreaterThan({2,4},4),id_(QQ^4),QQ) returns non-square identity-like matrix.
+
+------------------------------
+
+-- typeAGrassmannianSchubertIdeal --
+
+-- Function: Creates the ideal for an intersection of Schubert varieties in a Grassmannian with respect to local coordinates. Note that we always assume
+-- that the first flag given is represented by the identity matrix, so user inputs 1 fewer flag than conditions. We will be using this function recursively
+-- for the general type A flag manifold intersections, so while for Grassmannians we can further assume the second flag is the reverse identity, we can't 
+-- assume that for the general type A situation, and so do not implement that shortcut here.
+
+-- Tests:
+-- All computations in G(2,4). Have to create some random flags first before use. After ideal I is returned, can use dim I, degree I to extract info.
+-- F1 = random(QQ^4,QQ^4)
+-- F2 = random(QQ^4,QQ^4)
+-- F3 = random(QQ^4,QQ^4)
+-- typeAGrassmannianSchubertIdeal({2,4},{{3,4},{1,2}},{F1},QQ) returns 0 ideal in QQ
+-- typeAGrassmannianSchubertIdeal({2,4},{{1,2},{3,4}},{F1},QQ) returns an ideal with many generators in QQ[x_{3,1},x_{3,2},x_{4,1},x_{4,2}].
+-- NOTE: The above 2 examples give the same (trivial) intersection with dim I = 0, degree I = 1. However, the coordinates are with respect to the first 
+--       Schubert condition, so putting the larger length partial permutation first gives fewer variables and is preferable.
+-- typeAGrassmannianSchubertIdeal({2,4},{{1,3},{1,3},{1,3},{1,3}},{F1,F2,F3},QQ) returns an ideal I with dim I = 0, degree I = 2.
+-- typeAGrassmannianSchubertIdeal({2,4},{{1,3},{1,3}},{F1},QQ) returns an ideal I with dim I = 2, degree I = 2 (so doesn't have to be 0-dimensional).
+-- typeAGrassmannianSchubertIdeal({2,4},{{1,4},{2,3}},{F1},QQ) returns an ideal I with dim I = -1, degree I = 0 (even though codimensions add to 
+--                                                             the dimension of G(2,4), they are not dual, and so give an empty intersection).
+
+------------------------------
+
+-- typeASchubertIdeal --
+
+-- Function: Creates the ideal for an intersection of Schubert varieties in a given type A flag variety (could be Grassmannian, complete, or partial).
+-- Note that in this situation, we can always assume that the first flag given is represented by the identity matrix, so we implement it as such. Thus,
+-- the user inputs 1 fewer flag than conditions.
+
+-- Tests:
+--
+
 ------------------------------
 
 -- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
