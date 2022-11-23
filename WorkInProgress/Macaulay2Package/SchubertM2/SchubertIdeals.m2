@@ -25,8 +25,8 @@ export{
   "completePermutation",
   "typeALength",
   "bubbleSort",
-  "deltaSwap",
-  "polyRep",
+  "deltaSwapA",
+  "polyRepA",
   "elementarySymmetricIdeal",
   "intA",
   "partialIntA",
@@ -226,22 +226,22 @@ bubbleSort(List) := (L) -> (
                         break)));
       return(swaps))
 
-deltaSwap = method()
-deltaSwap(Thing,Ring,ZZ) := (f,R,k) -> (
-      ringVars = gens R;
-      return sub((f-sub(f,{ringVars_(k)=>ringVars_(k+1),ringVars_(k+1)=>ringVars_(k)}))/(ringVars_(k)-ringVars_(k+1)),R))
+deltaSwapA = method()
+deltaSwapA(Thing,Ring,ZZ) := (f,R,k) -> (
+      ringvars = gens R;
+      return sub((f-sub(f,{ringvars_(k)=>ringvars_(k+1),ringvars_(k+1)=>ringvars_(k)}))/(ringvars_(k)-ringvars_(k+1)),R))
       
-polyRep = method();
-      polyRep(List,Ring) := (w,R) -> (
-            ringVars = gens R;
-            n = length(ringVars);
-            pointclass = 1;
-            for i from 1 to (n-1) do(
-                  pointclass = pointclass*(ringVars_(i-1))^(n-i));
-            polyrep = pointclass;
-            for i in w do(
-                  polyrep = deltaSwap(polyrep,R,i));
-            return(polyrep))
+polyRepA = method();
+polyRep(List,Ring) := (w,R) -> (
+      ringvars = gens R;
+      n = length(ringvars);
+      pointclass = 1;
+      for i from 1 to (n-1) do(
+            pointclass = pointclass*(ringvars_(i-1))^(n-i));
+      polyrep = pointclass;
+      for i in w do(
+            polyrep = deltaSwapA(polyrep,R,i));
+      return(polyrep))
 
 elementarySymmetricIdeal = method()
 elementarySymmetricIdeal(ZZ) := (n) -> (
