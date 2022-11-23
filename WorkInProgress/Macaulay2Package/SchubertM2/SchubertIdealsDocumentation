@@ -185,6 +185,41 @@ TYPE A CODE
 
 ------------------------------
 
+-- completePermutation --
+
+-- Function: Takes a partial permutation, and completes it by adjoining the missing elements of [n] to the end in increasing order.
+
+-- Tests: 
+-- completePermutation({7,8,4,1,2,3},9) returns {7,8,4,1,2,3,5,6,9}.
+
+------------------------------
+
+-- typeALength --
+
+-- Function: Computes the Coxeter length of a partial permutation by first completing it to a full permutation, and then counting the number of inversions.
+-- This length computes the codimension of the corresponding type A Schubert variety.
+
+- Tests: typeALength({7,8,4,1,2,3},9) returns 15, which is the precise number of inversions of the completed permutation.
+
+------------------------------
+
+-- bubbleSort --
+
+-- Function: For each i from 0 to n-1, we have the simple transposition s_i acting on a list of size n that swaps the entries in position i and position 
+-- i+1 (using computer science convention that we start counting at 0). Given a permutation, this function uses simple transpositions to swap elements 
+-- until the list is converted into {n,n-1,n-2,...,3,2,1} (the longest length element of S_n). Furthermore, the algorithm employed is guaranteed to use 
+-- the minimal number of such transpositions, so keeping track of which transpositions are used by their index i, the output is a reduced word 
+-- {i_m,i_{m-1},...,i_2,i_1}, where s_{i_1} is the first transposition used, and s_{i_m} is the last. The algorithm works by finding the first pair of
+-- entries (searching from left to right) that are in increasing order, and then swaps them, and records the index of the transposition by adjoining it
+-- to the beginning of our reduced word, repeating until the longest length element is obtained. The longest word may appear to be backwards, but the way
+-- it will be employed will use these indicies in the reverse order from how we employed them, so this is done on purpose.
+
+-- Tests:
+-- bubbleSort({1,2,3,4}) returns {0,1,2,0,1,0}. 
+-- bubbleSort({4,3,2,1}) returns {}.
+
+------------------------------
+
 -- Test: polyRep(bubbleSort({1,4,3,2}),QQ[a,b,c,d]) 
 -- Returns: a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
 
