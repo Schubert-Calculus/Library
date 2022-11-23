@@ -232,7 +232,7 @@ deltaSwapA(Thing,Ring,ZZ) := (f,R,k) -> (
       return sub((f-sub(f,{ringvars_(k)=>ringvars_(k+1),ringvars_(k+1)=>ringvars_(k)}))/(ringvars_(k)-ringvars_(k+1)),R))
       
 polyRepA = method();
-polyRep(List,Ring) := (w,R) -> (
+polyRepA(List,Ring) := (w,R) -> (
       ringvars = gens R;
       n = length(ringvars);
       pointclass = 1;
