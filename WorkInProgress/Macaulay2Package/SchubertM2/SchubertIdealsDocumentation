@@ -14,6 +14,10 @@
 
 --------------------------------------------------
 
+TYPE A CODE
+
+--------------------------------------------------
+
 -- dimToCodim --
 
 -- Function: 
@@ -40,6 +44,15 @@
 
 ------------------------------
 
+-- splitPermutation --
+
+-- Function: A helper function that will split a partial permutation into a list of lists, separations determined by the flagshape.
+
+-- Tests:
+-- splitPermutation({2,3,6,9},{7,8,4,1,2,3}) should return {{7,8},{4},{1,2,3}}.
+
+------------------------------
+
 -- typeAStiefelCoords --
 
 -- Function: 
@@ -58,24 +71,20 @@
 -- (1) M, a matrix giving Stiefel coordinates for the Schubert variety given by flagshape and alpha.
 -- (2) R, a polynomial ring whose generators are the intdeterminates in M, with number of generators the dimension of the Schubert variety.
 
--- Helper Function: splitPermutation
--- (splits alpha up into a list of lists determined by flagshape)
-
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
 -----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
       
 -- Tests:
--- splitPermutation({2,3,6,9},{7,8,4,1,2,3}) should give {{7,8},{4},{1,2,3}}
 -- (All big cells in 4-space)
--- (1) typeAStiefelCoords({1,4},{1},QQ)
--- (2) typeAStiefelCoords({2,4},{1,2},QQ)
--- (3) typeAStiefelCoords({1,2,4},{1,2},QQ)
--- (4) typeAStiefelCoords({3,4},{1,2,3},QQ)
--- (5) typeAStiefelCoords({1,3,4},{1,2,3},QQ)
--- (6) typeAStiefelCoords({2,3,4},{1,2,3},QQ)
--- (7) typeAStiefelCoords({1,2,3,4},{1,2,3},QQ)
--- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ)
+-- (1) typeAStiefelCoords({1,4},{1},QQ) should be 3 dimensional.
+-- (2) typeAStiefelCoords({2,4},{1,2},QQ) should be 4 dimensional.
+-- (3) typeAStiefelCoords({1,2,4},{1,2},QQ) should be 5 dimensional.
+-- (4) typeAStiefelCoords({3,4},{1,2,3},QQ) should be 3 dimensional.
+-- (5) typeAStiefelCoords({1,3,4},{1,2,3},QQ) should be 5 dimensional.
+-- (6) typeAStiefelCoords({2,3,4},{1,2,3},QQ) should be 5 dimensional.
+-- (7) typeAStiefelCoords({1,2,3,4},{1,2,3},QQ) should be 6 dimensional.
+-- (8) typeAStiefelCoords({4,4},{1,2,3,4},QQ) should be 0 dimensional.
 
 ------------------------------
 
@@ -147,7 +156,32 @@
 -- the user inputs 1 fewer flag than conditions.
 
 -- Tests:
---
+-- F1 = random(QQ^6,QQ^6)
+-- F2 = random(QQ^6,QQ^6)
+-- F3 = random(QQ^6,QQ^6)
+-- F4 = random(QQ^6,QQ^6)
+-- F5 = random(QQ^6,QQ^6)
+-- F6 = random(QQ^6,QQ^6)
+-- typeASchubertIdeal({1,2,5},{{2,1},{2,1},{1,3},{1,3},{1,3},{1,3},{1,3}},{F1,F2,F3,F4,F5,F6},QQ) returns an ideal eqns with dim(eqns) = 0, degree(eqns) = 5.
+-- typeASchubertIdeal({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},{F1,F2,F3,F4,F5,F6},QQ) returns an ideal eqns with dim(eqns) = 0, degree(eqns) = 3.
+
+------------------------------
+
+-- numSolsA --
+
+-- Function: Calls typeASchubertIdeal, but instead of outputting the ideal of an intersection of Schubert varieties in a type A flag manifold, gives 
+-- directly the dimension and degree of the ideal.
+
+-- Tests:
+-- Tests:
+-- F1 = random(QQ^6,QQ^6)
+-- F2 = random(QQ^6,QQ^6)
+-- F3 = random(QQ^6,QQ^6)
+-- F4 = random(QQ^6,QQ^6)
+-- F5 = random(QQ^6,QQ^6)
+-- F6 = random(QQ^6,QQ^6)
+-- typeASchubertIdeal({1,2,5},{{2,1},{2,1},{1,3},{1,3},{1,3},{1,3},{1,3}},{F1,F2,F3,F4,F5,F6},QQ) returns (0,5).
+-- typeASchubertIdeal({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},{F1,F2,F3,F4,F5,F6},QQ) returns (0,3).
 
 ------------------------------
 
