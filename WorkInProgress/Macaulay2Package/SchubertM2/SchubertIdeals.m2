@@ -4,7 +4,7 @@ newPackage(
   Date => "November 23, 2022",
   Authors => {
     {Name => "C.J. Bott", Email => "cbott2@tamu.edu"},
-     {Name => "Frank Sottile"},
+     {Name => "Frank Sottile"}
   },
   HomePage => "<FIX>",
   Headline => "computing ideals of Schubert varieties on flag manifolds",
