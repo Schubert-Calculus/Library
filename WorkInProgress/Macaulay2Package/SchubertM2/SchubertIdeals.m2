@@ -3,16 +3,22 @@ newPackage(
   Version => "0.0.1", 
   Date => "November 23, 2022",
   Authors => {
-    {Name => "C.J. Bott", Email => "cbott2@tamu.edu"},
-     {Name => "Frank Sottile"}
+    {Name => "C.J. Bott", 
+     Email => "cbott2@tamu.edu"},
+    {Name => "Frank Sottile",
+     Email=>"sottile@tamu.edu",
+     HomePage=>"https://www.math.tamu.edu/~sottile/"}
   },
-  HomePage => "<FIX>",
-  Headline => "computing ideals of Schubert varieties on flag manifolds",
+--  HomePage => "<FIX>",
+  Headline => "Package for computing ideals of Schubert subvarieties of flag manifolds",
+  Keywords=>{"Schubert Calculus"},
+  PackageImports=>{},
+  PackageExports=>{},
   DebuggingMode => false
 )
 
 export{
-  --Functions
+  --methods
   "dimToCodim",
   "splitPermutation",
   "typeAStiefelCoords",
@@ -64,25 +70,30 @@ export{
   "partialIntD"
 }
 
+
+----------------------------
+--METHODS --
+----------------------------
+
 dimToCodim = method()
 dimToCodim(List,List) := (flagshape,alpha) -> (
-      s = length(flagshape) - 1;
-      n = flagshape_(-1);
-      breaks = prepend(0,flagshape);
+      s := length(flagshape) - 1;
+      n := flagshape_(-1);
+      breaks := prepend(0,flagshape);
       alphadual = {};
       for b from 1 to s do(
-            k = breaks_(b) - breaks_(b-1);
+            k := breaks_(b) - breaks_(b-1);
             for i from 1 to k do(
-                  alphadual = append(alphadual,n+1-alpha_(breaks_(b-1)+k-i))));
+                  alphadual := append(alphadual,n+1-alpha_(breaks_(b-1)+k-i))));
       return(alphadual))
 
 splitPermutation = method()
 splitPermutation(List,List) := (flagshape,alpha) -> (
-      gaps = {flagshape_(0)};
+      gaps := {flagshape_(0)};
       for i from 1 to (length(flagshape)-2) do(
             gaps = append(gaps,flagshape_(i)-flagshape_(i-1)));
-      splitperm = {};
-      copyalpha = alpha;
+      splitperm := {};
+      copyalpha := alpha;
       for gap in gaps do(
             subalpha = {};
             for i from 0 to (gap-1) do(
@@ -93,14 +104,14 @@ splitPermutation(List,List) := (flagshape,alpha) -> (
 
 typeAStiefelCoords = method()
 typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
-      n = flagshape_(-1);
-      a_s = flagshape_(-2);
-      S = K[x_(1,1)..x_(n,a_s)];
-      alphalist = splitPermutation(flagshape,alpha);
-      firstalpha = alphalist_(0);
-      l = length(firstalpha);
+      n := flagshape_(-1);
+      a_s := flagshape_(-2);
+      S := K[x_(1,1)..x_(n,a_s)];
+      alphalist := splitPermutation(flagshape,alpha);
+      firstalpha := alphalist_(0);
+      l := length(firstalpha);
 -- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subalpha
-      M = mutableMatrix(S,n,l);
+      M := mutableMatrix(S,n,l);
 -- Set leading ones in lxl identity submatrix with rows indexed by alpha
       for i from 1 to l do M_(firstalpha_(i-1)-1,i-1) = 1;
 -- Set variables below the leading 1's
