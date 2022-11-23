@@ -22,6 +22,14 @@ export{
   "typeAGrassmannianSchubertIdeal",
   "typeASchubertIdeal",
   "numSolsA",
+  "completePermutation",
+  "typeALength",
+  "bubbleSort",
+  "deltaSwap",
+  "polyRep",
+  "elementarySymmetricIdeal",
+  "intA",
+  "partialIntA",
   "typeCStiefelCoords",
   "secantFlag",
   "randomSecantFlag",
@@ -30,16 +38,9 @@ export{
   "typeCGrassmannianSchubertIdeal",
   "typeCSchubertIdeal",
   "numSolsC",
-  "completePermutation",
-  "typeALength",
   "typeBLength",
   "typeCLength",
   "typeDLength",
-  "bubbleSort",
-  "deltaSwap",
-  "polyRep",
-  "elementarySymmetricIdeal",
-  "intA",
   "elementarySymmetricSquaresIdeal",
   "elementarySchurDeterminantC",
   "elementarySchurDeterminantB",
@@ -57,7 +58,6 @@ export{
   "elementarySchurDeterminantD",
   "polyRepD",
   "intD",
-  "partialIntA",
   "completeSignedPermutation",
   "partialIntC",
   "partialIntB",
@@ -198,6 +198,88 @@ numSolsA(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       I = typeASchubertIdeal(flagshape,alphas,flags,K);
       return (dim I, degree I))
 
+completePermutation = method(TypicalValue=>List)
+completePermutation(List,ZZ):=(w,n) ->(
+	for i from 1 to n do(
+		if isSubset({i},w)==false then w=append(w,i));
+        return(w))
+
+typeALength = method()
+typeALength(List,ZZ) := (w,n) -> (
+      w = completePermutation(w,n);
+      count = 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      return(count))
+      
+bubbleSort = method()
+bubbleSort(List) := (L) -> (
+      n = length(L);
+      sorted = reverse(sort(L));
+      swaps = {};
+      while (L != sorted) do(
+            for i from 0 to (n-2) do(
+                  if L_(i) < L_(i+1) then(
+                        swaps = prepend(i,swaps);
+                        L = switch(i,i+1,L);
+                        break)));
+      return(swaps))
+
+deltaSwap = method()
+deltaSwap(Thing,Ring,ZZ) := (f,R,k) -> (
+      ringVars = gens R;
+      return sub((f-sub(f,{ringVars_(k)=>ringVars_(k+1),ringVars_(k+1)=>ringVars_(k)}))/(ringVars_(k)-ringVars_(k+1)),R))
+      
+polyRep = method();
+      polyRep(List,Ring) := (w,R) -> (
+            ringVars = gens R;
+            n = length(ringVars);
+            pointclass = 1;
+            for i from 1 to (n-1) do(
+                  pointclass = pointclass*(ringVars_(i-1))^(n-i));
+            polyrep = pointclass;
+            for i in w do(
+                  polyrep = deltaSwap(polyrep,R,i));
+            return(polyrep))
+
+elementarySymmetricIdeal = method()
+elementarySymmetricIdeal(ZZ) := (n) -> (
+      R = QQ[y_(1)..y_(n)][t];
+      f =1_R;
+      for i from 1 to n do(
+      f = f*(y_(i)+t));
+      coeffs = (coefficients (f-t^n))_(1);
+      S = QQ[y_(1)..y_(n)];
+      I = sub(ideal(coeffs),S);
+      return(S,I,S/I))
+      
+intA = method()
+intA(List,Ring,Ideal) := (alphas,S,I) -> (
+      f = 1_S;
+      for alpha in alphas do(
+            f = f*polyRep(bubbleSort(alpha),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
+      
+-- flagType a list of the form {a_1,a_2,...,a_s,n}
+partialIntA = method()
+partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l = length(flagType);
+      n = flagType_(-1);
+      newAlphas = {};
+      for alpha in alphas do(
+            newAlpha = completePermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass = {};
+      for k from 1 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      newAlphas = append(newAlphas,dualClass);
+      return(intA(newAlphas,S,I)))
+      
 typeCStiefelCoords = method()
 typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 n = flagshape_(-1);
@@ -341,21 +423,6 @@ numSolsC(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
       I = typeCSchubertIdeal(flagshape,conditions,flags,K);
       return (dim I, degree I))
 
-completePermutation = method(TypicalValue=>List)
-completePermutation(List,ZZ):=(w,n) ->(
-	for i from 1 to n do(
-		if isSubset({i},w)==false then w=append(w,i));
-        return(w))
-
-typeALength = method()
-typeALength(List,ZZ) := (w,n) -> (
-      w = completePermutation(w,n);
-      count = 0;
-      for i from 1 to n do
-            for j from i+1 to n do
-                  if w_(i-1) > w_(j-1) then count = count+1;
-      return(count))
-
 typeBLength = method()
 typeBLength(List) := (w) -> (
       n = length(w);
@@ -391,55 +458,6 @@ typeDLength(List) := (w) -> (
             for j from i+1 to n do
                   if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
       return(count))
-
-bubbleSort = method()
-bubbleSort(List) := (L) -> (
-      n = length(L);
-      sorted = reverse(sort(L));
-      swaps = {};
-      while (L != sorted) do(
-            for i from 0 to (n-2) do(
-                  if L_(i) < L_(i+1) then(
-                        swaps = prepend(i,swaps);
-                        L = switch(i,i+1,L);
-                        break)));
-      return(swaps))
-
-deltaSwap = method()
-deltaSwap(Thing,Ring,ZZ) := (f,R,k) -> (
-      ringVars = gens R;
-      return sub((f-sub(f,{ringVars_(k)=>ringVars_(k+1),ringVars_(k+1)=>ringVars_(k)}))/(ringVars_(k)-ringVars_(k+1)),R))
-      
-polyRep = method();
-      polyRep(List,Ring) := (w,R) -> (
-            ringVars = gens R;
-            n = length(ringVars);
-            pointclass = 1;
-            for i from 1 to (n-1) do(
-                  pointclass = pointclass*(ringVars_(i-1))^(n-i));
-            polyrep = pointclass;
-            for i in w do(
-                  polyrep = deltaSwap(polyrep,R,i));
-            return(polyrep))
-
-elementarySymmetricIdeal = method()
-elementarySymmetricIdeal(ZZ) := (n) -> (
-      R = QQ[y_(1)..y_(n)][t];
-      f =1_R;
-      for i from 1 to n do(
-      f = f*(y_(i)+t));
-      coeffs = (coefficients (f-t^n))_(1);
-      S = QQ[y_(1)..y_(n)];
-      I = sub(ideal(coeffs),S);
-      return(S,I,S/I))
-      
-intA = method()
-intA(List,Ring,Ideal) := (alphas,S,I) -> (
-      f = 1_S;
-      for alpha in alphas do(
-            f = f*polyRep(bubbleSort(alpha),S));
-      f = f % I;
-      return (((coefficients f)_(1))_(0))_(0))
 
 elementarySymmetricSquaresIdeal = method()
 elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
@@ -669,24 +687,6 @@ intD(List,Ring,Ideal) := (alphas,S,I) -> (
       return (((coefficients f)_(1))_(0))_(0))
 
 ---------------------------- PARTIAL FLAG SCHUBERT COMPUTATIONS ------------------------------------
-
--- flagType a list of the form {a_1,a_2,...,a_s,n}
-partialIntA = method()
-partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
-      l = length(flagType);
-      n = flagType_(-1);
-      newAlphas = {};
-      for alpha in alphas do(
-            newAlpha = completePermutation(alpha,n);
-            newAlphas = append(newAlphas,newAlpha));
-      dualClass = {};
-      for k from 1 to (l-1) do(
-            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
-	          dualClass = prepend(j,dualClass)));
-      for i from 1 to flagType_(0) do(
-            dualClass = prepend(i,dualClass));
-      newAlphas = append(newAlphas,dualClass);
-      return(intA(newAlphas,S,I)))
 
 completeSignedPermutation = method()
 completeSignedPermutation(List,ZZ) := (w,n) -> (
