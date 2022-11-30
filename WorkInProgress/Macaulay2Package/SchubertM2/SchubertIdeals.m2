@@ -269,7 +269,7 @@ intA = method()
 intA(List,Ring,Ideal) := (alphas,S,I) -> (
       f := 1_S;
       for alpha in alphas do(
-            f = f*polyRep(bubbleSort(alpha),S));
+            f = f*polyRepA(bubbleSort(alpha),S));
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
       
@@ -337,14 +337,14 @@ typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       M = sub(M,R);
 -- Create the symplectic form J
      J := mutableMatrix(R,n,n);
-     half_n := sub(n/2,ZZ);
-     for i from 1 to half_n do J_(n-i,i-1) = 1;
-     for j from half_n+1 to n do J_(n-j,j-1) = -1;
+     halfn := sub(n/2,ZZ);
+     for i from 1 to halfn do J_(n-i,i-1) = 1;
+     for j from halfn+1 to n do J_(n-j,j-1) = -1;
      J = matrix J;
 -- Create ideal of symplectic relations
      rels := ideal(0_R);
-     for i from 1 to k do 
-     for j from i to k do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
+     for i from 1 to as do 
+     for j from i to as do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
 -- Return Stiefel coordinates and new ring, along with the ideal of relations among the variables and the dimension of that ideal
      {M, R, rels, dim(rels)})
      
@@ -381,7 +381,7 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
 symplectify = method()
 symplectify(Matrix) := (M) -> (
       n := numgens target M;
-      Mnew = mutableMatrix M;
+      Mnew := mutableMatrix M;
 -- Make anti-upper triangular
       for i from 1 to n do(
             Mnew_(i-1,n-i) = 1;
@@ -391,9 +391,9 @@ symplectify(Matrix) := (M) -> (
       for i from 0 to (sub(n/2,ZZ)-2) do Mnew_(n-i-2,i) = (-1)*Mnew_(i,n-i-2);
 -- Create the symplectic form J
       J := mutableMatrix(QQ,n,n);
-      half_n := sub(n/2,ZZ);
-      for i from 1 to half_n do J_(n-i,i-1) = 1;
-      for j from half_n+1 to n do J_(n-j,j-1) = -1;
+      halfn := sub(n/2,ZZ);
+      for i from 1 to halfn do J_(n-i,i-1) = 1;
+      for j from halfn+1 to n do J_(n-j,j-1) = -1;
 -- Make 1st half of columns symplectic via J
       for j from 0 to (sub(n/2,ZZ)-2) do(
             r := sub(n/2,ZZ)-2-j;
@@ -568,7 +568,7 @@ polyRepC(List,Ring) := (w,R) -> (
       polyrep := pointclass*delta;
       for i in w do(
 	    if (i != n-1) then(
-                  polyrep = deltaSwap(polyrep,R,i));
+                  polyrep = deltaSwapA(polyrep,R,i));
             if (i == n-1) then(
 		  polyrep = deltaSwapC(polyrep,R)));
       return(polyrep))
@@ -587,7 +587,7 @@ polyRepB(List,Ring) := (w,R) -> (
       polyrep := pointclass*delta;
       for i in w do(
 	    if (i != n-1) then(
-                  polyrep = deltaSwap(polyrep,R,i));
+                  polyrep = deltaSwapA(polyrep,R,i));
             if (i == n-1) then(
 		  polyrep = deltaSwapB(polyrep,R)));
       return(polyrep))
@@ -684,7 +684,7 @@ polyRepD(List,Ring) := (w,R) -> (
       polyrep := pointclass*delta;
       for i in w do(
 	    if (i != n-1) then(
-                  polyrep = deltaSwap(polyrep,R,i));
+                  polyrep = deltaSwapA(polyrep,R,i));
             if (i == n-1) then(
 		  polyrep = deltaSwapD(polyrep,R)));
       return(polyrep))
@@ -701,7 +701,7 @@ intD(List,Ring,Ideal) := (alphas,S,I) -> (
 
 completeSignedPermutation = method()
 completeSignedPermutation(List,ZZ) := (w,n) -> (
-      wnew = w;
+      wnew := w;
       for i from 1 to n do(
 		if (isSubset({i},wnew)==false and isSubset({-i},wnew)==false) then wnew=append(wnew,i));
       return(wnew))
