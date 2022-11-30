@@ -95,7 +95,7 @@ splitPermutation(List,List) := (flagshape,alpha) -> (
       splitperm := {};
       copyalpha := alpha;
       for gap in gaps do(
-            subalpha = {};
+            subalpha := {};
             for i from 0 to (gap-1) do(
                   subalpha = append(subalpha,copyalpha_(0));
                   copyalpha = delete(copyalpha_(0),copyalpha));
@@ -125,10 +125,10 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
 -- Remove firstalpha from alphalist
       alphalist = delete(firstalpha,alphalist);
 -- Now repeat and concatenate the matrices
-      indexshift = length(firstalpha);
+      indexshift := length(firstalpha);
       for subalpha in alphalist do(
             l = length(subalpha);
-            N = mutableMatrix(S,n,l);
+            N := mutableMatrix(S,n,l);
             for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
             for j from 1 to l do
                   for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
@@ -143,7 +143,7 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
                   M_(alpha_(i-1)-1,j) = 0));
       M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
-      R = K[support M];
+      R := K[support M];
 -- Make it so that M is a matrix over the new ring
       M = sub(M,R);
 -- Return Stiefel coordinates and new ring
@@ -151,26 +151,26 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
      
 notGreaterThan = method(TypicalValue=>Boolean)
 notGreaterThan(List,List) := (beta,alpha) -> (
-      NotGreaterThan = false;
+      NotGreaterThan := false;
       for i from 1 to length(beta) do
             if beta_(i-1) < alpha_(i-1) then NotGreaterThan = true;
       return(NotGreaterThan))
       
 allNotGreaterThan = method()
 allNotGreaterThan(List,ZZ) := (alpha, n) -> (
-      L = {};
+      L := {};
       for beta in subsets(splice {1..n},length(alpha)) do
             if notGreaterThan(beta,alpha) then L = append(L,beta);
       return(L))
 
 cauchyBinetCoefficients = method()
 cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) -> (
-      k = grassmannianshape_(0);
-      n = grassmannianshape_(1);
-      Finv = inverse F;
-      M = mutableMatrix(K,length(betas),binomial(n,k));
-      subs = subsets(splice {1..n},k);
-      kOnes = splice{k:1};
+      k := grassmannianshape_(0);
+      n := grassmannianshape_(1);
+      Finv := inverse F;
+      M := mutableMatrix(K,length(betas),binomial(n,k));
+      subs := subsets(splice {1..n},k);
+      kOnes := splice{k:1};
       for i from 0 to length(betas)-1 do(
             for j from 0 to binomial(n,k)-1 do(
                   M_(i,j) = det(submatrix(Finv,betas_(i)-kOnes,subs_(j)-kOnes))));
@@ -180,25 +180,25 @@ typeAGrassmannianSchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
 typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
-      k = grassmannianshape_(0);
-      n = grassmannianshape_(1);
-      coords = typeAStiefelCoords(grassmannianshape,alphas_(0),K);
-      R = coords_(1);
-      I = ideal(0_R);
-      PY = exteriorPower(k,coords_(0));
+      k := grassmannianshape_(0);
+      n := grassmannianshape_(1);
+      coords := typeAStiefelCoords(grassmannianshape,alphas_(0),K);
+      R := coords_(1);
+      I := ideal(0_R);
+      PY := exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
             I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
 
 typeASchubertIdeal = method()
 typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
-      n = last(flagshape);
-      s = length(flags);
-      subspaces = delete(n,flagshape);
-      bigRing = (typeAStiefelCoords(flagshape,alphas_(0),K))#1;
-      eqns = ideal(0_bigRing);
+      n := last(flagshape);
+      s := length(flags);
+      subspaces := delete(n,flagshape);
+      bigRing := (typeAStiefelCoords(flagshape,alphas_(0),K))#1;
+      eqns := ideal(0_bigRing);
       for a in subspaces do(
-           conds = {take(alphas_(0),a)};
+           conds := {take(alphas_(0),a)};
            for i from 1 to s do(
                 conds = append(conds,sort(take(alphas_(i),a))));
            eqns = eqns + sub(typeAGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
@@ -206,7 +206,7 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
 
 numSolsA = method()
 numSolsA(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
-      I = typeASchubertIdeal(flagshape,alphas,flags,K);
+      I := typeASchubertIdeal(flagshape,alphas,flags,K);
       return (dim I, degree I))
 
 completePermutation = method(TypicalValue=>List)
@@ -217,8 +217,8 @@ completePermutation(List,ZZ):=(w,n) ->(
 
 typeALength = method()
 typeALength(List,ZZ) := (w,n) -> (
-      w = completePermutation(w,n);
-      count = 0;
+      w := completePermutation(w,n);
+      count := 0;
       for i from 1 to n do
             for j from i+1 to n do
                   if w_(i-1) > w_(j-1) then count = count+1;
@@ -226,9 +226,9 @@ typeALength(List,ZZ) := (w,n) -> (
       
 bubbleSort = method()
 bubbleSort(List) := (L) -> (
-      n = length(L);
-      sorted = reverse(sort(L));
-      swaps = {};
+      n := length(L);
+      sorted := reverse(sort(L));
+      swaps := {};
       while (L != sorted) do(
             for i from 0 to (n-2) do(
                   if L_(i) < L_(i+1) then(
@@ -239,35 +239,35 @@ bubbleSort(List) := (L) -> (
 
 deltaSwapA = method()
 deltaSwapA(Thing,Ring,ZZ) := (f,R,k) -> (
-      ringvars = gens R;
+      ringvars := gens R;
       return sub((f-sub(f,{ringvars_(k)=>ringvars_(k+1),ringvars_(k+1)=>ringvars_(k)}))/(ringvars_(k)-ringvars_(k+1)),R))
       
 polyRepA = method();
 polyRepA(List,Ring) := (w,R) -> (
-      ringvars = gens R;
-      n = length(ringvars);
-      pointclass = 1;
+      ringvars := gens R;
+      n := length(ringvars);
+      pointclass := 1;
       for i from 1 to (n-1) do(
             pointclass = pointclass*(ringvars_(i-1))^(n-i));
-      polyrep = pointclass;
+      polyrep := pointclass;
       for i in w do(
             polyrep = deltaSwapA(polyrep,R,i));
       return(polyrep))
 
 elementarySymmetricIdeal = method()
 elementarySymmetricIdeal(ZZ) := (n) -> (
-      R = QQ[y_(1)..y_(n)][t];
-      f =1_R;
+      R := QQ[y_(1)..y_(n)][t];
+      f :=1_R;
       for i from 1 to n do(
       f = f*(y_(i)+t));
-      coeffs = (coefficients (f-t^n))_(1);
-      S = QQ[y_(1)..y_(n)];
-      I = sub(ideal(coeffs),S);
+      coeffs := (coefficients (f-t^n))_(1);
+      S := QQ[y_(1)..y_(n)];
+      I := sub(ideal(coeffs),S);
       return(S,I,S/I))
       
 intA = method()
 intA(List,Ring,Ideal) := (alphas,S,I) -> (
-      f = 1_S;
+      f := 1_S;
       for alpha in alphas do(
             f = f*polyRep(bubbleSort(alpha),S));
       f = f % I;
@@ -276,13 +276,13 @@ intA(List,Ring,Ideal) := (alphas,S,I) -> (
 -- flagType a list of the form {a_1,a_2,...,a_s,n}
 partialIntA = method()
 partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
-      l = length(flagType);
-      n = flagType_(-1);
-      newAlphas = {};
+      l := length(flagType);
+      n := flagType_(-1);
+      newAlphas := {};
       for alpha in alphas do(
-            newAlpha = completePermutation(alpha,n);
+            newAlpha := completePermutation(alpha,n);
             newAlphas = append(newAlphas,newAlpha));
-      dualClass = {};
+      dualClass := {};
       for k from 1 to (l-1) do(
             for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
 	          dualClass = prepend(j,dualClass)));
