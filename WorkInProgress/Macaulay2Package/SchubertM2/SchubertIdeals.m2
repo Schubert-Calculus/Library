@@ -70,11 +70,16 @@ export{
   "partialIntD"
 }
 
+------------------------------
+-- DECLARE VARIABLES --
 x := symbol x;
+y := symbol y;
+t := symbol t;
+------------------------------
 
-----------------------------
---METHODS --
-----------------------------
+------------------------------
+-- METHODS --
+------------------------------
 
 dimToCodim = method()
 dimToCodim(List,List) := (flagshape,alpha) -> (
