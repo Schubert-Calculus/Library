@@ -217,7 +217,7 @@ completePermutation(List,ZZ):=(w,n) ->(
 
 typeALength = method()
 typeALength(List,ZZ) := (w,n) -> (
-      w := completePermutation(w,n);
+      w = completePermutation(w,n);
       count := 0;
       for i from 1 to n do
             for j from i+1 to n do
