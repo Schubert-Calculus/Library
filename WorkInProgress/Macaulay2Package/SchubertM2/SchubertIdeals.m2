@@ -217,11 +217,11 @@ completePermutation(List,ZZ):=(w,n) ->(
 
 typeALength = method()
 typeALength(List,ZZ) := (w,n) -> (
-      w = completePermutation(w,n);
+      wcomp := completePermutation(w,n);
       count := 0;
       for i from 1 to n do
             for j from i+1 to n do
-                  if w_(i-1) > w_(j-1) then count = count+1;
+                  if wcomp_(i-1) > wcomp_(j-1) then count = count+1;
       return(count))
       
 bubbleSort = method()
@@ -293,14 +293,14 @@ partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
       
 typeCStiefelCoords = method()
 typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
-n = flagshape_(-1);
-      a_s = flagshape_(-2);
-      S = K[x_(1,1)..x_(n,a_s)];
-      alphalist = splitPermutation(flagshape,alpha);
-      firstalpha = alphalist_(0);
-      l = length(firstalpha);
+      n := flagshape_(-1);
+      a_s := flagshape_(-2);
+      S := K[x_(1,1)..x_(n,a_s)];
+      alphalist := splitPermutation(flagshape,alpha);
+      firstalpha := alphalist_(0);
+      l := length(firstalpha);
 -- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subalpha
-      M = mutableMatrix(S,n,l);
+      M := mutableMatrix(S,n,l);
 -- Set leading ones in lxl identity submatrix with rows indexed by alpha
       for i from 1 to l do M_(firstalpha_(i-1)-1,i-1) = 1;
 -- Set variables below the leading 1's
@@ -314,10 +314,10 @@ n = flagshape_(-1);
 -- Remove firstalpha from alphalist
       alphalist = delete(firstalpha,alphalist);
 -- Now repeat and concatenate the matrices
-      indexshift = length(firstalpha);
+      indexshift := length(firstalpha);
       for subalpha in alphalist do(
             l = length(subalpha);
-            N = mutableMatrix(S,n,l);
+            N := mutableMatrix(S,n,l);
             for i from 1 to l do N_(subalpha_(i-1)-1,i-1) = 1;
             for j from 1 to l do
                   for i from subalpha_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
@@ -332,17 +332,17 @@ n = flagshape_(-1);
                   M_(alpha_(i-1)-1,j) = 0));
       M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
-      R = K[support M];
+      R := K[support M];
 -- Make it so that M is a matrix over the new ring
       M = sub(M,R);
 -- Create the symplectic form J
-     J = mutableMatrix(R,n,n);
-     half_n = sub(n/2,ZZ);
+     J := mutableMatrix(R,n,n);
+     half_n := sub(n/2,ZZ);
      for i from 1 to half_n do J_(n-i,i-1) = 1;
      for j from half_n+1 to n do J_(n-j,j-1) = -1;
      J = matrix J;
 -- Create ideal of symplectic relations
-     rels = ideal(0_R);
+     rels := ideal(0_R);
      for i from 1 to k do 
      for j from i to k do rels = rels + (transpose(submatrix(M,{i-1}))*J*submatrix(M,{j-1}))_(0,0);
 -- Return Stiefel coordinates and new ring, along with the ideal of relations among the variables and the dimension of that ideal
@@ -350,8 +350,8 @@ n = flagshape_(-1);
      
 secantFlag = method()
 secantFlag(List,Ring) := (L,R) -> (
-      n = length(L);
-      secantflag = mutableMatrix(R,n,n);
+      n := length(L);
+      secantflag := mutableMatrix(R,n,n);
       for i from 1 to n do
             for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
       secantflag = matrix secantflag;
@@ -359,7 +359,7 @@ secantFlag(List,Ring) := (L,R) -> (
 
 randomSecantFlag = method()
 randomSecantFlag(ZZ,Ring) := (n,R) -> (
-      L = {};
+      L := {};
       for i from 1 to n do
             L = append(L,random(R));
       return(secantFlag(L,R)))
@@ -367,7 +367,7 @@ randomSecantFlag(ZZ,Ring) := (n,R) -> (
 -- Osculating Flags
 parametrizedSymplecticFlag = method()
 parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
-      F = mutableMatrix(QQ,n,n);
+      F := mutableMatrix(QQ,n,n);
       for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
             for j from 1 to n-1 do 
                   for k from j to n-1 do
@@ -380,50 +380,50 @@ parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
     
 symplectify = method()
 symplectify(Matrix) := (M) -> (
-      n = numgens target M;
-      M = mutableMatrix M;
+      n := numgens target M;
+      Mnew = mutableMatrix M;
 -- Make anti-upper triangular
       for i from 1 to n do(
-            M_(i-1,n-i) = 1;
+            Mnew_(i-1,n-i) = 1;
             for j from i to (n-1) do(
-                  M_(j,n-i) = 0));
+                  Mnew_(j,n-i) = 0));
 -- f_i and f_(n-i) are "orthogonal" under skew-symmetric bilinear form
-      for i from 0 to (sub(n/2,ZZ)-2) do M_(n-i-2,i) = (-1)*M_(i,n-i-2);
+      for i from 0 to (sub(n/2,ZZ)-2) do Mnew_(n-i-2,i) = (-1)*Mnew_(i,n-i-2);
 -- Create the symplectic form J
-      J = mutableMatrix(QQ,n,n);
-      half_n = sub(n/2,ZZ);
+      J := mutableMatrix(QQ,n,n);
+      half_n := sub(n/2,ZZ);
       for i from 1 to half_n do J_(n-i,i-1) = 1;
       for j from half_n+1 to n do J_(n-j,j-1) = -1;
 -- Make 1st half of columns symplectic via J
       for j from 0 to (sub(n/2,ZZ)-2) do(
-            r = sub(n/2,ZZ)-2-j;
+            r := sub(n/2,ZZ)-2-j;
             for i from 0 to (sub(n/2,ZZ)-r-2) do(
-                  s = sub(n/2,ZZ)-1-i;
-	          M_(s,r) = M_(s,r) + (transpose(submatrix(M,{r}))*J*submatrix(M,{s}))_(0,0)));
-      M = matrix M;
-      return M)
+                  s := sub(n/2,ZZ)-1-i;
+	          Mnew_(s,r) = Mnew_(s,r) + (transpose(submatrix(Mnew,{r}))*J*submatrix(Mnew,{s}))_(0,0)));
+      Mnew = matrix Mnew;
+      return Mnew)
 
 typeCGrassmannianSchubertIdeal = method()
 typeCGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
-      k = grassmannianshape_(0);
-      n = grassmannianshape_(1);
-      coords = typeCStiefelCoords(grassmannianshape,alphas_(0),K);
-      R = coords_(1);
-      I = coords_(2);
-      PY = exteriorPower(k,coords_(0));
+      k := grassmannianshape_(0);
+      n := grassmannianshape_(1);
+      coords := typeCStiefelCoords(grassmannianshape,alphas_(0),K);
+      R := coords_(1);
+      I := coords_(2);
+      PY := exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
             I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
       
 typeCSchubertIdeal = method()
 typeCSchubertIdeal(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
-      n = last(flagshape);
-      s = length(flags);
-      subspaces = delete(n,flagshape);
-      bigRing = (typeCStiefelCoords(flagshape,conditions#0,K))#1;
-      eqns = ideal(0_bigRing);
+      n := last(flagshape);
+      s := length(flags);
+      subspaces := delete(n,flagshape);
+      bigRing := (typeCStiefelCoords(flagshape,conditions#0,K))#1;
+      eqns := ideal(0_bigRing);
       for a in subspaces do(
-           conds = {take(conditions#0,a)};
+           conds := {take(conditions#0,a)};
            for i from 1 to s do(
                 conds = append(conds,sort(take(conditions#i,a))));
            eqns = eqns + sub(typeCGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
@@ -431,13 +431,13 @@ typeCSchubertIdeal(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
       
 numSolsC = method()
 numSolsC(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
-      I = typeCSchubertIdeal(flagshape,conditions,flags,K);
+      I := typeCSchubertIdeal(flagshape,conditions,flags,K);
       return (dim I, degree I))
 
 typeBLength = method()
 typeBLength(List) := (w) -> (
-      n = length(w);
-      count = 0;
+      n := length(w);
+      count := 0;
       for i from 1 to n do
             for j from i+1 to n do
                   if w_(i-1) > w_(j-1) then count = count+1;
@@ -448,8 +448,8 @@ typeBLength(List) := (w) -> (
 
 typeCLength = method()
 typeCLength(List) := (w) -> (
-      n = length(w);
-      count = 0;
+      n := length(w);
+      count := 0;
       for i from 1 to n do
             for j from i+1 to n do
                   if w_(i-1) > w_(j-1) then count = count+1;
@@ -460,8 +460,8 @@ typeCLength(List) := (w) -> (
 
 typeDLength = method()
 typeDLength(List) := (w) -> (
-      n = length(w);
-      count = 0;
+      n := length(w);
+      count := 0;
       for i from 1 to n do
             for j from i+1 to n do
                   if w_(i-1) > w_(j-1) then count = count+1;
