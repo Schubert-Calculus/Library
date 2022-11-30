@@ -231,7 +231,7 @@
 -- f = a^3*b^2*c
 -- deltaSwapA(f,R,0) returns a^2*b^2*c
 -- deltaSwapA(f,R,1) returns a^3*b*c
--- deltaSwapA(f,R,2) returns a^3*b2
+-- deltaSwapA(f,R,2) returns a^3*b^2
 
 ------------------------------
 
