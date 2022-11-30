@@ -70,6 +70,7 @@ export{
   "partialIntD"
 }
 
+x := symbol x;
 
 ----------------------------
 --METHODS --
