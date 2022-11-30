@@ -36,7 +36,7 @@
 -- (1) alphadual, another list {alpha_1^(hat),...,alpha_(a_s)^(hat)} of the same size as alpha, representing the dual Schubert condition to alpha
 --                in the flag variety of shape {a_1,...,a_s,n}.
 
--- Tests: 
+-- Tests: (NOT WORKING IN EMACS, ONLY TERMINAL)
 -- (1) dimToCodim({2,4},{3,4}) should give {1,2} (the dense cell goes to the point)
 -- (2) dimToCodim({2,4},{1,4}) should give {1,4} (self-dual example)
 -- (3) dimToCodim({3,17,21},{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}) should give {19, 20, 21, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
@@ -269,7 +269,7 @@
 -- and reads off the coefficient of the single standard monomial of top degree (has to be a 0-dimensional intersection)
 -- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
 
--- Tests: elementarySymmetricIdeal(4) (sets up S and I)
+-- Tests: elementarySymmetricIdeal(4) (sets up S and I) (FIRST AND SECOND TESTS WORK, BUT GETTING AN ERROR ON TEST 3)
 --       intA({{2,1,3,4},{3,4,2,1}},S,I) returns 1.
 --       intA({{2,1,3,4},{4,3,1,2}},S,I) returns error, should be 0 (see NOTE above).
 --       intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) returns 2.
@@ -281,6 +281,6 @@
 -- Function: Solves Schubert problems in general Type A flag varieties. It solves the problem of the pulled back conditions in the ambient complete flag
 -- manifold, and then intersects the result with the Schubert variety representing the ambient partial flag variety in the complete flag manifold.
 
--- Tests:
+-- Tests: (GETTING AN ERROR ON THESE TESTS)
 -- partialIntA({1,2,5},{{2,1},{2,1},{1,3},{1,3},{1,3},{1,3},{1,3}},S,I) returns 5.
 -- partialIntA({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},S,I) returns 3. 
