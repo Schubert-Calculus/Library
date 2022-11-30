@@ -105,8 +105,8 @@ splitPermutation(List,List) := (flagshape,alpha) -> (
 typeAStiefelCoords = method()
 typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       n := flagshape_(-1);
-      a_s := flagshape_(-2);
-      S := K[x_(1,1)..x_(n,a_s)];
+      as := flagshape_(-2);
+      S := K[x_(1,1)..x_(n,as)];
       alphalist := splitPermutation(flagshape,alpha);
       firstalpha := alphalist_(0);
       l := length(firstalpha);
@@ -138,8 +138,8 @@ typeAStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
             M = M | N;
             indexshift = indexshift + l);
       M = mutableMatrix M;
-      for i from 1 to a_s do(
-            for j from i to a_s-1 do(
+      for i from 1 to as do(
+            for j from i to as-1 do(
                   M_(alpha_(i-1)-1,j) = 0));
       M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
@@ -294,8 +294,8 @@ partialIntA(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
 typeCStiefelCoords = method()
 typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       n := flagshape_(-1);
-      a_s := flagshape_(-2);
-      S := K[x_(1,1)..x_(n,a_s)];
+      as := flagshape_(-2);
+      S := K[x_(1,1)..x_(n,as)];
       alphalist := splitPermutation(flagshape,alpha);
       firstalpha := alphalist_(0);
       l := length(firstalpha);
@@ -327,8 +327,8 @@ typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
             M = M | N;
             indexshift = indexshift + l);
       M = mutableMatrix M;
-      for i from 1 to a_s do(
-            for j from i to a_s-1 do(
+      for i from 1 to as do(
+            for j from i to as-1 do(
                   M_(alpha_(i-1)-1,j) = 0));
       M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
