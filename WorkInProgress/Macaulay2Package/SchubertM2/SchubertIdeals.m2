@@ -88,9 +88,9 @@ dimToCodim(List,List) := (flagshape,alpha) -> (
       breaks := prepend(0,flagshape);
       alphadual := {};
       for b from 1 to s do(
-            k := breaks_(b) - breaks_(b-1);
+            k = breaks_(b) - breaks_(b-1);
             for i from 1 to k do(
-                  alphadual := append(alphadual,n+1-alpha_(breaks_(b-1)+k-i))));
+                  alphadual = append(alphadual,n+1-alpha_(breaks_(b-1)+k-i))));
       return(alphadual))
 
 splitPermutation = method()
