@@ -284,3 +284,6 @@
 -- Tests: (S,I) = elementarySymmetricIdeal(5)
 -- partialIntA({1,2,5},{{2,1},{2,1},{1,3},{1,3},{1,3},{1,3},{1,3}},S,I) returns 5.
 -- partialIntA({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},S,I) returns 3. 
+
+-- (S,I) = elementarySymmetricIdeal(6)
+-- partialIntA({2,4,6},{{1,4,2,5},{1,4,2,5},{1,4,2,5},{1,4,2,5}},S,I) returns -6 (SHOULD BE 6, WHY NEGATIVE???)
