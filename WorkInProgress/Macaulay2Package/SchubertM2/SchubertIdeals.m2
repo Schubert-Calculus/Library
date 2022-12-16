@@ -19,6 +19,7 @@ newPackage(
 
 export{
   --methods
+  "dimToCodim",
   "splitPermutation",
   "typeAStiefelCoords",
   "notGreaterThan",
@@ -66,8 +67,7 @@ export{
   "completeSignedPermutation",
   "partialIntC",
   "partialIntB",
-  "partialIntD",
-  "dimToCodim"
+  "partialIntD"
 }
 
 ------------------------------
@@ -269,7 +269,7 @@ elementarySymmetricIdeal(ZZ) := (n) -> (
       coeffs := (coefficients (f-t^n))_(1);
       S := QQ[y_(1)..y_(n)];
       I := sub(ideal(coeffs),S);
-      return(S,I,S/I))
+      return(S,I))
       
 intA = method()
 intA(List,Ring,Ideal) := (alphas,S,I) -> (
