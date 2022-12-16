@@ -36,7 +36,7 @@
 -- (1) alphadual, another list {alpha_1^(hat),...,alpha_(a_s)^(hat)} of the same size as alpha, representing the dual Schubert condition to alpha
 --                in the flag variety of shape {a_1,...,a_s,n}.
 
--- Tests: (NOT WORKING IN EMACS, ONLY TERMINAL)
+-- Tests: (DOESN'T WORK IF ONLY LOAD PACKAGE, HAVE TO HAVE PATH CORRECT FIRST)
 -- (1) dimToCodim({2,4},{3,4}) should give {1,2} (the dense cell goes to the point)
 -- (2) dimToCodim({2,4},{1,4}) should give {1,4} (self-dual example)
 -- (3) dimToCodim({3,17,21},{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}) should give {19, 20, 21, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
