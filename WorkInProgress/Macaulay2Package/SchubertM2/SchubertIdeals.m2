@@ -19,7 +19,6 @@ newPackage(
 
 export{
   --methods
-  "dimToCodim",
   "splitPermutation",
   "typeAStiefelCoords",
   "notGreaterThan",
@@ -67,7 +66,8 @@ export{
   "completeSignedPermutation",
   "partialIntC",
   "partialIntB",
-  "partialIntD"
+  "partialIntD",
+  "dimToCodim"
 }
 
 ------------------------------
