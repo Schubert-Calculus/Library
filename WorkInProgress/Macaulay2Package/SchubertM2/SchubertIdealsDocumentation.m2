@@ -269,7 +269,7 @@
 -- and reads off the coefficient of the single standard monomial of top degree (has to be a 0-dimensional intersection)
 -- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
 
--- Tests: (S,I,Q) = elementarySymmetricIdeal(4) (sets up S and I) 
+-- Tests: (S,I) = elementarySymmetricIdeal(4) (sets up S and I) 
 --       intA({{2,1,3,4},{3,4,2,1}},S,I) returns 1.
 --       intA({{2,1,3,4},{4,3,1,2}},S,I) returns error, should be 0 (see NOTE above).
 --       intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) returns 2.
@@ -281,6 +281,6 @@
 -- Function: Solves Schubert problems in general Type A flag varieties. It solves the problem of the pulled back conditions in the ambient complete flag
 -- manifold, and then intersects the result with the Schubert variety representing the ambient partial flag variety in the complete flag manifold.
 
--- Tests: (S,I,Q) = elementarySymmetricIdeal(5)
+-- Tests: (S,I) = elementarySymmetricIdeal(5)
 -- partialIntA({1,2,5},{{2,1},{2,1},{1,3},{1,3},{1,3},{1,3},{1,3}},S,I) returns 5.
 -- partialIntA({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},S,I) returns 3. 
