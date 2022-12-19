@@ -204,7 +204,7 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       bigRing := (typeAStiefelCoords(flagshape,alphas_(0),K))#1;
       eqns := ideal(0_bigRing);
       for a in subspaces do(
-           conds := {sort(take(alphas_(0),a))};
+           conds := {take(alphas_(0),a)};
            for i from 1 to q do(
                 conds = append(conds,sort(take(alphas_(i),a))));
            eqns = eqns + sub(typeAGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
