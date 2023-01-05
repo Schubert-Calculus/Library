@@ -195,6 +195,8 @@ typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (coords,alphas,flags,K) -
             I = I + ideal(cauchyBinetCoefficients({k,n},allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
 
+---- WORK IN PROGRESS!!! ----
+
 typeASchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
