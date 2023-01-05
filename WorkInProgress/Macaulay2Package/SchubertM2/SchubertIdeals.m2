@@ -208,7 +208,7 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       for a in subspaces do(
            conds := {take(alphas_(0),a)};
 	   subM = submatrix(bigcoords,{0..(a-1)});
-	   coords := {subM,K[support subM]};
+	   coords := {subM,bigring};
            for i from 1 to q do(
                 conds = append(conds,sort(take(alphas_(i),a))));
            eqns = eqns + sub(typeAGrassmannianSchubertIdeal(coords,conds,flags,K),bigring));
