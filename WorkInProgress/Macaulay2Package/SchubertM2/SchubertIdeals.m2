@@ -185,29 +185,33 @@ cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) 
 typeAGrassmannianSchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
-typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (grassmannianshape,alphas,flags,K) -> (
-      k := grassmannianshape_(0);
-      n := grassmannianshape_(1);
-      coords := typeAStiefelCoords(grassmannianshape,alphas_(0),K);
+typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (coords,alphas,flags,K) -> (
+      k := numgens(source(coords_(0)));
+      n := numgens(target(coords_(0)));
       R := coords_(1);
       I := ideal(0_R);
       PY := exteriorPower(k,coords_(0));
       for i from 1 to length(alphas)-1 do 
-            I = I + ideal(cauchyBinetCoefficients(grassmannianshape,allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
+            I = I + ideal(cauchyBinetCoefficients({k,n},allNotGreaterThan(alphas_(i),n),flags_(i-1),K)*PY);
       return(I))
 
 typeASchubertIdeal = method()
+----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
+----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
 typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       n := last(flagshape);
       q := length(flags);
       subspaces := delete(n,flagshape);
-      bigRing := (typeAStiefelCoords(flagshape,alphas_(0),K))#1;
-      eqns := ideal(0_bigRing);
+      bigcoords = (typeAStiefelCoords(flagshape,alphas_(0),K))_(0);
+      bigring := (typeAStiefelCoords(flagshape,alphas_(0),K))_(1);
+      eqns := ideal(0_bigring);
       for a in subspaces do(
            conds := {take(alphas_(0),a)};
+	   subM = submatrix(bigcoords,{0..(a-1)});
+	   coords := {subM,K[support subM]};
            for i from 1 to q do(
                 conds = append(conds,sort(take(alphas_(i),a))));
-           eqns = eqns + sub(typeAGrassmannianSchubertIdeal({a,n},conds,flags,K),bigRing));
+           eqns = eqns + sub(typeAGrassmannianSchubertIdeal(coords,conds,flags,K),bigring));
       return(eqns))
 
 numSolsA = method()
