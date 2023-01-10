@@ -197,6 +197,26 @@ typeAGrassmannianSchubertIdeal(List,List,List,Ring) := (coords,alphas,flags,K) -
 
 ---- WORK IN PROGRESS!!! ----
 
+typeASchubertIdeal2 = method()
+----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
+----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
+typeASchubertIdeal2(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
+      n := last(flagshape);
+      q := length(flags);
+      subspaces := delete(n,flagshape);
+      bigcoords = (typeAStiefelCoords(flagshape,alphas_(0),K))_(0);
+      bigring := (typeAStiefelCoords(flagshape,alphas_(0),K))_(1);
+      eqns := ideal(0_bigring);
+      for a in subspaces do(
+           coords := submatrix(bigcoords,{0..(a-1)});
+	   PY = exteriorPower(a,coords);
+           conds := {sort(take(alphas_(0),a))};
+           for i from 1 to q do(
+                conds = append(conds,sort(take(alphas_(i),a))));
+           for i from 1 to length(conds)-1 do( 
+                 eqns = eqns + sub(ideal(cauchyBinetCoefficients({a,n},allNotGreaterThan(conds_(i),n),flags_(i-1),K)*PY),bigring)));
+      return(eqns))
+      
 typeASchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
