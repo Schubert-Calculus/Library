@@ -189,12 +189,12 @@ typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       n := last(flagshape);
       q := length(flags);
       subspaces := delete(n,flagshape);
-      bigcoords = (typeAStiefelCoords(flagshape,alphas_(0),K))_(0);
+      bigcoords := (typeAStiefelCoords(flagshape,alphas_(0),K))_(0);
       bigring := (typeAStiefelCoords(flagshape,alphas_(0),K))_(1);
       eqns := ideal(0_bigring);
       for a in subspaces do(
            coords := submatrix(bigcoords,{0..(a-1)});
-	   PY = exteriorPower(a,coords);
+	   PY := exteriorPower(a,coords);
            conds := {sort(take(alphas_(0),a))};
            for i from 1 to q do(
                 conds = append(conds,sort(take(alphas_(i),a))));
