@@ -1,7 +1,7 @@
 newPackage(
   "SchubertIdeals",
   Version => "0.0.1", 
-  Date => "November 23, 2022",
+  Date => "November 30, 2022",
   Authors => {
     {Name => "C.J. Bott", 
      Email => "cbott2@tamu.edu"},
