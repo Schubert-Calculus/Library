@@ -182,10 +182,10 @@ cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) 
                   M_(i,j) = det(submatrix(Finv,betas_(i)-kOnes,subs_(j)-kOnes))));
       return(matrix M))
 
-typeASchubertIdeal2 = method()
+typeASchubertIdeal = method()
 ----- NOTE: There should be m alphas and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the alpha's codimensions should add up to k(n-k) to give an actual Schubert problem
-typeASchubertIdeal2(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
+typeASchubertIdeal(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
       n := last(flagshape);
       q := length(flags);
       subspaces := delete(n,flagshape);
