@@ -1,5 +1,4 @@
 -- TO-DO LIST:
--- Actually detail out the "Inputs" and "Outputs" (can copy and paste a lot)
 -- Add 1-liners for code in other file
 -- Add tests for trivial intersection giving reverse identity flag itself back (G(1,4) and G(2,4) examples maybe)
 -- Fix "intA" code to deal with empty intersections (0 solutions)
