@@ -1,9 +1,10 @@
 -- TO-DO LIST:
 -- Actually detail out the "Inputs" and "Outputs" (can copy and paste a lot)
--- LUNCH! :D
 -- Add 1-liners for code in other file
+-- Add tests for trivial intersection giving reverse identity flag itself back (G(1,4) and G(2,4) examples maybe)
 -- Fix "intA" code to deal with empty intersections (0 solutions)
 -- Possibly fix "intA" code to instead of extracting coefficient, divide by the basis element (takes care of negative coefficients of the basis element)
+----
 -- Type B and C code documentation
 -- Redo code to follow Billey's thesis
 
@@ -58,11 +59,11 @@
 -- Function: A helper function that will split a partial permutation into a list of lists, separations determined by the flagshape.
 
 -- Inputs:
--- (1) flagshape, 
--- (2) alpha, 
+-- (1) flagshape, a list {a_1,...,a_s,n}.
+-- (2) alpha, a list {alpha_1,...,alpha_(a_s)} giving a Schubert condition of that shape.
 
 -- Outputs:
--- (1) splitperm, 
+-- (1) splitperm, a list of lists, whose concatenations give back alpha, broken up by the locations of possible descents from the prescribed flagshape.
 
 -- Tests:
 -- (1) splitPermutation({2,3,6,9},{7,8,4,1,2,3}) should return {{7,8},{4},{1,2,3}}.
@@ -110,11 +111,11 @@
 -- partial order. If beta is NOT greater than or equal to alpha, the function returns "true". Otherwise, the function returns "false".
 
 -- Inputs: 
--- (1) beta, 
--- (2) alpha, 
+-- (1) beta, a partial permutation.
+-- (2) alpha, a partial permutation of the same size as beta.
 
 -- Outputs:
--- (1) notgreaterthan, 
+-- (1) notgreaterthan, a Boolean: "true" if beta is not greater than or equal to alpha (in the Bruhat order), and "false" otherwise.
 
 -- Tests:
 -- (1) notGreaterThan({1,2},{3,4}) returns "true"
@@ -130,8 +131,8 @@
 -- alpha in the Bruhat partial order.
 
 -- Inputs: 
--- (1) alpha, 
--- (2) n, 
+-- (1) alpha, a partial permutation.
+-- (2) n, a positive integer detailing that alpha comes as a subset of {1,...,n}.
 
 -- Outputs:
 -- (1) L, 
@@ -153,13 +154,14 @@
 -- "Numerical Schubert Calculus via the Littlewood-Richardson Homotopy Algorithm" (Leykin, del Campo, Sottile, Vakil, Verschelde).
 
 -- Inputs:
--- (1) grassmannianshape, 
--- (2) betas, 
--- (3) F, 
--- (4) K, 
+-- (1) grassmannianshape, a list {k,n} giving the type of a Grassmannian.
+-- (2) betas, an indexing set of partial permutations detailing which minors will be considered. For us, will be all betas not greater than or equal to
+--            a specified alpha in the Bruhat order (see reference above).
+-- (3) F, an invertible matrix representing a flag.
+-- (4) K, a field.
 
 -- Outputs:
--- (1) M, 
+-- (1) M, a matrix. For our uses, it will produce P(alpha)(F^{-1}) (see reference above).
 
 -- Tests: 
 -- (1) cauchyBinetCoefficients({2,4},allNotGreaterThan({2,4},4),id_(QQ^4),QQ) returns non-square identity-like matrix.
@@ -173,13 +175,13 @@
 -- the user inputs 1 fewer flag than conditions.
 
 -- Inputs: 
--- (1) flagshape, 
--- (2) alphas, 
--- (3) flags, 
--- (4) K, 
+-- (1) flagshape, a list {a_1,...,a_s,n}.
+-- (2) alphas, a list of lists {alpha_1,...,alpha_(a_s)}, each giving a Schubert condition of that shape.
+-- (3) flags, invertible nxn matrices representing general flags.
+-- (4) K, a field.
 
 -- Outputs: 
--- (1) eqns, 
+-- (1) eqns, an ideal with generators the defining equations (in local coordinates) of the corresponding Schubert intersection problem.
 
 -- Tests:
 -- All computations in G(2,4). Have to create some random flags first before use. After ideal I is returned, can use dim I, degree I to extract info.
@@ -217,14 +219,14 @@
 -- directly the dimension and degree of the ideal.
 
 -- Inputs: 
--- (1) flagshape, 
--- (2) alphas, 
--- (3) flags, 
--- (4) K, 
+-- (1) flagshape, a list {a_1,...,a_s,n}.
+-- (2) alphas, a list of lists {alpha_1,...,alpha_(a_s)}, each giving a Schubert condition of that shape.
+-- (3) flags, invertible nxn matrices representing general flags.
+-- (4) K, a field. 
 
 -- Outputs: 
--- (1) dim I, 
--- (2) degree I, 
+-- (1) dim I, the dimension of the corresponding Schubert intersection problem.
+-- (2) degree I, the degree of the corresponding Schubert intersection problem. If dim I = 0, this degree is the number of solutions to the system.
 
 -- Tests:
 -- (1)
@@ -241,14 +243,14 @@
 
 -- completePermutation --
 
--- Function: Takes a partial permutation, and completes it by adjoining the missing elements of [n] to the end in increasing order.
+-- Function: Takes a partial permutation, and completes it by adjoining the missing elements of {1,...,n} to the end in increasing order.
 
 -- Inputs: 
--- (1) w, 
--- (2) n, 
+-- (1) w, a partial permutation.
+-- (2) n, a positive integer detailing that w comes as a subset of {1,...,n}.
 
 -- Outputs: 
--- (1) wcomplete, 
+-- (1) wcomplete, a permutation of {1,...,n} that is w completed.
 
 -- Tests: 
 -- (1) completePermutation({7,8,4,1,2,3},9) returns {7,8,4,1,2,3,5,6,9}.
@@ -261,11 +263,11 @@
 -- This length computes the codimension of the corresponding type A Schubert variety.
 
 -- Inputs: 
--- (1) w, 
--- (2) n, 
+-- (1) w, a partial permutation.
+-- (2) n, a positive integer detailing that w comes as a subset of {1,...,n}.
 
 -- Outputs: 
--- (1) count, 
+-- (1) count, the Coxeter length of w.
 
 -- Tests: 
 -- (1) typeALength({7,8,4,1,2,3},9) returns 15, which is the precise number of inversions of the completed permutation.
@@ -284,10 +286,10 @@
 -- it will be employed will use these indicies in the reverse order from how we employed them, so this is done on purpose.
 
 -- Inputs: 
--- (1) L, 
+-- (1) L, a (full) permutation.
 
 -- Outputs: 
--- (1) swaps, 
+-- (1) swaps, A list corresponding to the indicies of a reduced word for L as a product of transpositions.
 
 -- Tests:
 -- (1) bubbleSort({1,2,3,4}) returns {0,1,2,0,1,0}. 
@@ -301,12 +303,12 @@
 -- computer science notation where i starts counting from 0 to n-2. This takes a polynomial to a polynomial of degree one less.
 
 -- Inputs: 
--- (1) f, 
--- (2) R, 
--- (3) k, 
+-- (1) f, a multivariate polynomial.
+-- (2) R, a polynomial ring containing f (could contain more variables).
+-- (3) k, a nonnegative integer (corresponding to which divided difference operator to apply).
 
 -- Outputs: 
--- (1) fnew
+-- (1) fnew, the polynomial produced by applying the kth divided difference operator to f (should be 1 degree less).
 
 -- Tests:
 -- (1)
@@ -326,11 +328,11 @@
 -- by that permutation in the full flag manifold.
 
 -- Inputs: 
--- (1) w, 
--- (2) R, 
+-- (1) w, a list of indicies corresponding to a reduced word for a (full) permutation.
+-- (2) R, a polynomial ring from which the staircase monomial will be computed.
 
 -- Outputs: 
--- (1) polyrep, 
+-- (1) polyrep, the Schubert polynomial representative for the Schubert class indexed by the (full) permutation w was the reduced word for.
 
 -- Tests: 
 -- (1) polyRepA(bubbleSort({1,4,3,2}),QQ[a,b,c,d])  returns a^2*b + a*b^2  + a^2*c + a*b*c + b^2*c
@@ -350,11 +352,11 @@
 -- instance, but just once ahead of time.
 
 -- Inputs: 
--- (1) n, 
+-- (1) n, a positive integer.
 
 -- Outputs:
--- (1) S, 
--- (2) I, 
+-- (1) S, the polynomial ring in n variables.
+-- (2) I, the ideal of S generated by all elementary symmetric polynomials in n variables.
 
 -- Tests: 
 -- (1) elementarySymmetricIdeal(3) gives QQ[x_1,x_2,x_3], and the ideal generated by the 3 elementary symmetric polynomials.
@@ -369,12 +371,12 @@
 -- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
 
 -- Inputs: 
--- (1) alphas, 
--- (2) S, 
--- (3) I, 
+-- (1) alphas, a list of lists {alpha_1,...,alpha_(a_s)}, each giving a Schubert condition of that shape.
+-- (2) S, the polynomial ring in n variables.
+-- (3) I, the ideal of S generated by all elementary symmetric polynomials in n variables.
 
 -- Outputs: 
--- (1) numsols, 
+-- (1) numsols, the number of solutions to the Schubert problem.
 
 -- Tests: 
 -- (1)
@@ -391,13 +393,13 @@
 -- manifold, and then intersects the result with the Schubert variety representing the ambient partial flag variety in the complete flag manifold.
 
 -- Inputs: 
--- (1) flagshape, 
--- (2) alphas, 
--- (3) S, 
--- (4) I, 
+-- (1) flagshape, a list {a_1,...,a_s,n}.
+-- (2) alphas, a list of lists {alpha_1,...,alpha_(a_s)}, each giving a Schubert condition of that shape.
+-- (3) S, the polynomial ring in n variables.
+-- (4) I, the ideal of S generated by all elementary symmetric polynomials in n variables.
 
 -- Outputs: 
--- (1) numsols, 
+-- (1) numsols, the number of solutions to the Schubert problem.
 
 -- Tests: 
 -- (1) 
