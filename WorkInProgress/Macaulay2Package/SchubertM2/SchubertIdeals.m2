@@ -210,7 +210,7 @@ numSolsA(List,List,List,Ring) := (flagshape,alphas,flags,K) -> (
 
 completePermutation = method(TypicalValue=>List)
 completePermutation(List,ZZ):=(w,n) ->(
-      wcomplete = w;
+      wcomplete := w;
       for i from 1 to n do(
             if isSubset({i},wcomplete)==false then wcomplete=append(wcomplete,i));
       return(wcomplete))
@@ -240,7 +240,7 @@ bubbleSort(List) := (L) -> (
 deltaSwapA = method()
 deltaSwapA(Thing,Ring,ZZ) := (f,R,k) -> (
       ringvars := gens R;
-      fnew = sub((f-sub(f,{ringvars_(k)=>ringvars_(k+1),ringvars_(k+1)=>ringvars_(k)}))/(ringvars_(k)-ringvars_(k+1)),R);
+      fnew := sub((f-sub(f,{ringvars_(k)=>ringvars_(k+1),ringvars_(k+1)=>ringvars_(k)}))/(ringvars_(k)-ringvars_(k+1)),R);
       return(fnew))
       
 polyRepA = method();
@@ -272,7 +272,7 @@ intA(List,Ring,Ideal) := (alphas,S,I) -> (
       for alpha in alphas do(
             f = f*polyRepA(bubbleSort(alpha),S));
       f = f % I;
-      numsols = (((coefficients f)_(1))_(0))_(0);
+      numsols := (((coefficients f)_(1))_(0))_(0);
       return(numsols))
       
 -- flagType a list of the form {a_1,a_2,...,a_s,n}
@@ -291,7 +291,7 @@ partialIntA(List,List,Ring,Ideal) := (flagshape,alphas,S,I) -> (
       for i from 1 to flagshape_(0) do(
             dualclass = prepend(i,dualclass));
       newalphas = append(newalphas,dualclass);
-      numsols = intA(newalphas,S,I);
+      numsols := intA(newalphas,S,I);
       return(numsols))
       
 typeCStiefelCoords = method()
