@@ -1,9 +1,7 @@
 -- TO-DO LIST:
 -- Add 1-liners for code in other file
 -- Add tests for trivial intersection giving reverse identity flag itself back (G(1,4) and G(2,4) examples maybe)
--- Fix "intA" code to deal with empty intersections (0 solutions)
--- Possibly fix "intA" code to instead of extracting coefficient, divide by the basis element (takes care of negative coefficients of the basis element)
-----
+------
 -- Type B and C code documentation
 -- Redo code to follow Billey's thesis
 
@@ -366,8 +364,7 @@
 
 -- Function: Solves Schubert problems in Type A complete flag manifolds. Given a list of Schubert conditions, as well as S and I from 
 -- elementarySymmetricIdeal, this function computes the corresponding Schubert polynomials for those conditions, multiplies them together mod I,
--- and reads off the coefficient of the single standard monomial of top degree (has to be a 0-dimensional intersection)
--- NOTE: Currently Struggles if answer is 0, need an "if, then" statement to rectify this.
+-- and divides by the single standard monomial of top degree to get the coefficient, which is the number of solutions (has to be a 0-dimensional intersection).
 
 -- Inputs: 
 -- (1) alphas, a list of lists {alpha_1,...,alpha_(a_s)}, each giving a Schubert condition of that shape.
@@ -381,7 +378,7 @@
 -- (1)
 -- (S,I) = elementarySymmetricIdeal(4) (sets up S and I) 
 -- (1a) intA({{2,1,3,4},{3,4,2,1}},S,I) returns 1.
--- (1b) intA({{2,1,3,4},{4,3,1,2}},S,I) returns error, should be 0 (see NOTE above).
+-- (1b) intA({{2,1,3,4},{4,3,1,2}},S,I) returns 0.
 -- (1c) intA({{2,1,3,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,3,2,4},{1,2,4,3}},S,I) returns 2.
 
 ------------------------------
@@ -407,9 +404,6 @@
 -- (1b) partialIntA({1,2,5},{{2,1},{2,1},{2,1},{1,3},{1,3},{1,3},{1,3}},S,I) returns 3. 
 -- (2)
 -- (S,I) = elementarySymmetricIdeal(6)
--- (2a) partialIntA({2,4,6},{{1,4,2,5},{1,4,2,5},{1,4,2,5},{1,4,2,5}},S,I) returns -6 (I checked, and the staircase monomial % I has negative representative...)
-
-
-
+-- (2a) partialIntA({2,4,6},{{1,4,2,5},{1,4,2,5},{1,4,2,5},{1,4,2,5}},S,I) returns 6.
 
 
