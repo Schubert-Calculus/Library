@@ -1,9 +1,8 @@
 -- TO-DO LIST:
 -- Add 1-liners for code in other file
--- Add tests for trivial intersection giving reverse identity flag itself back (G(1,4) and G(2,4) examples maybe)
-------
 -- Type B and C code documentation
 -- Redo code to follow Billey's thesis
+-- Add tests to "Frank.m2"
 
 --------------------------------------------------
 -- NOTES:
@@ -207,7 +206,28 @@
 -- F2 = random(QQ^6,QQ^6)
 -- F3 = random(QQ^6,QQ^6)
 -- (3a) typeASchubertIdeal({2,4,6},{{1,4,2,5},{1,4,2,5},{1,4,2,5},{1,4,2,5}},{F1,F2,F3},QQ) returns an ideal eqns with dim(eqns) = 0, degree(eqns) = 6.
-
+-- (4) Test to make sure that in addition to intersection numbers being correct, in a trivial case the reverse identity flag is returned.
+-- (4a) F = random(QQ^4,QQ^4)
+-- I = typeASchubertIdeal({1,4},{{1},{4}},{F},QQ);
+-- typeAStiefelCoords({1,4},{1},QQ)
+-- gens gb I 
+-- (4b) F = matrix{{1/2,4/5,1/2,7/8},{1/2,3/2,1/3,6/5},{8/9,10/9,2,8/5},{1,1/3,2,7/9}} (a specific instance of a random matrix that I generated)
+-- J = typeASchubertIdeal({2,4},{{1,2},{3,4}},{F},QQ);
+-- typeAStiefelCoords({2,4},{1,2},QQ)
+-- gens gb J
+-- M = matrix{{1,0},{0,1},{224/37,-114/37},{2312/333,-490/111}} (eyeballing the Groebner basis to substitute values in for the variables of the local coords)
+-- F12 = submatrix(F,{0,1})
+-- F13 = submatrix(F,{0,2})
+-- F14 = submatrix(F,{0,3})
+-- F23 = submatrix(F,{1,2})
+-- F24 = submatrix(F,{1,3})
+-- F34 = submatrix(F,{2,3})
+-- rank(M | F12) (should give 4)
+-- rank(M | F13) (should give 3)
+-- rank(M | F14) (should give 3)
+-- rank(M | F23) (should give 3)
+-- rank(M | F24) (should give 3)
+-- rank(M | F34) (should give 2, so M and F34 do indeed generate the same 2-plane, so the reverse identity flag is recovered as desired).
 ------------------------------
 
 -- numSolsA --
