@@ -67,7 +67,9 @@ export{
   "completeSignedPermutation",
   "partialIntC",
   "partialIntB",
-  "partialIntD"
+  "partialIntD",
+  "intA2",
+  "partialIntA2"
 }
 
 ------------------------------
