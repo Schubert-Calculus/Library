@@ -2,7 +2,6 @@
 -- Add 1-liners for code in other file
 -- Type B and C code documentation
 -- Redo code to follow Billey's thesis
--- Add tests to "Frank.m2"
 
 --------------------------------------------------
 -- NOTES:
