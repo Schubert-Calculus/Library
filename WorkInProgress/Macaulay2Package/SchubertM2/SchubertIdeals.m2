@@ -797,5 +797,5 @@ partialIntA2(List,List,Ring,Ideal) := (flagshape,alphas,S,I) -> (
       for i from 1 to flagshape_(0) do(
             dualclass = prepend(i,dualclass));
       newalphas = append(newalphas,dualclass);
-      numsols := intA(newalphas,S,I);
+      numsols := intA2(newalphas,S,I);
       return(numsols))
