@@ -270,14 +270,15 @@ elementarySymmetricIdeal(ZZ) := (n) -> (
       
 intA = method()
 intA(List,Ring,Ideal) := (alphas,S,I) -> (
+      n := numgens S;
       f := 1_S;
       for alpha in alphas do(
             f = f*polyRepA(bubbleSort(alpha),S));
       f = f % I;
-      numsols := (((coefficients f)_(1))_(0))_(0);
+      g := polyRepA(bubbleSort(reverse(toList(1..n))),S) % I;
+      numsols := f / g;
       return(numsols))
       
--- flagType a list of the form {a_1,a_2,...,a_s,n}
 partialIntA = method()
 partialIntA(List,List,Ring,Ideal) := (flagshape,alphas,S,I) -> (
       l := length(flagshape);
@@ -770,32 +771,3 @@ partialIntD(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
       newAlphas = append(newAlphas,dualClass);
       return(intC(newAlphas,S,I)))
 
-intA2 = method()
-intA2(List,Ring,Ideal) := (alphas,S,I) -> (
-      n := numgens S;
-      f := 1_S;
-      for alpha in alphas do(
-            f = f*polyRepA(bubbleSort(alpha),S));
-      f = f % I;
-      g := polyRepA(bubbleSort(reverse(toList(1..n))),S) % I;
-      numsols := f / g;
-      return(numsols))
-      
--- flagType a list of the form {a_1,a_2,...,a_s,n}
-partialIntA2 = method()
-partialIntA2(List,List,Ring,Ideal) := (flagshape,alphas,S,I) -> (
-      l := length(flagshape);
-      n := flagshape_(-1);
-      newalphas := {};
-      for alpha in alphas do(
-            newalpha := completePermutation(alpha,n);
-            newalphas = append(newalphas,newalpha));
-      dualclass := {};
-      for k from 1 to (l-1) do(
-            for j from (flagshape_(-(k+1)) + 1) to flagshape_(-k) do(
-	          dualclass = prepend(j,dualclass)));
-      for i from 1 to flagshape_(0) do(
-            dualclass = prepend(i,dualclass));
-      newalphas = append(newalphas,dualclass);
-      numsols := intA2(newalphas,S,I);
-      return(numsols))
