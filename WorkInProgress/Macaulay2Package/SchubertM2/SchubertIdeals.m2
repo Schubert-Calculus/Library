@@ -770,7 +770,7 @@ partialIntD(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
 
 intA2 = method()
 intA2(List,Ring,Ideal) := (alphas,S,I) -> (
-      n = numgens S;
+      n := numgens S;
       f := 1_S;
       for alpha in alphas do(
             f = f*polyRepA(bubbleSort(alpha),S));
