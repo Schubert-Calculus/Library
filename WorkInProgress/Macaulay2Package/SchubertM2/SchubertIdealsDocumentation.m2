@@ -1,7 +1,6 @@
 -- TO-DO LIST:
--- Add 1-liners for code in other file
--- Type B and C code documentation
--- Redo code to follow Billey's thesis
+-- Type B,C,D code fixes documentation to match A
+-- Change B,C,D code to follow Billey's thesis
 
 --------------------------------------------------
 -- NOTES:
@@ -425,4 +424,8 @@
 -- (S,I) = elementarySymmetricIdeal(6)
 -- (2a) partialIntA({2,4,6},{{1,4,2,5},{1,4,2,5},{1,4,2,5},{1,4,2,5}},S,I) returns 6.
 
+--------------------------------------------------
 
+-- TYPE C CODE
+
+--------------------------------------------------
