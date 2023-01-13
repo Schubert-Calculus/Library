@@ -44,29 +44,29 @@ export{
   "typeCGrassmannianSchubertIdeal",
   "typeCSchubertIdeal",
   "numSolsC",
-  "typeBLength",
+  "completeSignedPermutation",
   "typeCLength",
-  "typeDLength",
-  "elementarySymmetricSquaresIdeal",
-  "elementarySchurDeterminantC",
-  "elementarySchurDeterminantB",
   "signedToNot",
   "signedBubbleSort",
   "deltaSwapC",
-  "deltaSwapB",
+  "elementarySchurDeterminantC",
   "polyRepC",
-  "polyRepB",
+  "elementarySymmetricSquaresIdeal",
   "intC",
+  "partialIntC",
+  "typeBLength",
+  "deltaSwapB",
+  "elementarySchurDeterminantB",
+  "polyRepB",
   "intB",
-  "elementarySymmetricDIdeal",
+  "partialIntB",
+  "typeDLength",
   "signedBubbleSortD",
   "deltaSwapD",
   "elementarySchurDeterminantD",
   "polyRepD",
+  "elementarySymmetricDIdeal",
   "intD",
-  "completeSignedPermutation",
-  "partialIntC",
-  "partialIntB",
   "partialIntD"
 }
 
@@ -80,6 +80,12 @@ t := symbol t;
 ------------------------------
 -- METHODS --
 ------------------------------
+
+--------------------------------------------------
+
+-- TYPE A CODE
+
+--------------------------------------------------
 
 -- Converts a partial permutation in dimension notation to the corresponding one in codimension notation. (Equivalently, gives the dual class).
 dimToCodim = method()
@@ -311,6 +317,12 @@ partialIntA(List,List,Ring,Ideal) := (flagshape,alphas,S,I) -> (
       numsols := intA(newalphas,S,I);
       return(numsols))
       
+--------------------------------------------------
+
+-- TYPE C CODE
+
+--------------------------------------------------
+
 typeCStiefelCoords = method()
 typeCStiefelCoords(List,List,Ring) := (flagshape,alpha,K) -> (
       n := flagshape_(-1);
@@ -454,17 +466,12 @@ numSolsC(List,List,List,Ring) := (flagshape,conditions,flags,K) -> (
       I := typeCSchubertIdeal(flagshape,conditions,flags,K);
       return (dim I, degree I))
 
-typeBLength = method()
-typeBLength(List) := (w) -> (
-      n := length(w);
-      count := 0;
-      for i from 1 to n do
-            for j from i+1 to n do
-                  if w_(i-1) > w_(j-1) then count = count+1;
-      for i from 1 to n do
-            for j from i to n do
-                  if w_(i-1) + w_(j-1) > 2*n+2 then count = count+1;
-      return(count))
+completeSignedPermutation = method()
+completeSignedPermutation(List,ZZ) := (w,n) -> (
+      wnew := w;
+      for i from 1 to n do(
+		if (isSubset({i},wnew)==false and isSubset({-i},wnew)==false) then wnew=append(wnew,i));
+      return(wnew))
 
 typeCLength = method()
 typeCLength(List) := (w) -> (
@@ -477,64 +484,7 @@ typeCLength(List) := (w) -> (
             for j from i to n do
                   if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
       return(count))
-
-typeDLength = method()
-typeDLength(List) := (w) -> (
-      n := length(w);
-      count := 0;
-      for i from 1 to n do
-            for j from i+1 to n do
-                  if w_(i-1) > w_(j-1) then count = count+1;
-      for i from 1 to n do
-            for j from i+1 to n do
-                  if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
-      return(count))
-
-elementarySymmetricSquaresIdeal = method()
-elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
-      R := QQ[y_(1)..y_(n)][t];
-      f := 1_R;
-      for i from 1 to n do(
-            f = f*(y_(i)^2+t));
-      coeffs := (coefficients (f-t^n))_(1);
-      S := QQ[y_(1)..y_(n)];
-      I := sub(ideal(coeffs),S);
-      return(S,I,S/I))
       
-elementarySchurDeterminantC = method()
-elementarySchurDeterminantC(List,ZZ) := (lambda,n) -> (
-      Rt := QQ[y_(1)..y_(n)][t];
-      f := 1_(Rt);
-      for i from 1 to n do(
-            f = f*(y_(i)+t));
-      elempolys := ((coefficients (f-t^n))_(1))_(0);
-      S := QQ[y_(1)..y_(n)];
-      fixedElemPolys := {};
-      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,sub(elempolys_(i-1),S));
-      M := mutableMatrix(S,n,n);
-      for i from 1 to n do(
-            for j from 1 to n do(
-                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
-                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
-      return determinant(matrix M))
-
-elementarySchurDeterminantB = method()
-elementarySchurDeterminantB(List,ZZ) := (lambda,n) -> (
-      Rt := QQ[y_(1)..y_(n)][t];
-      f := 1_(Rt);
-      for i from 1 to n do(
-            f = f*(y_(i)+t));
-      elempolys := ((coefficients (f-t^n))_(1))_(0);
-      S := QQ[y_(1)..y_(n)];
-      fixedElemPolys := {};
-      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,(1/2)*(sub(elempolys_(i-1),S)));
-      M := mutableMatrix(S,n,n);
-      for i from 1 to n do(
-            for j from 1 to n do(
-                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
-                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
-      return determinant(matrix M))
-
 signedToNot = method()
 signedToNot(List) := (perm) -> (
       n := length(perm);
@@ -563,17 +513,29 @@ signedBubbleSort(List) := (L) -> (
                         L = switch(i,i+1,L);
                         break)));
       return(swaps))
-
+      
 deltaSwapC = method()
 deltaSwapC(Thing,Ring) := (f,R) -> (
       ringVars := gens R;
       return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(2*ringVars_(-1)),R))
       
-deltaSwapB = method()
-deltaSwapB(Thing,Ring) := (f,R) -> (
-      ringVars := gens R;
-      return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-1)),R))
-
+elementarySchurDeterminantC = method()
+elementarySchurDeterminantC(List,ZZ) := (lambda,n) -> (
+      Rt := QQ[y_(1)..y_(n)][t];
+      f := 1_(Rt);
+      for i from 1 to n do(
+            f = f*(y_(i)+t));
+      elempolys := ((coefficients (f-t^n))_(1))_(0);
+      S := QQ[y_(1)..y_(n)];
+      fixedElemPolys := {};
+      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,sub(elempolys_(i-1),S));
+      M := mutableMatrix(S,n,n);
+      for i from 1 to n do(
+            for j from 1 to n do(
+                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
+                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
+      return determinant(matrix M))
+      
 polyRepC = method()
 polyRepC(List,Ring) := (w,R) -> (
       ringVars := gens R;
@@ -592,6 +554,84 @@ polyRepC(List,Ring) := (w,R) -> (
             if (i == n-1) then(
 		  polyrep = deltaSwapC(polyrep,R)));
       return(polyrep))
+      
+elementarySymmetricSquaresIdeal = method()
+elementarySymmetricSquaresIdeal(ZZ) := (n) -> (
+      R := QQ[y_(1)..y_(n)][t];
+      f := 1_R;
+      for i from 1 to n do(
+            f = f*(y_(i)^2+t));
+      coeffs := (coefficients (f-t^n))_(1);
+      S := QQ[y_(1)..y_(n)];
+      I := sub(ideal(coeffs),S);
+      return(S,I,S/I))
+      
+intC = method()
+intC(List,Ring,Ideal) := (alphas,S,I) -> (
+      f := 1_S;
+      for alpha in alphas do(
+            f = f*polyRepC(signedBubbleSort(signedToNot(alpha)),S));
+      f = f % I;
+      return (((coefficients f)_(1))_(0))_(0))
+      
+partialIntC = method()
+partialIntC(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l := length(flagType);
+      n := flagType_(-1);
+      newAlphas := {};
+      for alpha in alphas do(
+            newAlpha := completeSignedPermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass := {};
+      for k from 2 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (n-flagType_(-2)) do(
+            dualClass = append(dualClass,-i));
+      newAlphas = append(newAlphas,dualClass);
+      return(intC(newAlphas,S,I)))
+      
+--------------------------------------------------
+
+-- TYPE B CODE
+
+--------------------------------------------------
+
+typeBLength = method()
+typeBLength(List) := (w) -> (
+      n := length(w);
+      count := 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      for i from 1 to n do
+            for j from i to n do
+                  if w_(i-1) + w_(j-1) > 2*n+2 then count = count+1;
+      return(count))
+      
+deltaSwapB = method()
+deltaSwapB(Thing,Ring) := (f,R) -> (
+      ringVars := gens R;
+      return sub((f-sub(f,{ringVars_(-1)=>(-1)*ringVars_(-1)}))/(ringVars_(-1)),R))
+      
+elementarySchurDeterminantB = method()
+elementarySchurDeterminantB(List,ZZ) := (lambda,n) -> (
+      Rt := QQ[y_(1)..y_(n)][t];
+      f := 1_(Rt);
+      for i from 1 to n do(
+            f = f*(y_(i)+t));
+      elempolys := ((coefficients (f-t^n))_(1))_(0);
+      S := QQ[y_(1)..y_(n)];
+      fixedElemPolys := {};
+      for i from 1 to n do fixedElemPolys = append(fixedElemPolys,(1/2)*(sub(elempolys_(i-1),S)));
+      M := mutableMatrix(S,n,n);
+      for i from 1 to n do(
+            for j from 1 to n do(
+                  if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
+                  if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
+      return determinant(matrix M))
       
 polyRepB = method()
 polyRepB(List,Ring) := (w,R) -> (
@@ -612,14 +652,6 @@ polyRepB(List,Ring) := (w,R) -> (
 		  polyrep = deltaSwapB(polyrep,R)));
       return(polyrep))
 
-intC = method()
-intC(List,Ring,Ideal) := (alphas,S,I) -> (
-      f := 1_S;
-      for alpha in alphas do(
-            f = f*polyRepC(signedBubbleSort(signedToNot(alpha)),S));
-      f = f % I;
-      return (((coefficients f)_(1))_(0))_(0))
-
 intB = method()
 intB(List,Ring,Ideal) := (alphas,S,I) -> (
       f := 1_S;
@@ -627,22 +659,44 @@ intB(List,Ring,Ideal) := (alphas,S,I) -> (
             f = f*polyRepB(signedBubbleSort(signedToNot(alpha)),S));
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
+      
+partialIntB = method()
+partialIntB(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
+      l := length(flagType);
+      n := flagType_(-1);
+      newAlphas := {};
+      for alpha in alphas do(
+            newAlpha := completeSignedPermutation(alpha,n);
+            newAlphas = append(newAlphas,newAlpha));
+      dualClass := {};
+      for k from 2 to (l-1) do(
+            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
+	          dualClass = prepend(j,dualClass)));
+      for i from 1 to flagType_(0) do(
+            dualClass = prepend(i,dualClass));
+      for i from 1 to (n-flagType_(-2)) do(
+            dualClass = append(dualClass,-i));
+      newAlphas = append(newAlphas,dualClass);
+      return(intB(newAlphas,S,I)))
 
-elementarySymmetricDIdeal = method()
-elementarySymmetricDIdeal(ZZ) := (n) -> (
-      Rt := QQ[y_(1)..y_(n)][t];
-      f := 1_(Rt);
-      squareProd := 1_(Rt);
-      prod := 1_(Rt);
-      for i from 1 to n do(
-            f = f*(y_(i)^2+t);
-	    squareProd = squareProd*((y_(i))^2);
-	    prod = prod*(y_(i)));
-      coeffs := (coefficients (f-t^n-squareProd))_(1);
-      S := QQ[y_(1)..y_(n)];
-      I := sub(ideal(coeffs,prod),S);
-      return(S,I,S/I))
+--------------------------------------------------
 
+-- TYPE D CODE
+
+--------------------------------------------------
+
+typeDLength = method()
+typeDLength(List) := (w) -> (
+      n := length(w);
+      count := 0;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) > w_(j-1) then count = count+1;
+      for i from 1 to n do
+            for j from i+1 to n do
+                  if w_(i-1) + w_(j-1) > 2*n+1 then count = count+1;
+      return(count))
+      
 signedBubbleSortD = method()
 signedBubbleSortD(List) := (L) -> (
       n := length(L);
@@ -667,7 +721,7 @@ signedBubbleSortD(List) := (L) -> (
                         L = switch(i,i+1,L);
                         break)));
       return(swaps))
-
+      
 deltaSwapD = method()
 deltaSwapD(Thing,Ring) := (f,R) -> (
       ringVars := gens R;
@@ -689,7 +743,7 @@ elementarySchurDeterminantD(List,ZZ) := (lambda,n) -> (
                   if (lambda_(i-1)+j-i) == 0 then M_(i-1,j-1) = 1;
                   if ((lambda_(i-1)+j-i) > 0 and (lambda_(i-1)+j-i) <= n) then M_(i-1,j-1) = fixedElemPolys_(lambda_(i-1)+j-i-1)));
       return determinant(matrix M))      
-      
+ 
 polyRepD = method()
 polyRepD(List,Ring) := (w,R) -> (
       ringVars := gens R;
@@ -708,7 +762,22 @@ polyRepD(List,Ring) := (w,R) -> (
             if (i == n-1) then(
 		  polyrep = deltaSwapD(polyrep,R)));
       return(polyrep))
-  
+      
+elementarySymmetricDIdeal = method()
+elementarySymmetricDIdeal(ZZ) := (n) -> (
+      Rt := QQ[y_(1)..y_(n)][t];
+      f := 1_(Rt);
+      squareProd := 1_(Rt);
+      prod := 1_(Rt);
+      for i from 1 to n do(
+            f = f*(y_(i)^2+t);
+	    squareProd = squareProd*((y_(i))^2);
+	    prod = prod*(y_(i)));
+      coeffs := (coefficients (f-t^n-squareProd))_(1);
+      S := QQ[y_(1)..y_(n)];
+      I := sub(ideal(coeffs,prod),S);
+      return(S,I,S/I))
+      
 intD = method()
 intD(List,Ring,Ideal) := (alphas,S,I) -> (
       f := 1_S;
@@ -716,53 +785,6 @@ intD(List,Ring,Ideal) := (alphas,S,I) -> (
             f = f*polyRepD(signedBubbleSortD(signedToNot(alpha)),S));
       f = f % I;
       return (((coefficients f)_(1))_(0))_(0))
-
----------------------------- PARTIAL FLAG SCHUBERT COMPUTATIONS ------------------------------------
-
-completeSignedPermutation = method()
-completeSignedPermutation(List,ZZ) := (w,n) -> (
-      wnew := w;
-      for i from 1 to n do(
-		if (isSubset({i},wnew)==false and isSubset({-i},wnew)==false) then wnew=append(wnew,i));
-      return(wnew))
-
-partialIntC = method()
-partialIntC(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
-      l := length(flagType);
-      n := flagType_(-1);
-      newAlphas := {};
-      for alpha in alphas do(
-            newAlpha := completeSignedPermutation(alpha,n);
-            newAlphas = append(newAlphas,newAlpha));
-      dualClass := {};
-      for k from 2 to (l-1) do(
-            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
-	          dualClass = prepend(j,dualClass)));
-      for i from 1 to flagType_(0) do(
-            dualClass = prepend(i,dualClass));
-      for i from 1 to (n-flagType_(-2)) do(
-            dualClass = append(dualClass,-i));
-      newAlphas = append(newAlphas,dualClass);
-      return(intC(newAlphas,S,I)))
-      
-partialIntB = method()
-partialIntB(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
-      l := length(flagType);
-      n := flagType_(-1);
-      newAlphas := {};
-      for alpha in alphas do(
-            newAlpha := completeSignedPermutation(alpha,n);
-            newAlphas = append(newAlphas,newAlpha));
-      dualClass := {};
-      for k from 2 to (l-1) do(
-            for j from (flagType_(-(k+1)) + 1) to flagType_(-k) do(
-	          dualClass = prepend(j,dualClass)));
-      for i from 1 to flagType_(0) do(
-            dualClass = prepend(i,dualClass));
-      for i from 1 to (n-flagType_(-2)) do(
-            dualClass = append(dualClass,-i));
-      newAlphas = append(newAlphas,dualClass);
-      return(intB(newAlphas,S,I)))
       
 partialIntD = method()
 partialIntD(List,List,Ring,Ideal) := (flagType,alphas,S,I) -> (
