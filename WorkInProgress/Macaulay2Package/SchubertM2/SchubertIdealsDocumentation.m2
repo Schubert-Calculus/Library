@@ -3,6 +3,19 @@
 -- Type B,C,D code fixes documentation to match A.
 -- Change B,C,D code to follow Billey's thesis.
 
+-- Process for Classification (In Progress)
+-- (1) Choose an ambient flag variety, and calculate its dimension N.
+-- (2) Compute the Schubert subvarieties of that flag variety (or their representations via partial permutations)
+-- (3) Compute the lengths of each Schubert variety, and sort them all by length (grouping together those with the same length)
+-- (4) Compute all possible partitions of N.
+-- (5) For each partition, compute every possible Schubert problem solution with Schubert varieties of the corresponding lengths. 
+-- (6) Throw out all with 0 or 1 solution (trivial Schubert problems). Do we throw out those with too few/many solutions in addition to this?
+-- (7) Count the number of these (remaining) nontrivial Schubert problems, and sort them by number of solutions.
+-- (8) Further, throw out all the nonessential Schubert problems, those that exist on a smaller flag variety. ("small" needs to be mapped out
+--     Do we do this earlier in the process???
+-- (9) Count the number of these (remaining) essential Schubert problems, and determine those that do NOT contain the alternating group. (Vakil?)
+-- (10) Count the number of these (remaining) enriched Schubert problems, and investigate the Galois group further. (Frobenius? Fibrations?)
+
 --------------------------------------------------
 -- NOTES:
 
