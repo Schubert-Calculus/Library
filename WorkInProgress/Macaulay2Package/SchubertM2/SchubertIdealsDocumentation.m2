@@ -1,6 +1,7 @@
 -- TO-DO LIST:
--- Type B,C,D code fixes documentation to match A
--- Change B,C,D code to follow Billey's thesis
+-- Add Grassmannian Shortcut Type A and Type C code.
+-- Type B,C,D code fixes documentation to match A.
+-- Change B,C,D code to follow Billey's thesis.
 
 --------------------------------------------------
 -- NOTES:
