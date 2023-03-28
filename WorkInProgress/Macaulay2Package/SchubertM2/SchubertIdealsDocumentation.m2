@@ -2,6 +2,9 @@
 -- Add Grassmannian Shortcut Type A and Type C code.
 -- Type B,C,D code fixes documentation to match A.
 -- Change B,C,D code to follow Billey's thesis.
+-- Do documentation for real
+-- Write up what I've done
+-- For Type A, change function names, etc to follow Frank's advice
 
 -- Process for Classification (In Progress)
 -- (1) Choose an ambient flag variety, and calculate its dimension N.
