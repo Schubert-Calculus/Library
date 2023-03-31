@@ -1,0 +1,95 @@
+#BruhatProcedures
+#
+# Frank Sottile
+# 14 March 2002
+# New Brunswick, NJ
+#
+#   These are procedures to compute in the Bruhat order of S_n
+#
+###################################################################
+#
+# Ell(w)      Computes the length of a permutation w
+# LT(v,w)     determines if v <= w in the Bruhat order
+# LX(v,w)     determines if v < w in the lexicographic order
+# Descents(w) Returns the descents of w
+# MakeSn(n)   Creates the symmetric group
+#
+###################################################################
+Ell := proc(w)
+ local ell,n,i,j ;
+ ell:=0:
+ n := nops(w):
+ if n<>1 then
+  for i from 1 to n-1 do
+   for j from i+1 to n do
+    if w[i]>w[j] then ell:=ell+1 fi:
+   od:
+  od:
+ fi:
+ ell
+end:
+###################################################################
+LT := proc(v,w)
+local lt, i, sv, sw, j:
+lt:=evalb(true):
+for i from 1 to nops(w)-1 do
+ sv:=sort(v[1..i]):
+ sw:=sort(w[1..i]):
+ for j from 1 to i do
+  lt:=evalb((sv[j]<=sw[j]) and lt):
+ od:
+od:
+evalb(lt)
+end:
+######################################################
+# LX(v,w)     determines if v > w in the lexicographic order
+LX := proc(v,w)
+ local lt,eq,j;
+ eq:=evalb(true):
+ j:=1:
+ while eq do 
+  eq:=evalb(v[j]=w[j]):
+  if not(eq) then
+   return(evalb(v[j]>w[j]))
+  end if:
+  j:=j+1:
+ end do:
+end proc:
+######################################################
+Descents:=proc(w)
+ local i, descents;
+ descents:=[]:
+ for i from 1 to nops(w)-1 do 
+  if w[i]>w[i+1] then 
+   descents:=[descents[],i]:
+  fi:
+ od:
+ return(descents):
+end proc:
+######################################################
+MakeSn := proc(n)
+ local Sn,pi,asc,w,j,ii,jj,dummy,bigger:
+ Sn:=[]:
+ pi:=[]:                            
+ for j from 1 to n do:       #  Initializes pi = identity
+ pi := [pi[],j]: od:         
+ asc := 1:                   #  The ASCents of pi
+ while (asc > 0) do:
+ w := eval(pi):              #   the value of pi
+ Sn:=[Sn[],w]:
+ asc := 0;
+ for j from 1 to n-1 do:                   #   Finds the last ascent of pi
+ if (pi[j]<pi[j+1]) then asc := j fi: od;   
+ if (asc >0) then                            # If pi has an ascent  at asc...
+   dummy := eval(pi[asc]);
+   for ii from asc+1 to n do:
+   if (pi[ii]>dummy) then bigger:=ii fi: od:
+   pi[asc]:= eval(w[bigger]):                # kills the ascent at asc
+   w[bigger]:= dummy: 
+   for jj from 1 to n-asc do;
+   pi[asc+jj]:= eval(w[n+1-jj]); od;         # makes pi increasing afterwards
+  fi:
+ od:
+ return(Sn):
+end:
+######################################################################

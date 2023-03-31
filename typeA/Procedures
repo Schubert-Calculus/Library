@@ -1,0 +1,503 @@
+#procedures.maple
+#
+#  This file contains procedures to help search for interesting 
+# Enumerative problems to study in classical flag manifolds
+#
+#  We use Exponential notation for an enumerative problem
+# Enumerative Problem := [[1,3,2,4,5], 4], [[1,2,4,3,5], 4]]
+#                     ==  X^4 Y^4
+#
+##################################################
+Name_of_File:=proc(FlagManifold,Extra)
+#
+#   Creates name of temporary file containing data for Schubert problems
+#
+local File, d:
+ File:="raw_problems/F":
+ for d in FlagManifold do 
+  File:=sprintf("%s%d",File,d):
+ end do:
+ if _params['Extra'] <> NULL then
+  File:=sprintf("%s.%s",File,Extra):
+ end if:
+ return(File)
+end proc:
+##################################################
+TopClass:=proc(FlagManifold)
+#
+#  Computes the index of the top class of the partial FlagManifold
+#
+local FM, top, i, j, k:
+
+ FM:=[0,FlagManifold[]]:
+ top:=[]:
+ for j from 1 to nops(FlagManifold) do 
+  i:=FlagManifold[j]:
+  for k from FM[j]+1 to FM[j+1] do 
+   top:=[top[],i]:
+   i:=i-1:
+  end do:
+ end do:
+ return(top):
+end proc:
+##################################################
+FlagMan:=proc(EP)
+#
+#  Figures out the flag manifold
+#
+local Descents, Condition, w, j:
+ Descents:={nops(EP[1][1])}:
+ for Condition in EP do
+  w:=Condition[1]:
+  for j from 1 to nops(w)-1 do
+   if w[j]>w[j+1] then 
+    Descents:=Descents union {j}:
+   end if:
+  end do:
+ end do:
+ return(sort(convert(Descents,list))):
+end proc:
+##################################################
+Number := proc(EnumerativeProblem,FlagManifold)
+#
+#  Computes the intersection number of the given enumerative problem
+#
+local n, Poly, Condition:
+global SchubPoly, GB, Vr:
+
+ Poly:=2*SchubPoly[TopClass(FlagManifold)]:
+
+ for Condition in EnumerativeProblem do 
+  Poly:=Poly*SchubPoly[Condition[1]]^Condition[2]:
+ od:
+ Poly:=Groebner[NormalForm](Poly,Gb,plex(Vr[])):
+ if Poly=0 then 
+   return(0)
+  else
+   return(op(1,Poly)/2):
+ end if:
+end proc:
+##################################################
+Dimension:=proc(FlagManifold)
+ local dim, FM, i:
+ dim:=0:
+ FM:=[0,FlagManifold[]];
+ for i from 1 to nops(FM)-2 do 
+  dim:=dim+(FM[i+1]-FM[i])*(n-FM[i+1]):
+ end do:
+ return(dim):
+end proc:
+##############################################################
+#
+#   This computes the codimension of an enumerative problem
+#
+CoDimension:=proc(EnumerativeProblem)
+ local Codim, Condition:
+ Codim:=0:
+ for Condition in EnumerativeProblem do 
+  Codim:=Codim+Ell(Condition[1])*Condition[2]:
+ od:
+ return(Codim):
+end proc:
+###############################################################
+#
+#  This checks to see if the given problem has intersection number >1 and 
+#   if it projects to one in a Grassmannian
+#
+CheckProblem := proc(EnumerativeProblem,FlagManifold,projection_ok) 
+ global IntersectionNumber:
+
+ IntersectionNumber:=Number(EnumerativeProblem,FlagManifold):
+
+ if IntersectionNumber<=1 then
+   return(false):
+  else
+   if projection_ok then
+     return(true):
+    else
+     FlagProjection(EnumerativeProblem,FlagManifold,IntersectionNumber):
+   end if:
+ end if:
+
+end proc:
+############################################################
+#
+GrassProjection:=proc(EnumerativeProblem,FlagManifold,IntersectionNumber)
+local n, Projection, a, Condition, w, lambda, EP, idx:
+  n:=FlagManifold[nops(FlagManifold)]:
+  Projection := false:
+  for a from FlagManifold[1] to FlagManifold[nops(FlagManifold)-1] do 
+   EP:=[]:
+   for Condition in EnumerativeProblem do 
+    w:=Condition[1]:
+    lambda:=[sort([seq(w[idx],idx=1..a)])[],sort([seq(w[idx],idx=a+1..n)])[]]:
+    EP:=[EP[],[lambda,Condition[2]]]:
+   od:
+   if evalb(CoDimension(EP)=a*(n-a)) then
+    Projection := Projection or evalb(IntersectionNumber=Number(EP,[a,n]))
+   end if:
+  end do:
+  if(Projection) then 
+    return(false):
+   else
+    return(true):
+  end if:
+end proc:
+############################################################
+#
+FlagProjection:=proc(EP,FlagManifold,IntersectionNumber)
+local Projection, FM, FMP, TC, nDim, i, j, EnPr,w,v,Condition:
+#
+#   Checks to see if the given enumerative problem projects to an 
+# enumerative problem in a smaller flag manifold
+#
+ Projection := false:
+ 
+ for i from 1 to nops(FlagManifold)-1 do 
+  FM:=[FlagManifold[1..(i-1)][],FlagManifold[(i+1)..nops(FlagManifold)][]]:
+  FMP:=[0,FM[]]:
+  TC:=TopClass(FM):
+  nDim:=binomial(FlagManifold[nops(FlagManifold)],2)-Ell(TC):
+  EnPr:=[]:
+  for Condition in EP do 
+   w:=Condition[1]:
+   v:=[]:
+   for j from 1 to nops(FM) do 
+    v:=[v[],sort(w[FMP[j]+1..FMP[j+1]])[]]:
+   end do:
+   EnPr:=[EnPr[],[v,Condition[2]]]:
+  end do:
+  if CoDimension(EnPr) = nDim then 
+    Projection := Projection or evalb(IntersectionNumber=Number(EnPr,FM))
+  end if:
+ end do:
+ if(Projection) then 
+   return(false):
+  else
+   return(true):
+ end if:
+end proc:
+
+############################################################
+Single := proc(w,descents)
+local belongs, j, ndesc:
+ belongs:=true:
+ j:=1:
+ ndesc:=0:
+ while (belongs and j<nops(w)) do 
+  if not(member(j,descents)) and w[j]>w[j+1] then belongs:=false: end if:
+  j:=j+1:
+ end do:
+ for j from 1 to nops(w)-1 do
+  if w[j]>w[j+1] then ndesc:=ndesc+1: end if:
+ end do:
+ return(evalb(ndesc=1) and belongs):
+end proc: 
+
+############################################################
+Belongs := proc(w,descents)
+local belongs, j:
+ belongs:=true:
+ j:=1:
+ while (belongs and j<n) do 
+  if not(member(j,descents)) and w[j]>w[j+1] then belongs:=false: end if:
+  j:=j+1:
+ end do:
+ return(belongs):
+end proc: 
+############################################################
+Partitions := proc(m,a)
+#
+#  List of partitions of m with largest part at most a
+#
+ local q, i, lambda:
+ if m=0 then 
+   return([[]]): 
+  else
+   q:=[]:
+   for i from 1 to a do 
+    for lambda in Partitions(m-i,min(i,m-i)) do 
+     q:=[q[], [i, lambda[]]]:
+    end do:
+   end do:
+   return(q):
+ end if:
+end proc:
+############################################################
+OKPartitions := proc(m)
+#
+#  Returns partitions of m in exponent notation with at least two
+#  parts and with largest part at most m-2
+#
+local p,lambda,mu,idx,i:
+ p:=[]:
+ for lambda in Partitions(m,m-2) do
+  if nops(lambda)>1 then
+   mu:=[seq(0,idx=1..m-2)]:
+   for i in lambda do
+    mu[i]:=mu[i]+1:
+   end do:
+   p:=[p[],mu]:
+  end if:
+ end do:
+ return(p):
+end proc:
+############################################################
+GoodPartitions := proc(m)
+#
+#  Returns partitions of m in exponent notation with at least three  
+#  parts and with largest part at most m-3
+#
+local p,lambda,mu,idx,i:
+ p:=[]:
+ for lambda in Partitions(m,m-3) do 
+  if nops(lambda)>2 then  
+   mu:=[seq(0,idx=1..m-3)]:
+   for i in lambda do 
+    mu[i]:=mu[i]+1:
+   end do:
+   p:=[p[],mu]:
+  end if:
+ end do:
+ return(p):
+end proc:
+############################################################
+#
+#   This 
+#
+#
+#
+fixEP := proc(EnumerativeProblem,FlagManifold)
+
+ local Grass, j, EP, A, Desc, descents, Str,i,k,a,la,lb:
+
+ EP:=EnumerativeProblem:
+ Grass:=["Z", "Y", "X", "W", "V", "U", "T", "S"]:
+ #
+ # Desc is a table of lists where Desc[i] are those conditions with descent i
+ #        and Desc[0] are those with more than one descent
+ #
+ Desc[0]:=[]: 
+ for a in FlagManifold do 
+  Desc[a]:=[]:
+ end do:
+ #
+ for j from 1 to nops(EP) do 
+  descents:=Descents(EP[j][1]):
+  if nops(descents)>1 then 
+    Str:="A":
+    for i from 1 to descents[nops(descents)] do 
+     Str:=sprintf("%s%d",Str,EP[j][1][i]):
+    end do:
+    Desc[0]:=[Desc[0][],[EP[j][], Str]]:
+   else
+    k:=descents[1]:
+    Str:=Grass[nops(EP[j][1])-k]:
+    if Ell(EP[j][1])>1 then
+     i:=1:
+     while k+1-i>0 and EP[j][1][k+1-i]>k+1-i do
+      Str := sprintf("%s%d",Str,EP[j][1][k+1-i]-(k+1-i)):
+      i:=i+1:
+     end do:
+    end if:
+    Desc[k]:=[Desc[k][],[EP[j][], Str]]:
+  end if:
+ end do:
+ #
+ #  Now, we sort those with a given descents by length, and then lexicographically
+ #        and then reform EP
+ EP:=[]:
+ for i in [0,FlagManifold[]] do
+  if nops(Desc[i])>1 then 
+   j:=1:
+   while j<nops(Desc[i]) do
+    la:=Ell(Desc[i][j][1]):
+    lb:=Ell(Desc[i][j+1][1]):
+    if la>lb then
+      j:=j+1:
+     elif la<lb then
+      A:=Desc[i][j]:
+      Desc[i][j]:=Desc[i][j+1]:
+      Desc[i][j+1]:=A:
+      j:=1:
+     elif (la=lb and LX(Desc[i][j][1],Desc[i][j+1][1])) then
+      A:=Desc[i][j]:
+      Desc[i][j]:=Desc[i][j+1]:
+      Desc[i][j+1]:=A:
+      j:=1:
+     else
+      j:=j+1:
+    end if:
+   end do:
+  end if: 
+  EP:=[EP[],Desc[i][]]:
+ end do:
+ return(EP):
+end proc:
+################################################################
+makeString := proc(A)
+local S, a:
+ S:="":
+ for a in A do 
+  S:=sprintf("%s%s",S,a[3]):
+  if a[2]>1 then
+   S:=sprintf("%s^%d",S,a[2]):
+  end if:
+ end do:
+ return(S):
+end proc:
+################################################################
+#
+#   For necklaces (Yuval Sivan wrote these, so they are murky to Frank)
+#
+################################################################
+with(ListTools):
+with(group):
+############################################################
+ListNecklaces := proc(repetitions,resolution)
+ local n,g,x,OR,NOR,word,w;
+ if resolution="all" then
+  word:=[seq(i$repetitions[i],i=1..nops(repetitions))]:
+  n := nops(word):
+  g := DihedralGroup(n):
+  x := combstruct[allstructs](Permutation(word)):
+  OR := OrbitRepresentatives(g, x):
+  return(sort(OR,LX))
+ end if:
+ if resolution="block" then
+  word:=[seq(i,i=1..nops(repetitions))]:
+  n := nops(word):
+  g := DihedralGroup(n):
+  x := combstruct[allstructs](Permutation(word)):
+  OR := OrbitRepresentatives(g, x):
+  OR := sort(OR,LX):
+  NOR:=[]:
+  for w in OR do
+   NOR:=[NOR[],PermToBlock(w,repetitions)]:
+  end do:
+  return(NOR)
+ end if:
+end proc:
+############################################################
+PermToBlock := proc(w,r)
+ local i,block:
+ block:=[]:
+ for i from 1 to nops(w) do
+  block:=[block[],seq(w[i],j=1..r[w[i]])]:
+ end do:
+ return(block)
+end proc:
+
+
+############################################################
+OrbitRepresentatives := proc(g, x)
+ return map(leastElement, Orbits(g, x)):
+end proc:
+############################################################
+leastElement := proc(orbit)
+ local O,A,j;
+ O := convert(orbit,list):
+ j := nops(O):
+ while (j>1) do
+  if LX(O[j],O[j-1]) then
+    j:=j-1:
+   else
+    A:=O[j]:
+    O[j]:=O[j-1]:
+    O[j-1]:=A:
+  end if:
+ end do:
+ return(O[1]);
+end proc:
+############################################################
+RotationGroup := proc(n)
+ local i,s:
+ s := [seq(i,i=1..n)]:
+ return {seq(Rotate(s,i),i=1..n)};
+end proc:
+############################################################
+DihedralGroup := proc(n)
+ local L,rot;
+ rot:=RotationGroup(n);
+ return rot union map(L->Reverse(L),rot);
+end proc:
+############################################################
+Orbits := proc(g,x)
+ local y, y1, n, orbit, out:
+ y := {op(x)}:
+ n := nops(g):
+ out := {}:
+ while nops(y)<>0 do
+  y1 := y[1]:
+  orbit := {seq(Permute(g[i],y1),i=1..n)}:
+  y := y minus orbit:
+  out := out union {orbit}:
+ end do:
+ return out:
+end proc:
+############################################################
+Permute := proc(x,y)
+ return map(n->y[n],x);
+end proc:
+############################################################
+necklaceToPermutation:=proc(necklace,repetitions)
+ local positions, inverseperm, permutation, j;
+# global repetitions:
+
+ positions := [0,op(PartialSums(repetitions))]:
+ positions := map(x->x+1,positions):
+ permutation := [x$positions[nops(positions)]-1]:
+ inverseperm := permutation:
+
+ for j from 1 to positions[nops(positions)]-1 do
+  permutation[j] := positions[necklace[j]]:
+  positions[necklace[j]] := positions[necklace[j]] + 1:
+ end do:
+
+ for j from 1 to positions[nops(positions)]-1 do
+  inverseperm[permutation[j]] := j:
+ end do:
+
+ return inverseperm
+end proc:
+############################################################
+Repetitions := proc(EP,resolution)
+#
+#   Takes the enumerative problem read in from FlagMfld.raw
+# and returns the composition of the repetitions, at the desired
+# resolution (coarse=true, fine=false)
+#
+ global FlagManifold:
+ local ini,beta, w, i,a, descents, d:
+ ini:=[]:
+ for a in FlagManifold do beta[a]:=0: end do:
+ descents:={FlagManifold[1..nops(FlagManifold)-1][]}:
+
+ if resolution="fine" then
+   return(op(2,Transpose(EP))):
+ end if:
+
+ if resolution="coarse" then
+  for w in EP do
+   if not(Single(w[1],descents)) then
+     ini:=[ini[],w[2]]:
+    else
+     d:=op(1,Descents(w[1])):
+     beta[d]:=beta[d]+w[2]:
+   end if:
+  end do:
+  beta:=[ini[],seq(beta[FlagManifold[i]],i=1..nops(FlagManifold)-1)]:
+  ini:=[]:
+  for a in beta do
+   if a<>0 then
+    ini:=[ini[],a]:
+   end if:
+  end do:
+  return(ini):
+ end if:
+
+end proc:
+############################################################
+
+
+
