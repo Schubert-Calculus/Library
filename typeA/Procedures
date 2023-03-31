@@ -355,6 +355,7 @@ with(ListTools):
 with(group):
 ############################################################
 ListNecklaces := proc(repetitions,resolution)
+
  local n,g,x,OR,NOR,word,w,i;
  if resolution="all" then
   word:=[seq(i$repetitions[i],i=1..nops(repetitions))]:

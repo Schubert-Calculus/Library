@@ -16,8 +16,7 @@ read(Procedures):
 FlagManifold:=[2,3,4,6]:
 projection_ok:=true:
 #
-projection_ok:=false:
-tooBig:=120:
+tooBig:=200:
 threshold:=3:
 #
 # FlagManifold is the type of the flags [a,b,n]:= a-planes in b-planes in n-space
