@@ -355,7 +355,7 @@ with(ListTools):
 with(group):
 ############################################################
 ListNecklaces := proc(repetitions,resolution)
- local n,g,x,OR,NOR,word,w;
+ local n,g,x,OR,NOR,word,w,i;
  if resolution="all" then
   word:=[seq(i$repetitions[i],i=1..nops(repetitions))]:
   n := nops(word):
@@ -380,7 +380,7 @@ ListNecklaces := proc(repetitions,resolution)
 end proc:
 ############################################################
 PermToBlock := proc(w,r)
- local i,block:
+ local i,block,j:
  block:=[]:
  for i from 1 to nops(w) do
   block:=[block[],seq(w[i],j=1..r[w[i]])]:
@@ -423,7 +423,7 @@ DihedralGroup := proc(n)
 end proc:
 ############################################################
 Orbits := proc(g,x)
- local y, y1, n, orbit, out:
+ local y, y1, n, orbit, out,i:
  y := {op(x)}:
  n := nops(g):
  out := {}:

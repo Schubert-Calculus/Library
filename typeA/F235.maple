@@ -13,7 +13,7 @@ interface(quiet=true):
 read(BruhatProcedures):
 read(Procedures):
 ############################################################
-FlagManifold:=[2,3,4,6]:
+FlagManifold:=[2,3,5]:
 projection_ok:=true:
 #
 projection_ok:=false:

@@ -1,0 +1,112 @@
+#Schubn.maple
+#
+#  This file will do compute the Schubert polynomials for Sn.
+#
+interface(quiet=true):
+read(`BruhatProcedures`):
+n:=7:
+
+W:=[]:
+V:=[]:
+Vr:=[]:
+for i from 1 to n do
+ V:=[V[],x||i]:
+ Vr:=[x||i,Vr[]]:
+ W:=[W[],-i]:
+od:
+
+###############################################################
+#
+#  This procedure computes the divided differences
+#
+d := proc(i,f)
+ local A:
+ simplify((f-subs(V[i+1]=V[i],A=V[i+1],subs(V[i]=A,f)))/(V[i]-V[i+1]))
+end:
+#################################################################
+
+#######################################################################
+#
+# Initialization of Groebner basis & elementary symmetric polynomials
+#
+Elem:=[]:
+for i from 1 to n do
+ ei:=0:
+ for Set in combinat[choose](V,i) do
+  t:=1:
+  for var in Set do
+   t:=t*var:
+  od:
+  ei:=ei+t:
+ od:
+ Elem:=[Elem[],ei]:
+od:
+
+#Gb:=Groebner[gbasis](Elem,plex(Vr[])):
+Gb:=Groebner[Basis](Elem,plex(Vr[])):
+
+#######################################################################
+#
+# This code walks down the weak order, beginning with the top element.
+# Sn :=  the set of pi with S[pi] computed
+# Done :=  Those pi with *all* d(i,S[pi]) computed
+#
+pi:=[]:
+for i from 1 to n do
+ pi:=[i,pi[]]:
+od:
+S[pi]:=1:
+for i from 1 to n-1 do
+ S[pi]:=S[pi]*x||i^(n-i):
+od:
+
+Sn:={pi}:
+Done:={}:
+while ((Sn minus Done) <> {}) do
+ pi := op(1,Sn minus Done):
+ for i from 1 to n-1 do
+  if pi[i]>pi[i+1] then
+   p := eval(pi):
+   p[i]:=pi[i+1]:
+   p[i+1]:=pi[i]:
+   if not member(p,Sn) then 
+#    S[p]:= Groebner[normalf](d(i,S[pi]),Gb,plex(Vr[])):
+    S[p]:= Groebner[NormalForm](d(i,S[pi]),Gb,plex(Vr[])):
+    Sn := Sn union {p}:
+   fi:
+  fi:
+ od:
+ Done := Done union {pi}:
+od:
+
+for i from 0 to n*(n-1)/2 do Rank[i]:={}: od:
+
+for pi in Sn do
+ rank:=0:
+ for i from 1 to n-1 do 
+  for j from i+1 to n do
+   if pi[i]>pi[j] then rank:=rank+1 fi:
+ od:od:
+ Rank[rank]:=Rank[rank] union {pi}:
+od:
+
+for i from 0 to n*(n-1)/2 do Rank[i]:={}: od:
+
+for pi in Sn do
+ rank:=0:
+ for i from 1 to n-1 do 
+  for j from i+1 to n do
+   if pi[i]>pi[j] then rank:=rank+1 fi:
+ od:od:
+ Rank[rank]:=Rank[rank] union {pi}:
+od:
+
+file := fopen(sprintf("Schubert.%d.data",n),WRITE):
+fprintf(file," Gb:=%a:\n",Gb):
+fprintf(file," Vr:=%a:\n W:=%a:\n",Vr,W):
+fprintf(file," S%d:=%a:\n", n, eval(Sn)):
+fprintf(file," Rank:=%a:\n",eval(Rank)):
+fprintf(file," SchubPoly:=%a:\n",eval(S)):
+fclose(file):
+
+quit;
