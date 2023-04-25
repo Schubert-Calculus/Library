@@ -26,10 +26,10 @@ threshold:=3:
 n:=FlagManifold[nops(FlagManifold)]:
 read(sprintf("Schubert.%d.data",n)): 
 ############################################################
-file:=open(Name_of_File(FlagManifold),WRITE):
+#file:=open(Name_of_File(FlagManifold),WRITE):
+file:=open("myTest",WRITE):
 #
-fprintf(file,"interface(quiet=true):\n FlagManifold:=%a:\n",FlagManifold):
-fprintf(file,"Problems:=[\n"):
+fprintf(file,"------  FlagManifold:=%a:\n",FlagManifold):
 ################################################################################
 #
 #    Make the list of possible SchubertConditions & Betti Numbers
@@ -106,7 +106,19 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
   if CheckProblem(EP,FlagManifold,projection_ok) then 
    if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then 
  #   EP:=fixEP(EP,FlagManifold):
-    fprintf(file," [%d, %a],\n",IntersectionNumber,EP):
+
+    fprintf(file,"{{%a, {",convert(FlagManifold,set)):
+    for ii from 1 to nops(EP) do
+     for jj from 1 to EP[ii][2]-1 do
+      fprintf(file,"%a, ",convert(EP[ii][1],set)):
+     end do:
+     if ii <> nops(EP) then
+       fprintf(file,"%a,",convert(EP[ii][1],set)):
+      else  
+       fprintf(file,"%a}},",convert(EP[ii][1],set)):
+     end if:
+    end do:
+    fprintf(file,"%d}\n",IntersectionNumber):
    end if:
   end if:
    
@@ -114,9 +126,8 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
 end do:
 lprint(time());
 
-fprintf(file," NULL]:\n"):
-fprintf(file," nops(Problems);\n"):
-fprintf(file," # Time of computation:=%3.2f:\n",time()):
+fprintf(file,"--- nops(Problems);\n"):
+fprintf(file,"--- # Time of computation:=%3.2f:\n",time()):
 fclose(file):
 
 quit;
