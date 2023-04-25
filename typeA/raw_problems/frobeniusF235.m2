@@ -75,9 +75,13 @@ filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
+f = "output.txt" << "";
 for problem in problems do(
-	print(problem);
-	frobeniusAlgorithm(problem#0,10009,problem#1,100));
+	f << problem << endl;
+	f << frobeniusAlgorithm(problem#0,10009,problem#1,100) << endl;
+	f << frobeniusFrequencies(problem#0,10009,problem#1,100) << endl);
+#	print(problem);
+#	frobeniusAlgorithm(problem#0,10009,problem#1,100));
 #	if problem#1 < 7 then frobeniusAlgorithmLessThanEightSolutions(problem#0,1009,problem#1,6*problem#1);
 #	if problem#1 >=8 then frobeniusAlgorithm(problem#0,1009,problem#1,6*problem#1));
 
