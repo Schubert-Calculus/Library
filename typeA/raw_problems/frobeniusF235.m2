@@ -1,4 +1,4 @@
-restart
+--restart
 path = {"../../WorkInProgress/Macaulay2Package/SchubertM2/"} | path 
 recursionLimit=10000
 loadPackage("SchubertIdeals", Reload => true)
@@ -33,26 +33,29 @@ frobeniusAlgorithm(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 	f := smartFactor univariateEliminant(sum(gens ring(I)),I);
 	degreecyclelist := sort(flatten for fac in f list(degree(fac#0)));
 	if sum(degreecyclelist) != numsols then continue;
-        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist));
+        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
 	if degreecyclelist == {numsols} then fullcycle = true;
 	if degreecyclelist == {1,numsols-1} then fullminusonecycle = true;
 	for k in degreecyclelist do(
-	     if (k > numsols/2) and (k < numsols-2) and (isPrime(k)==true) then primecycle = true); 
+	     if (k > numsols/2) and (k <= numsols-2) and (isPrime(k)==true) then primecycle = true); 
 	if ((fullcycle == true) and (fullminusonecycle == true) and (primecycle == true)) then (print("Full Symmetric Group") and break);
-    if ((fullcycle == false) or (fullminusonecycle == false) or (primecycle == false)) then print("Needs Further Study"); 
+   );
+    if ((fullcycle == false) or (fullminusonecycle == false) or (primecycle == false)) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
-    return(fullcycle,fullminusonecycle,primecycle,frequencytable))
+    return(fullcycle,fullminusonecycle,primecycle,frequencytable)
+ )
 
-frobeniusFrequencies = method()
-frobeniusFrequencies(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
+frobeniusDegreeThree = method()
+frobeniusDegreeThree(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
     flagtype := L_(0);
     n := last(flagtype);
     conditions := L_(1);
     l := length(conditions);
     P := ZZ/p;
     datastuff := {};
+    twocycle := false;
     for i from 1 to numiterations do(
 	flags := {};
 	for j from 1 to (l-1) do(
@@ -61,17 +64,108 @@ frobeniusFrequencies(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 	I := typeASchubertIdeal(flagtype,conditions,flags,P);
 	f := smartFactor univariateEliminant(sum(gens ring(I)),I);
 	degreecyclelist := sort(flatten for fac in f list(degree(fac#0)));
-	if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist));
+	if sum(degreecyclelist) != numsols then continue;
+        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
+	if degreecyclelist == {1,2} then twocycle = true;
+	if (twocycle == true) then (print("Full Symmetric Group") and break);
+   );
+    if (twocycle == false) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
-	frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
-    return(frequencytable))
+        frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
+    return(twocycle,frequencytable)
+ )
 
-frobeniusAlgorithmLessThanEightSolutions = method()
-frobeniusAlgorithmLessThanEightSolutions(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
-    frequencytable = frobeniusFrequencies(L,p,numsols,numiterations);
-    if length(frequencytable) == length(partitions numsols) then print("Full Symmetric Group");
-    if length(frequencytable) != length(partitions numsols) then print("Needs Further Study"))
+frobeniusDegreeFour = method()
+frobeniusDegreeFour(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
+    flagtype := L_(0);
+    n := last(flagtype);
+    conditions := L_(1);
+    l := length(conditions);
+    P := ZZ/p;
+    datastuff := {};
+    threecycle := false;
+    fourcycle := false;
+    for i from 1 to numiterations do(
+	flags := {};
+	for j from 1 to (l-1) do(
+	    flags = append(flags,random(P^n,P^n)));
+	if det(product(flags)) == 0 then continue;
+	I := typeASchubertIdeal(flagtype,conditions,flags,P);
+	f := smartFactor univariateEliminant(sum(gens ring(I)),I);
+	degreecyclelist := sort(flatten for fac in f list(degree(fac#0)));
+	if sum(degreecyclelist) != numsols then continue;
+        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
+	if degreecyclelist == {1,3} then threecycle = true;
+	if degreecyclelist == {4} then fourcycle = true;
+	if ((threecycle == true) and (fourcycle == true)) then (print("Full Symmetric Group") and break);
+   );
+    if ((threecycle == false) or (fourcycle == false)) then print("Needs Further Study");
+    frequencytable := {};
+    for cycle in unique(datastuff) do(
+        frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
+    return(threecycle,fourcycle,frequencytable)
+ )
+
+frobeniusDegreeFive = method()
+frobeniusDegreeFive(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
+    flagtype := L_(0);
+    n := last(flagtype);
+    conditions := L_(1);
+    l := length(conditions);
+    P := ZZ/p;
+    datastuff := {};
+    twothreecycle := false;
+    for i from 1 to numiterations do(
+	flags := {};
+	for j from 1 to (l-1) do(
+	    flags = append(flags,random(P^n,P^n)));
+	if det(product(flags)) == 0 then continue;
+	I := typeASchubertIdeal(flagtype,conditions,flags,P);
+	f := smartFactor univariateEliminant(sum(gens ring(I)),I);
+	degreecyclelist := sort(flatten for fac in f list(degree(fac#0)));
+	if sum(degreecyclelist) != numsols then continue;
+        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
+	if degreecyclelist == {2,3} then twothreecycle = true;
+	if (twothreecycle == true) then (print("Full Symmetric Group") and break);
+   );
+    if (twothreecycle == false) then print("Needs Further Study");
+    frequencytable := {};
+    for cycle in unique(datastuff) do(
+        frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
+    return(twothreecycle,frequencytable)
+ )
+
+frobeniusDegreeSix = method()
+frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
+    flagtype := L_(0);
+    n := last(flagtype);
+    conditions := L_(1);
+    l := length(conditions);
+    P := ZZ/p;
+    datastuff := {};
+    twothreecycle := false;
+    fivecycle := false;
+    for i from 1 to numiterations do(
+	flags := {};
+	for j from 1 to (l-1) do(
+	    flags = append(flags,random(P^n,P^n)));
+	if det(product(flags)) == 0 then continue;
+	I := typeASchubertIdeal(flagtype,conditions,flags,P);
+	f := smartFactor univariateEliminant(sum(gens ring(I)),I);
+	degreecyclelist := sort(flatten for fac in f list(degree(fac#0)));
+	if sum(degreecyclelist) != numsols then continue;
+        if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
+	if degreecyclelist == {1,2,3} then twothreecycle = true;
+	if degreecyclelist == {1,5} then fivecycle = true;
+	if ((twothreecycle == true) and (fivecycle == true)) then (print("Full Symmetric Group") and break);
+   );
+    if ((twothreecycle == false) or (fivecycle == false)) then print("Needs Further Study");
+    frequencytable := {};
+    for cycle in unique(datastuff) do(
+        frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
+    return(twothreecycle,fivecycle,frequencytable)
+ )
 
 ---------------------------------------------------------------------------------------------------
 
@@ -83,11 +177,17 @@ for file in filelist do(
 f = "frobenius_output.txt" << "";
 for problem in problems do(
 	f << problem << endl;
-	f << frobeniusAlgorithm(problem#0,10009,problem#1,100) << endl;
---	f << frobeniusFrequencies(problem#0,10009,problem#1,100) << endl);
-	print(problem));
---	frobeniusAlgorithm(problem#0,10009,problem#1,100));
---	if problem#1 < 7 then frobeniusAlgorithmLessThanEightSolutions(problem#0,1009,problem#1,6*problem#1);
---	if problem#1 >=8 then frobeniusAlgorithm(problem#0,1009,problem#1,6*problem#1));
+	if problem#1 >= 7 then(
+	    f << frobeniusAlgorithm(problem#0,10009,problem#1,100) << endl << endl);
+	if problem#1 == 3 then(
+	    f << frobeniusDegreeThree(problem#0,10009,problem#1,100) << endl << endl);
+	if problem#1 == 4 then(
+	    f << frobeniusDegreeFour(problem#0,10009,problem#1,100) << endl << endl);
+	if problem#1 == 5 then(
+	    f << frobeniusDegreeFive(problem#0,10009,problem#1,100) << endl << endl);
+	if problem#1 == 6 then(
+	    f << frobeniusDegreeSix(problem#0,10009,problem#1,100) << endl << endl);
+	quit;
+	);
 
 quit();
