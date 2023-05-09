@@ -13,6 +13,16 @@ interface(quiet=true):
 read(BruhatProcedures):
 read(Procedures):
 ############################################################
+printCondition := proc(condition)
+# Prints a list (condition) as {....}
+ local i, str:
+ str:="{":
+ for i from 1 to nops(condition)-1 do
+  str:=sprintf("%s%d,",str,condition[i]):
+ end do:
+ return sprintf("%s%d}",str,condition[nops(condition)])
+end proc:
+############################################################
 FlagManifold:=[2,3,5]:
 projection_ok:=true:
 #
@@ -103,25 +113,28 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
 
   EP:=[seq(Conditions[idx][S[idx]][],idx=1..nops(S))];
 
-  if CheckProblem(EP,FlagManifold,projection_ok) then 
+  if CheckProblem(EP,FlagManifold,projection_ok) then
+   # CheckProblem computes the intersection number
    if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then 
  #   EP:=fixEP(EP,FlagManifold):
 
-    fprintf(file,"{{%a, {",convert(FlagManifold,set)):
+    fprintf(file,"{{%s,{",printCondition(FlagManifold)):
     for ii from 1 to nops(EP) do
      for jj from 1 to EP[ii][2]-1 do
-      fprintf(file,"%a, ",convert(EP[ii][1],set)):
+      fprintf(file,"%s,",printCondition(EP[ii][1])):
+
      end do:
      if ii <> nops(EP) then
-       fprintf(file,"%a,",convert(EP[ii][1],set)):
+       fprintf(file,"%s,",printCondition(EP[ii][1])):
       else  
-       fprintf(file,"%a}},",convert(EP[ii][1],set)):
+       fprintf(file,"%s}},",printCondition(EP[ii][1])):
      end if:
     end do:
     fprintf(file,"%d}\n",IntersectionNumber):
+
    end if:
   end if:
-   
+ 
  end do:
 end do:
 lprint(time());

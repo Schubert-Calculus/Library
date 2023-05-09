@@ -102,7 +102,7 @@ end proc:
 ###############################################################
 #
 #  This checks to see if the given problem has intersection number >1 and 
-#   if it projects to one in a Grassmannian
+#   if it projects to one in a Grassmannian.  This also computes the intersection number
 #
 CheckProblem := proc(EnumerativeProblem,FlagManifold,projection_ok) 
  global IntersectionNumber:
