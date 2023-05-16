@@ -49,8 +49,8 @@ descents:={FlagManifold[1..nops(FlagManifold)-1][]}:
 for rank from 1 to Dimension(FlagManifold)-2 do
  SchubertConditions[rank]:=[]:
  for w in Rank[rank] do 
-  if Single(w,descents) then 
-#  if Belongs(w,descents) then 
+#  if Single(w,descents) then 
+  if Belongs(w,descents) then 
    SchubertConditions[rank]:=[SchubertConditions[rank][],w]:
   end if:
  end do:
