@@ -23,7 +23,7 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[2,3,5]:
+FlagManifold:=[1,2,3,4,5]:
 projection_ok:=true:
 #
 tooBig:=200:
@@ -37,9 +37,8 @@ n:=FlagManifold[nops(FlagManifold)]:
 read(sprintf("Schubert.%d.data",n)): 
 ############################################################
 #file:=open(Name_of_File(FlagManifold),WRITE):
-file:=open("myTest",WRITE):
+file:=open("F12345data.txt",WRITE):
 #
-fprintf(file,"------  FlagManifold:=%a:\n",FlagManifold):
 ################################################################################
 #
 #    Make the list of possible SchubertConditions & Betti Numbers
@@ -139,8 +138,6 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
 end do:
 lprint(time());
 
-fprintf(file,"--- nops(Problems);\n"):
-fprintf(file,"--- # Time of computation:=%3.2f:\n",time()):
 fclose(file):
 
 quit;
