@@ -1,4 +1,4 @@
---restart
+-- NOTE: Requires Version of 1.21 of Macaulay2 to Work
 path = {"../../WorkInProgress/Macaulay2Package/SchubertM2/"} | path 
 recursionLimit=10000
 loadPackage("SchubertIdeals", Reload => true)
