@@ -23,7 +23,7 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[1,2,3,4,5]:
+FlagManifold:=[2,3,4,5]:
 projection_ok:=true:
 #
 tooBig:=200:
@@ -37,7 +37,7 @@ n:=FlagManifold[nops(FlagManifold)]:
 read(sprintf("Schubert.%d.data",n)): 
 ############################################################
 #file:=open(Name_of_File(FlagManifold),WRITE):
-file:=open("F12345data.txt",WRITE):
+file:=open("F2345data.txt",WRITE):
 #
 ################################################################################
 #
@@ -49,8 +49,8 @@ descents:={FlagManifold[1..nops(FlagManifold)-1][]}:
 for rank from 1 to Dimension(FlagManifold)-2 do
  SchubertConditions[rank]:=[]:
  for w in Rank[rank] do 
-  if Single(w,descents) then 
-#  if Belongs(w,descents) then 
+#  if Single(w,descents) then 
+  if Belongs(w,descents) then 
    SchubertConditions[rank]:=[SchubertConditions[rank][],w]:
   end if:
  end do:
