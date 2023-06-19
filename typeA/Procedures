@@ -13,7 +13,7 @@ Name_of_File:=proc(FlagManifold,Extra)
 #   Creates name of temporary file containing data for Schubert problems
 #
 local File, d:
- File:="raw_problems/F":
+ File:="F":
  for d in FlagManifold do 
   File:=sprintf("%s%d",File,d):
  end do:
