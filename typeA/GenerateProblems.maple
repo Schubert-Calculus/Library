@@ -155,7 +155,7 @@ end do:
 #
 ########################################################
 
-Nums:=sort(convert(Nums,list));
+Nums:=sort(convert(Nums,list)):
 myFile := sprintf("%s/%s.txt",myDirectory,myDirectory):
  
  system(sprintf("touch %s",myFile)):
