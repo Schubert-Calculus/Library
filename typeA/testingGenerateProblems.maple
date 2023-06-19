@@ -23,7 +23,7 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[2,3,4,5]:
+FlagManifold:=[2,6]:
 projection_ok:=true:
 #
 tooBig:=200:
@@ -37,7 +37,7 @@ n:=FlagManifold[nops(FlagManifold)]:
 read(sprintf("Schubert.%d.data",n)): 
 ############################################################
 #file:=open(Name_of_File(FlagManifold),WRITE):
-file:=open("F2345data.txt",WRITE):
+file:=open("F26data.txt",WRITE):
 #
 ################################################################################
 #
