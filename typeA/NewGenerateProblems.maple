@@ -120,7 +120,7 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
   if CheckProblem(EP,FlagManifold,projection_ok) then
    # CheckProblem computes the intersection number
    if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then
-    if FlagProjection(EP,FlagManifold,IntersectionNumber) = false then 
+    if FlagProjection(EP,FlagManifold,IntersectionNumber) then 
  #   EP:=fixEP(EP,FlagManifold):
 
      if not member(IntersectionNumber, Nums) then
