@@ -23,7 +23,7 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[2,3,5]:
+FlagManifold:=[1, 2, 3, 4, 5];
 projection_ok:=true:
 #
 tooBig:=200:
@@ -119,7 +119,8 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
 
   if CheckProblem(EP,FlagManifold,projection_ok) then
    # CheckProblem computes the intersection number
-   if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then 
+   if IntersectionNumber >= threshold and IntersectionNumber <= tooBig then
+    if FlagProjection(EP,FlagManifold,IntersectionNumber) then 
  #   EP:=fixEP(EP,FlagManifold):
 
      if not member(IntersectionNumber, Nums) then
@@ -142,6 +143,7 @@ for mu in GoodPartitions(Dimension(FlagManifold)) do
      fprintf(file,"%d}\n",IntersectionNumber):
 
      fclose(file):
+    end if:
    end if:
   end if:
  
