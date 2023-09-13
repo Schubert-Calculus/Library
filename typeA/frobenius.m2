@@ -169,24 +169,24 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 
 ---------------------------------------------------------------------------------------------------
 
-inputfile = get "F12345.txt";
+inputfile = get "F16.txt";
 filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
-f = "frobenius_output-F12345.txt" << "";
+f = "frobenius_output-F16.txt" << "";
 for problem in problems do(
 	f << problem << endl;
 	if problem#1 >= 7 then(
-	    f << frobeniusAlgorithm(problem#0,10009,problem#1,7*problem#1) << endl << endl);
+	    f << frobeniusAlgorithm(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	if problem#1 == 3 then(
-	    f << frobeniusDegreeThree(problem#0,10009,problem#1,7*problem#1) << endl << endl);
+	    f << frobeniusDegreeThree(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	if problem#1 == 4 then(
-	    f << frobeniusDegreeFour(problem#0,10009,problem#1,7*problem#1) << endl << endl);
+	    f << frobeniusDegreeFour(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	if problem#1 == 5 then(
-	    f << frobeniusDegreeFive(problem#0,10009,problem#1,7*problem#1) << endl << endl);
+	    f << frobeniusDegreeFive(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	if problem#1 == 6 then(
-	    f << frobeniusDegreeSix(problem#0,10009,problem#1,7*problem#1) << endl << endl);
+	    f << frobeniusDegreeSix(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	quit;
 	);
 
