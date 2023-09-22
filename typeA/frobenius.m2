@@ -164,12 +164,12 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 
 ---------------------------------------------------------------------------------------------------
 
-inputfile = get "F12345.txt";
+inputfile = get "F246.txt";
 filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
-f = "frobenius_output-F12345.txt" << "";
+f = "frobenius_output-F246.txt" << "";
 for problem in problems do(
 	f << problem << endl;
 	if problem#1 >= 7 then(
