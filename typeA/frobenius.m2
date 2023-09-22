@@ -38,9 +38,8 @@ frobeniusAlgorithm(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 	if degreecyclelist == {1,numsols-1} then fullminusonecycle = true;
 	for k in degreecyclelist do(
 	     if (k > numsols/2) and (k <= numsols-2) and (isPrime(k)==true) then primecycle = true); 
-	if ((fullcycle == true) and (fullminusonecycle == true) and (primecycle == true)) then (print("Full Symmetric Group") and break);
+	if ((fullcycle == true) and (fullminusonecycle == true) and (primecycle == true)) then break;
    );
-    if ((fullcycle == false) or (fullminusonecycle == false) or (primecycle == false)) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
@@ -67,9 +66,8 @@ frobeniusDegreeThree(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 	if sum(degreecyclelist) != numsols then continue;
         if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
 	if degreecyclelist == {1,2} then twocycle = true;
-	if (twocycle == true) then (print("Full Symmetric Group") and break);
+	if (twocycle == true) then break;
    );
-    if (twocycle == false) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
@@ -98,9 +96,8 @@ frobeniusDegreeFour(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
         if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
 	if degreecyclelist == {1,3} then threecycle = true;
 	if degreecyclelist == {4} then fourcycle = true;
-	if ((threecycle == true) and (fourcycle == true)) then (print("Full Symmetric Group") and break);
+	if ((threecycle == true) and (fourcycle == true)) then break;
    );
-    if ((threecycle == false) or (fourcycle == false)) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
@@ -127,9 +124,8 @@ frobeniusDegreeFive(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 	if sum(degreecyclelist) != numsols then continue;
         if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
 	if degreecyclelist == {2,3} then twothreecycle = true;
-	if (twothreecycle == true) then (print("Full Symmetric Group") and break);
+	if (twothreecycle == true) then break;
    );
-    if (twothreecycle == false) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
@@ -158,9 +154,8 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
         if sum(degreecyclelist) == numsols then datastuff = append(datastuff,degreecyclelist);
 	if degreecyclelist == {1,2,3} then twothreecycle = true;
 	if degreecyclelist == {1,5} then fivecycle = true;
-	if ((twothreecycle == true) and (fivecycle == true)) then (print("Full Symmetric Group") and break);
+	if ((twothreecycle == true) and (fivecycle == true)) then break;
    );
-    if ((twothreecycle == false) or (fivecycle == false)) then print("Needs Further Study");
     frequencytable := {};
     for cycle in unique(datastuff) do(
         frequencytable = append(frequencytable,(cycle,number(datastuff,i->i==cycle))));
@@ -169,12 +164,12 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 
 ---------------------------------------------------------------------------------------------------
 
-inputfile = get "F16.txt";
+inputfile = get "F12345.txt";
 filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
-f = "frobenius_output-F16.txt" << "";
+f = "frobenius_output-F12345.txt" << "";
 for problem in problems do(
 	f << problem << endl;
 	if problem#1 >= 7 then(
@@ -187,6 +182,7 @@ for problem in problems do(
 	    f << frobeniusDegreeFive(problem#0,10009,problem#1,10*problem#1) << endl << endl);
 	if problem#1 == 6 then(
 	    f << frobeniusDegreeSix(problem#0,10009,problem#1,10*problem#1) << endl << endl);
+        clearOutput;
 	quit;
 	);
 
