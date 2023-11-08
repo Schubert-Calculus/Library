@@ -115,7 +115,7 @@ CheckProblem := proc(EnumerativeProblem,FlagManifold,projection_ok)
    if projection_ok then
      return(true):
     else
-     FlagProjection(EnumerativeProblem,FlagManifold,IntersectionNumber):
+     return(FlagProjection(EnumerativeProblem,FlagManifold,IntersectionNumber)):
    end if:
  end if:
 
@@ -171,7 +171,7 @@ local Projection, FM, FMP, TC, nDim, i, j, EnPr,w,v,Condition:
     Projection := Projection or evalb(IntersectionNumber=Number(EnPr,FM))
   end if:
  end do:
- if(Projection) then 
+ if(Projection) then
    return(false):
   else
    return(true):
