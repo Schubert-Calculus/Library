@@ -17,13 +17,11 @@ while IFS= read -r line1 && IFS= read -r line2 <&3; do
   sed -i "26s/.*/FlagManifold:=$line2;/" GenerateProblems.maple
   maple GenerateProblems.maple
   rm -rf $line1
-  sed -i "167s/.*/inputfile = get \"$line1.txt\";/" frobenius_trial.m2
-  sed -i "172s/.*/f = \"frobenius_output-$line1.txt\" << \"\";/" frobenius_trial.m2
-  sed -i "173s/.*/g = \"times-$line1.txt\" << \"\";/" frobenius_trial.m2
-  M2 frobenius_trial.m2
+#  sed -i "167s/.*/inputfile = get \"$line1.txt\";/" frobenius_trial.m2
+#  sed -i "172s/.*/f = \"frobenius_output-$line1.txt\" << \"\";/" frobenius_trial.m2
+#  M2 frobenius_trial.m2
   mv $line1.txt Flags-In-$n-Space/$line1/
-  mv frobenius_output-$line1.txt Flags-In-$n-Space/$line1/
-  mv times-$line1.txt Flags-In-$n-Space/$line1/
+#  mv frobenius_output-$line1.txt Flags-In-$n-Space/$line1/
 
 done < "$file1" 3< "$file2"
 

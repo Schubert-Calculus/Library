@@ -165,7 +165,7 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 ---------------------------------------------------------------------------------------------------
 
 f = openOutAppend "frobenius_output-F246.txt";
-problem = {{{2,4,6},{{1,2,3,5,4,6},{1,2,3,5,4,6},{1,2,3,5,4,6},{1,3,2,4,5,6},{1,3,2,5,4,6},{1,3,2,5,4,6},{1,3,2,5,4,6},{1,3,2,5,4,6}}},70};
+problem = ;
 f << problem << endl;
 if problem#1 >= 7 then(
 	f << frobeniusAlgorithm(problem#0,10009,problem#1,12*problem#1) << endl << endl);

@@ -169,30 +169,38 @@ filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
-f = "trial_frobenius_output-F246.txt" << "";
-g = "times-F246.txt" << "";
+f = "frobenius_output-F246.txt" << "";
+data = openOutAppend "data.txt";
 for problem in problems do(
-        g << "hi" << endl;
+	i = 0;
+	T1 = cpuTime();
 	if problem#1 >= 7 then(
 	    (fullcycle,fullminusonecycle,primecycle,frequencytable) = frobeniusAlgorithm(problem#0,10009,problem#1,12*problem#1);
 	    if ((fullcycle == false) or (fullminusonecycle == false) or (primecycle == false)) then(
+	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
 	if problem#1 == 3 then(
 	    (twocycle,frequencytable) = frobeniusDegreeThree(problem#0,10009,problem#1,12*problem#1);
 	    if (twocycle == false) then(
+	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
 	if problem#1 == 4 then(
 	    (threecycle,fourcycle,frequencytable) = frobeniusDegreeFour(problem#0,10009,problem#1,12*problem#1);
 	    if ((threecycle == false) or (fourcycle == false)) then(
+	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
 	if problem#1 == 5 then(
 	    (twothreecycle,frequencytable) = frobeniusDegreeFive(problem#0,10009,problem#1,12*problem#1);
 	    if (twothreecycle == false) then(
+	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
 	if problem#1 == 6 then(
 	    (twothreecycle,fivecycle,frequencytable) = frobeniusDegreeSix(problem#0,10009,problem#1,12*problem#1);
 	    if ((twothreecycle == false) or (fivecycle == false)) then(
+	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
+	T2 = cpuTime();
+	data << typeALength(dimToCodim(prob#0#0,prob#0#1#0),prob#0#0#-1) << "," << problem#1 << "," << T2-T1 << "," << i << endl;
         clearOutput;
 	quit;
 	);
