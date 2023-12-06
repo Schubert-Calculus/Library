@@ -1,16 +1,18 @@
 import subprocess
 
-f = open('frobenius_output-F246.txt', 'x')
+f = open('frobenius_output-F1236.txt', 'x')
 f.close()
 
-with open('F246.txt','r') as input_file:
+with open('Flags-In-6-Space/F1236/F1236.txt','r') as input_file:
 	content = input_file.read()
 lines = content.split('\n')
+del lines[-1]
 
-for line in lines:
-	with open('singlefrobenius.m2', 'r') as file:
-		data = file.readlines()	
-	data[167] = 'problem = ' + str(line) + ';\n'
-	with open('singlefrobenius.m2', 'w') as file:
-		file.writelines(data)
-	subprocess.run(["M2 singlefrobenius.m2"], shell=True, capture_output=True, text=True)
+if lines != ['']:
+	for line in lines:
+		with open('trial_frobenius.m2', 'r') as file:
+			data = file.readlines()	
+		data[167] = 'problem = ' + str(line) + ';\n'
+		with open('trial_frobenius.m2', 'w') as file:
+			file.writelines(data)
+		subprocess.run(["M2 trial_frobenius.m2"], shell=True, capture_output=True, text=True)	

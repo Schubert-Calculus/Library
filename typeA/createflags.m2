@@ -1,4 +1,4 @@
-N = 6
+N = 5
 
 allFlags = method()
 allFlags(ZZ) := (n) -> (

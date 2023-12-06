@@ -23,7 +23,7 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[2, 3, 4, 5, 6];
+FlagManifold:=[1, 2, 3, 4, 5];
 projection_ok:=true:
 #
 tooBig:=50:

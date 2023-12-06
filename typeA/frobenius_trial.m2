@@ -164,12 +164,12 @@ frobeniusDegreeSix(List,ZZ,ZZ,ZZ) := (L,p,numsols,numiterations) -> (
 
 ---------------------------------------------------------------------------------------------------
 
-inputfile = get "F246.txt";
+inputfile = get "Flags-In-6-Space/F1256/F1256.txt";
 filelist = lines(inputfile);
 problems = {};
 for file in filelist do(
 	problems = append(problems, value(file)));
-f = "frobenius_output-F246.txt" << "";
+f = "frobenius_output-F1256.txt" << "";
 data = openOutAppend "data.txt";
 for problem in problems do(
 	i = 0;
@@ -200,7 +200,7 @@ for problem in problems do(
 	    	i = 1;
 	        f << problem << endl << frequencytable << endl << endl));
 	T2 = cpuTime();
-	data << typeALength(dimToCodim(prob#0#0,prob#0#1#0),prob#0#0#-1) << "," << problem#1 << "," << T2-T1 << "," << i << endl;
+	data << typeALength(dimToCodim(problem#0#0,problem#0#1#0),problem#0#0#-1) << "," << problem#1 << "," << T2-T1 << "," << i << endl;
         clearOutput;
 	quit;
 	);
