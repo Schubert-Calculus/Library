@@ -1,9 +1,9 @@
 import subprocess
 
-f = open('frobenius_output-F1236.txt', 'x')
+f = open('frobenius_output-F1346.txt', 'x')
 f.close()
 
-with open('Flags-In-6-Space/F1236/F1236.txt','r') as input_file:
+with open('Flags-In-6-Space/F1346/F1346.txt','r') as input_file:
 	content = input_file.read()
 lines = content.split('\n')
 del lines[-1]
