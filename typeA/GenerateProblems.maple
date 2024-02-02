@@ -23,11 +23,11 @@ printCondition := proc(condition)
  return sprintf("%s%d}",str,condition[nops(condition)])
 end proc:
 ############################################################
-FlagManifold:=[1, 2, 3, 4, 5];
+FlagManifold:=[1, 3, 4, 5, 6];
 projection_ok:=true:
 #
-tooBig:=50:
-threshold:=3:
+tooBig:=250:
+threshold:=51:
 #
 # FlagManifold is the type of the flags [a,b,n]:= a-planes in b-planes in n-space
 # projection_ok is whether or not to study problems that project to others.
