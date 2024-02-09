@@ -1,5 +1,5 @@
 restart
-path = {"../WorkInProgress/Macaulay2Package/SchubertM2/"} | path 
+path = {"../../../WorkInProgress/Macaulay2Package/SchubertM2/"} | path
 recursionLimit=10000
 loadPackage("SchubertIdeals", Reload => true)
 
@@ -19,20 +19,19 @@ regressionTime(List) := (prob) -> (
     s := prob#1;
     return(-8.64298235 + 0.0395682*v + 1.98113039*s))
 
-inputfile = get "F12345.txt";
-filelist = lines(inputfile);
-problems = {};
-for file in filelist do(
-	problems = append(problems, value(file)))
+inputfile = get "F246.txt";
+problems = lines(inputfile);
+
 j = 1;
 i = 0;
-batchlimit = 28800;
+batchlimit = 4115;
 while i < length(problems) do(
 	f = concatenate("batch",toString(j),".txt") << "";
 	currentsum = 0;
 	while (currentsum < batchlimit and i < length(problems)) do(
-		currentsum = currentsum + regressionTime(problems#i);
-		f << problems#i << endl;
+		currentsum = currentsum + regressionTime(value(problems#i));
+		f << value(problems#i) << endl;
 		i = i+1);
+	close f;
 	j = j+1)
 quit();

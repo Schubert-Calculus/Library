@@ -20,19 +20,18 @@ regressionTime(List) := (prob) -> (
     return(-8.64298235 + 0.0395682*v + 1.98113039*s))
 
 inputfile = get "F1256.txt";
-filelist = lines(inputfile);
-problems = {};
-for file in filelist do(
-	problems = append(problems, value(file)))
+problems = lines(inputfile);
+
 j = 1;
 i = 0;
-batchlimit = 28800;
+batchlimit = 1;
 while i < length(problems) do(
 	f = concatenate("batch",toString(j),".txt") << "";
 	currentsum = 0;
 	while (currentsum < batchlimit and i < length(problems)) do(
-		currentsum = currentsum + regressionTime(problems#i);
-		f << problems#i << endl;
+		currentsum = currentsum + regressionTime(value(problems#i));
+		f << value(problems#i) << endl;
 		i = i+1);
+	close f;
 	j = j+1)
 quit();
