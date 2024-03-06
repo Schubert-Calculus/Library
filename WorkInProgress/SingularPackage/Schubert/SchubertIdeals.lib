@@ -9,22 +9,22 @@
 //
 //   It appears that `StiefelCoordinates' may be a reserved name.  Need to think about this.
 //
-//
+//   No line of library should be more than 60 characters long
 ///////////////////////////////////////////////////////////////////////////////   
-version="version SchubertCalculus.lib  1.0.0.0  August_2018 ";   
+version="version SchubertCalculus.lib  1.0.0.0  March_2024 ";   
 category="Algebraic geometry"; 
 info="   
-LIBRARY:  SchubertCalculus.lib  Procedures for formulating Schubert varieties on flag manifolds
-AUTHOR:   Taylor Brysiewicz
-          Frank Sottile      sottile@math.tamu.edu
+LIBRARY:  SchubertIdeals.lib  Procedures for formulating Schubert varieties on flag manifolds
+AUTHOR:   Taylor Brysiewicz  tbrysiew@uwo.ca
+          Frank Sottile      sottile@tamu.edu
 	  C.J. Bott
-          Nathaniel Welty
 
 OVERVIEW: This library provides procedures for formulating membership in Schubert varieties
            and Schubert problems on classical flag varieties.
 
-REFERENCES: Fulton, Young Tableaux: With Applications to Representation Theory and Geometry, LMSST 35, Cambridge
-               University Press
+REFERENCES: Fulton, Wm., Young Tableaux: With Applications to Representation Theory and Geometry, LMSST 35, Cambridge
+               University Press, 1995.
+            Fulton, Wm. and Pragacz, P., Schubert Varieties and Degeneracy Loci, Lecture Notes in Mathematics, 1689, Springer, 1998.
 
 KEYWORDS: Grassmannian; Schubert variety; Schubert Problem; Littlewood-Richardson Rule;
 
@@ -62,9 +62,9 @@ LIB "linalg.lib";
 // proc makeStiefelCoordinateRing ( intvec flagType, list conditions, list # ) 
 //      Computes the ring for the Stiefel coordinates
 //
-//
 // proc makeStiefelCoordinates ( intvec flagType, list conditions ) 
 //       Returns the matrix of Stiefel coordinates
+//
 //
 //
 //
