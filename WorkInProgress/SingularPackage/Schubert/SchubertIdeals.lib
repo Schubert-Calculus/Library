@@ -137,6 +137,9 @@ example
 // When conditions has two permutations (and necessarily the flag variety is
 //   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
 //   where I' is the opposite flag.
+
+//  The next line is an issue.  Can we return both at the same time?
+
 // Assumes that the local ring has already been created with makeStiefelCoordinateRing
 //   and the same input parameters (flagType, conditions)
 //
