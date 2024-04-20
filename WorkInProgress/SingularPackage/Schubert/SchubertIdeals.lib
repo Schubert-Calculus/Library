@@ -1,292 +1,793 @@
 //SchubertIdeals.lib 
-// 
-//  SchubertIdeals  is a Singular library for formulating Schubert problems and  
-//                 Schubert conditions on Grassmannians and type A flag manifolds 
-//                 It builds on an earlier version written by Luis David Garcia-Puente, 
-//                 James Ruffo, and Frank Sottile 
+// 19 April 2024
+////////////////////////////////////////////////////////////
+// This is a Singular library for computing ideals of
+//   Schubert varieties on Grassmannians and flag manifolds 
+//   of Lie Types A and C, in systems of local Stiefel
+//   coordinates on these spaces.
 //
-//  This version is being written by Taylor Brysiewicz, Frank Sottile, C.J. Bott, and Nathaniel Welty
+// It builds on an earlier version written by Luis David
+//   Garcia-Puente, James Ruffo, and Frank Sottile 
 //
-//   It appears that `StiefelCoordinates' may be a reserved name.  Need to think about this.
+// This version is written by  C.J. Bott, Taylor Brysiewicz,
+//   and Frank Sottile
 //
-//   No line of library should be more than 60 characters long
-///////////////////////////////////////////////////////////////////////////////   
-version="version SchubertCalculus.lib  1.0.0.0  March_2024 ";   
+//  All lines must be at most 60 characters long
+////////////////////////////////////////////////////////////
+version="version SchubertIdeals.lib 1.0.0.0 April_2024 ";    
 category="Algebraic geometry"; 
 info="   
-LIBRARY:  SchubertIdeals.lib  Procedures for formulating Schubert varieties on flag manifolds
-AUTHOR:   Taylor Brysiewicz  tbrysiew@uwo.ca
-          Frank Sottile      sottile@tamu.edu
-	  C.J. Bott
+LIBRARY:  SchubertIdeals.lib  ideals of Schubert varieties
+AUTHOR:   C.J. Bott,          cdott2@tamu.edu
+          Taylor Brysiewicz,  tbrysiew@uwo.ca
+          Frank Sottile,      sottile@tamu.edu
 
-OVERVIEW: This library provides procedures for formulating membership in Schubert varieties
-           and Schubert problems on classical flag varieties.
+OVERVIEW: 
+This library provides procedures for formulating membership 
+in Schubert varieties and Schubert problems on classical 
+flag varieties (currently Lie types A and C).  It also may
+compute degrees of Schubert problems.
 
-REFERENCES: Fulton, Wm., Young Tableaux: With Applications to Representation Theory and Geometry, LMSST 35, Cambridge
-               University Press, 1995.
-            Fulton, Wm. and Pragacz, P., Schubert Varieties and Degeneracy Loci, Lecture Notes in Mathematics, 1689, Springer, 1998.
+REFERENCES: 
+Fulton, Wm., Young Tableaux: With Applications to 
+  Representation Theory and Geometry, LMSST 35, CUP 1995.
+Fulton, Wm. and Pragacz, P., Schubert Varieties and 
+  Degeneracy Loci, LNM 1689, Springer, 1998.
 
-KEYWORDS: Grassmannian; Schubert variety; Schubert Problem; Littlewood-Richardson Rule;
+
+KEYWORDS: Grassmannian; Schubert variety; Schubert Problem; 
+    Littlewood-Richardson Rule;
 
 SEE ALSO:
 
 PROCEDURES:
-  makeStiefelCoordinateRing(flagType, conditions, # );  makes the ring for the Stiefel coordinates
-  makeStiefelCoordinates(flagType, conditions );        Returns the matrix of Stiefel coordinates
+  proc makeStiefelCoordinates ( intvec flagType , list conditions, list # )
 
  <proc_name_1>();     <one line description of the purpose>
      .
      .
  <proc_name_N>();     <one line description of the purpose>
 ";
-/////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
 LIB "matrix.lib"; 
 LIB "linalg.lib"; 
-//////////////////////////////////////////////////////////////////////////////////////
+LIB "general.lib";
+LIB "random.lib";
+////////////////////////////////////////////////////////////
 //
-//   The following two conventions are for type A flag varieties
+// Conventions for type A flag varieties:
 //
-//  flagType is an integer vector (intvec) (a_1, ..., a_s, n)=(adot, n) with increasing 
-//           entries specifying the type of the flag manifold.
+//  flagType is an integer vector (intvec) (a_1, ..., a_s, n)=(adot, n)
+//           with increasing entries specifying the type of the flag manifold.
 //            flagType = (3,6)  is the Grassmannian of 3-planes in 6-space
 //            flagType = (2,3,7) is the manifold of partial flags consisting of a
 //                        2-plane contained in a 3-plane lying in 7-space
 ////////
 //
-// Schubert conditions are partial permutations w of {1,...,n} represented as integer vectors.
+// Schubert conditions are integer vectors w that are partial permutations w of [n]
 //         w has descents only at positions of adot, where flagType=(adot,n)
 //
-//////////////////////////////////////////////////////////////////////////////////////
+// Flags are represented by matrices with n rows
+//
+////////////////////////////////////////////////////////////
+//
+//   These are the main procedures of this library
 //
 //
-// proc makeStiefelCoordinateRing ( intvec flagType, list conditions, list # ) 
-//      Computes the ring for the Stiefel coordinates
+// proc makeStiefelCoordinates ( intvec flagType , list conditions, list # )
+//     default for # : ["0", "x", "dp", "stiefelCoordinates"]
 //
-// proc makeStiefelCoordinates ( intvec flagType, list conditions ) 
-//       Returns the matrix of Stiefel coordinates
+//     Makes the Stiefel coordinates in the tye A flag variety for either a Schubert variety
+//     or a Richardson variety (on a Grassmannian, and with two Schubert conditions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  proc naiveEquationsGrassmannian ( matrix stiefelCoords, intvec condition, matrix flagMatrix)
+//
+//   Computes the naive equations in the local stiefelCoords for the Grassmannian Schubert variety
+//     given by the condition and flag flagMatrix.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  proc naiveEquationsFlag ( matrix stiefelCoordinates, intvec condition, matrix flag )
+//
+//   Computes the naive equations in the local stiefelCoords for the chubert variety
+//     given by the condition and flag flagMatrix.
+//
+//     Lacks checks and documentation
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// proc minimalEquationsGrassmannian( matrix stiefelCoords, intvec condition, matrix flagMatrix)
+//  
+//   Computes the minimal equations  in the local stiefelCoords for the Grassmannian Schubert variety
+//     given by the condition and flag flagMatrix.
+//
+//     Lacks checks and documentation
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// proc makeLagrangianCoordinates ( intvec w, list # )
+//
+//
+//  makes Stiefel Coordinates for a Schubert subvariety of the Lagrangian Grassmannian, with the standard symplectic form
 //
 //
 //
 //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Procedures for computing flags for Lie type A
+//
+// proc randomFlag( list(n, range) ) or proc randomFlag( list(n) ) 
+//      Generates a random flag, represented as an invertible n x n matrix of numbers
+// proc osculatingFlag (int n, poly t)  
+//      Generates the flag osculating (s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1)^T  at the point s=t
+// proc secantFlag (int n, list secantPoints)  
+//      Generates the secant flag to the rational normal curve (above) at the pointset secantPoints
 //
 //
+// Procedures for computing flags for Lie type C   &&&&&&&&&&&&&&&&
 //
+// proc osculatingFlagC ( poly t, int n)
+//      Generates the symplectic isotropic flag osculating the rational normal curve
+//      transpose( 1, t, t^2/2!, ... , t^(2n-1)/(2n-1)! ) , where positions n+1, n+3, ... are negated.
+//  
+////
+//  Computes a random symplectic flag with integer entries; the initial entries are in 
+//    -range ..  range
 //
-/////////////////////////////////////////////////////////////////////////////////
+//   Need more instructions here.  characteristic, default range, parameters, etc.
 //
-// This returns a ring for this package's Stiefel coordinates.
-//
-//  flagType  an integer vector describing the flag manifold
-//
-//  conditions  a list of one or two permutations for flagType (two only when flagType is a Grassmannian)
-//
-//  # is a list "characteristic", "variable name", "monomial order" default = "0","x","dp";
-//
-//   This returns the ring in a list of length 1
-//
-proc makeStiefelCoordinateRing ( intvec flagType, list conditions, list # )
-"USAGE:  list L = makeStiefelCoordinateRing( flagType, conditions, ringData); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
- ringData is a list of strings "characteristic", "variableName", "monomialOder".  It may be 
-    empty, and then the default values are "0", "x", "dp".
+//proc randomflagC (int n, int range)
 
- RETURN: a list containing the ring. 
-   
- Example: example makeStiefelCoordinateRing; shows an example"
+
+
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  proc internalJ( int n )
+//    Makes the default symplectic form that we use for our coordinates, a 2n x 2n matrix J with J^2 = - I
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  makes Stiefel coordinates in type A for the standard coordinate flag
+//   
+//  # is a list of strings [characteristic, generic variable name, term order, name_of_coordinates]
+//     This is used for the exported ring and the name of the exported coordinates
+//     If not set by user, set to default values ["0", "x", "dp", "stiefelCoordinates"]
+//
+//  Note: cannot use locCoordinats, returns an error message if that is passed
+//  This returns a list [ ringDescriptor, list # describing the ring and coordinates ]
+//
+proc makeStiefelCoordinates ( intvec flagType , list conditions, list # )
+"USAGE: makeStiefelCoordinates( flagType, conditions, # ) intvec flagType, list conditions, list #
+  Computes local Stiefel coordinates for the given flag manifold (encoded in flagType)  for the Schubert or Richardson
+   variety given by the one or two conditions in the list conditions.  # contains information for the ring
+   (characteristic, variablename, monomial order, and the name for the matrix of coordinates.
+
+ RETURN: A list containing the ring constructor and exporting of the matrix of coordinates
+
+ EXAMPLE: example makeStiefelCoordinates shows an example"
 {
-  if (size(#)<>3) { #[1] = "0"; #[2] = "x"; #[3] = "dp";}
-  list L = makeStiefelPatternMatrix ( flagType, conditions )[2];
+  //   Sets default values for ring constructor, if user did not already set them
+  if (size(#)==3) {#[4] = "stiefelCoordinates"; }
+  if (size(#)<>4) {#[1] = "0"; #[2] = "x"; #[3] = "dp"; #[4] = "stiefelCoordinates"; }
+  if ( #[4] == "locCoordinats" )
+  {
+    printf("Input failure in makeStiefelCoordinates, must use a different name for local Stiefel Coordinates than locCoordinats");
+    quit;
+  }
   intvec pr;
-  int i;
+  int i,j;
+  //   Need the indices of variables
+  list indsOfVariables = indicesOfVariables( flagType , conditions );
+  //   Make the coordinate ring.  The name R is internal to this proceduire
   string ringConstructor = "ring R = " + #[1] + ",(" ;
-  for ( i=1; i<=size(L); i++ )  {
-    pr = L[i];
+  for ( i=1; i<=size(indsOfVariables); i++ )  {
+    pr = indsOfVariables[i];
     if ( i>1 ) { ringConstructor = ringConstructor + ","; }
     ringConstructor =  ringConstructor + #[2] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
   }   
-  ringConstructor = ringConstructor + ")," + #[3] + ";";   
+  ringConstructor = ringConstructor + ")," + #[3] + ";";
   execute(ringConstructor);
-  return(list(R));
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 4, 7;
-  intvec w = 2,6, 3,7, 1,4,5;
-  list myConditions = w ;
-  list ringData = "0", "y", "dp";
-  def myRing = makeStiefelCoordinateRing( myFlagType, myConditions, ringData)[1];
-  setring myRing;
-  basering;
-  //   characteristic : 0
-  //   number of vars : 7
-  //        block   1 : ordering dp
-  //                  : names    y(1)(1) y(1)(2) y(3)(1) y(3)(3) y(4)(1) y(4)(3) y(5)(1)
-  //        block   2 : ordering C
-} 
-/////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
-//
-// Makes Stiefel coordinates for the Schubert variety X_w I, where w is a
-//   Schubert condition for the flag variety  flagType and I is the standard
-//   coordinate flag.  This is if there is one permutation w in conditions.
-// When conditions has two permutations (and necessarily the flag variety is
-//   a Grassmannian), then it makes Stiefel coordinates for X_w I \cap X_v I',
-//   where I' is the opposite flag.
+  int n = flagType[nrows(flagType)];
+  int m = flagType[nrows(flagType)-1];
+  intvec w = conditions[1];
+  matrix locCoordinats[n][m];
 
-//  The next line is an issue.  Can we return both at the same time?
-
-// Assumes that the local ring has already been created with makeStiefelCoordinateRing
-//   and the same input parameters (flagType, conditions)
-//
-proc makeStiefelCoordinates ( intvec flagType, list conditions )
-"USAGE:  list L = makeStiefelCoordinates( flagType, conditions); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
-
- RETURN: a matrix of Stiefel coordinates for the Schubert or Richardson variety.
-
- NOTE: This procedure assumes that the base ring has at least as many variables as needed 
-           for the Stiefel coordinates.  Ideally it is the ring created by the command
-           makeStiefelCoordinateRing
-   
- Example: example makeStiefelCoordinates; shows an example"
-{
-  int i;
-  //
-  //  Now we make our ring and plug in indeterminates in to the Stiefel Coordinates
-  //
-  list L = makeStiefelPatternMatrix ( myFlagType, conditions );
-  matrix localCoords = matrix(L[1]);
-  intvec pr;
-  for (i=1; i<= size(L[2]); i++) {
-    pr = L[2][i];
-    localCoords[pr[1],pr[2]] = var(i);
+  for (j=1; j<=flagType[nrows(flagType)-1]; j++) { locCoordinats[n+1-w[j],j] = 1; }
+  for ( i=1; i<=size(indsOfVariables); i++ )
+  {
+    pr = indsOfVariables[i];
+    locCoordinats[pr[1],pr[2]] = var(i);
   }
-  return( localCoords );
+  string coordConstructor = "matrix " + #[4] + " = locCoordinats ;";
+  execute(coordConstructor); 
+  string exportConstructor = "export( " + #[4] + " );";
+  execute(exportConstructor);
+  return( list(R, #) );
 }
 example   
 {   
   "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 3, 6;
-  intvec w = 2,6, 4, 1,3,5;
+  intvec myFlagType =  2, 5, 8;
+  intvec w = 2,6, 1,4,7;
   list myConditions = w ;
-  list myRingData = "0", "y", "dp";
-  def myRing = makeStiefelCoordinateRing(  myFlagType, myConditions , myRingData)[1];
+  list myRingData = "0", "y", "dp", "myCoordinates";
+  def myRing = makeStiefelCoordinates(  myFlagType, myConditions , myRingData)[1];
   setring myRing;
-  matrix StiefelCoordinates  = makeStiefelCoordinates ( myFlagType, conditions, myRingData);
-  print(StiefelCoordinates);
+  print(myCoordinates);
+  myFlagType = 3, 7;
+  myConditions = intvec(1,3,4), intvec(1,2,5) ;
+  def myRing = makeStiefelCoordinates(  myFlagType, myConditions )[1];
+  setring myRing;
+  print(stiefelCoordinates);
 } 
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Computes the naive equations for a Grassmannian condition.
+//
+//  The condition that a k-plane H in n-space lie in the Schubert variety X_w F is that
+//    for each i=1..k, the dimension of H \cap F_{n+1-w[i]} \geq k+1-i , which is equivalent to 
+//    for each i=1..k, rank of concat ( H, F[1...(n+1-w[i]) ) \leq n+i-w[i]  (n+i+1-w[i] minors vanish)
+//
+proc naiveEquationsGrassmannian ( matrix stiefelCoords, intvec condition, matrix flagMatrix)
+"USAGE: naiveEquationsGrassmannian( sC, w, F )
+  Given a n x k matrix sC of Stiefel coordinates for a subset of the Grassmannian Gr(k,n), computes the ideal 
+    of its intersection with the Schubert variety X_w F, via the naive equations (all appropriate minors)
 
+ RETURN: The ideal
 
-/////////////////////////////////////////////////////////////////////////////////   
+ EXAMPLE: example naiveEquationsGrassmannian shows an example"
+{
+  int n = nrows(stiefelCoords);
+  int k = ncols(stiefelCoords);
+  if (k <> nrows(condition))
+  {
+    printf("Input failure for naiveEquationsGrassmannian. The Schubert condition (%s) does not have the same length as the columns of the Stiefel Coordinates.",condition);
+    quit;
+  }
+  if (n <> nrows(flagMatrix) or n <> ncols(flagMatrix) )
+  {
+    printf("Input failure for naiveEquationsGrassmannian. The Stiefel Coordinates and Flag do not have compatible dimensions");
+    quit;
+  }
+  matrix tempMat;
+  ideal I = 0;
+  int i;
+  // finds the essential conditions
+  intvec jmps = jumps(condition);
+  intvec flagCols;
+  // sets up the matrices and ideald of minors for the essential conditions
+  for (i=1; i<=nrows(jmps); i++)
+  {
+    flagCols =  1..(n+1-condition[jmps[i]]) ;
+    tempMat = concat( stiefelCoords, submat(flagMatrix,1..n,flagCols));
+    I = I + ideal(minor(tempMat,n+1+jmps[i]-condition[jmps[i]]));
+  }
+  return(I);
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+   myFlagType = 3, 6;
+   myConditions = intvec(1,3,5), intvec(1,3,5) ;
+   def myRing = makeStiefelCoordinates(  myFlagType, myConditions )[1];
+   setring myRing;
+   matrix myFlag =  randomFlag( list( 6 ) );
+   ideal I = naiveEquationsGrassmannian ( stiefelCoordinates, intvec(1,3,5), myFlag);
+   I = std(I);
+   dim(I), mult(I);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Static procedures  (This should eventually go in the header ?)
+//  Computes the naive equations for Schubert variety in a manifold of partial flags
 //
-//   For testing do not call them static
+//    Lacks checks   Needs documentation and example
 //
-// proc completePermutation ( intvec w, int n ) returns an intvec (a permutation)
-//      Completes a partial permutation w to a full permutation in S_n or breaks
+proc naiveEquationsFlag ( matrix stiefelCoordinates, intvec condition, matrix flag )
+{
+  intvec conditionInGrassmannian;
+  matrix coordinatesInGrassmannian;
+  ideal I=0;
+  intvec descents = getDescents(w);
+  int n = nrows(stiefelCoordinates);
+
+  // This is to handle there being an identity condition
+  print(descents);
+  if ( descents[1]<>0 )
+  {
+    for (int i=1; i<=nrows(descents); i++)
+    {
+      conditionInGrassmannian = w[1..descents[i]];
+      conditionInGrassmannian = sort(conditionInGrassmannian)[1];
+      coordinatesInGrassmannian = submat( stiefelCoordinates, 1..n, 1..descents[i]);
+      I = I +  naiveEquationsGrassmannian( coordinatesInGrassmannian, conditionInGrassmannian, flag);
+    }
+  }
+  return( I );
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// proc getDescents (intvec w)
-//        Gets the descent set of a sequence w.  The last descent is at nrows(w)
+//  Generates a random flag, represented as an invertible n x n matrix of numbers
+//
+proc randomFlag( list # )
+"USAGE: matrix M = randomFlag( [n, range] ) or  matrix M = randomFlag( [ n ] )
+  Creates a random invertible n x n matrix. 
+  In characteristic p > 0, the entries are uniformily chosen random integers between 1 and p.
+  In characteristic 0, they are rational numbers a/b where a is a random integer in -range...range and b in 1..range.
+      With one entry, range is set to 100.
+ RETURN: The random flag
+ NOTE: This requires a basering to be active
+ EXAMPLE: example randomFlag shows an example"
+{
+  if (size(#)==0 or size(#)>2) { print("incorrect input for randomFlag");  quit; }
+
+  int n = #[1];
+  int i,j, range;
+  poly val = 0;
+  matrix M[n][n];
+  if  (char(basering)<>0)
+  {
+    range = char(basering) - 1;
+    while ( val==0 )
+    {
+      for (i=1; i<=n; i++)
+      {
+        for (j=1; j<=n; j++)
+        {
+          M[i, j]=random(0, range);
+        }
+      }
+      val = det( M );
+    }
+  }
+  else  // characteristic zero
+  {
+    if (size(#)==1)  // set default for range
+    {
+      #[2]=100; 
+    }
+    while ( val==0 )
+    {
+      range = #[2];
+      M = random( range, n, n);
+      for (i=1; i<=n; i++)
+      {
+        for (j=1; j<=n; j++)
+        {
+          M[i, j]=M[i, j]/random(1, range);
+        }
+      }
+      val = det( M );
+    }
+  }
+  return( M );
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  ring R=0,x,dp;
+  print(randomFlag( list(4, 1234) ));
+  ring S=101,y,lp;
+  print(randomFlag( list(4) ));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Creates the n x n matrix of the flag osculating the rational normal curve
+//  (s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1)^T  at the point s=t
+//
+proc osculatingFlag (int n, poly t)  
+"USAGE: matrix M = osculatingFlag( n, t )
+  Creates the matrix of format n x n of flags osculating the rational normal curve
+      transpose ( ( s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1 ) )  at the point s=t.
+ RETURN: The osculating flag
+ NOTE:    Requires a basering.  When t=0, the osculating flag is the coordinate flag opposite to the standard flag.
+           This may cause issues with local coordinates of Richardson varieties
+ EXAMPLE: example osculatingFlag shows an example"
+{  
+  matrix osculatingFlag[n][n];  
+  int i,j;  
+  for (i=1; i<=n; i++)  
+  {  
+    osculatingFlag[n+1-i,i] = 1;  
+    for (j=i+1; j<=n; j++)  
+    {  
+      osculatingFlag[n+1-j,i] = t^(j-i)/factorial(j-i);
+    }
+  }
+  return(osculatingFlag);  
+}  
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  ring R=0,t,dp;
+  print(osculatingFlag( 5, t ));
+  print(osculatingFlag( 5, 7 ));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Creates the matrix of the flag secant to the rational normal curve (s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1)^T
+//    at the given list of secant points
+//
+proc secantFlag (int n, list secantPoints)  
+"USAGE: matrix M = secantFlag( n, secantPoints )
+
+  Creates the matrix of format n x n of flags secant to the rational normal curve
+      transpose (  (1, s, s^2/2, s^3/3!, ...) )  at the points in secantPoints
+
+ RETURN: The secant flag
+
+ EXAMPLE: example secantFlag shows an example"
+{
+  if (size(secantPoints) < n)
+  {
+    printf("Input failure for secantFlag.  Insufficiently many points of secancy.");
+    quit;
+  }
+  matrix secantFlag[n][n];  
+  int i,j;
+  for (j=1; j<=n; j++)  
+    {
+      for (i=1; i<=n; i++)  
+	{  
+	  secantFlag[i,j] = secantPoints[j]^(i-1)/factorial(i-1);  
+	}  
+    }  
+  return( secantFlag );  
+}
+example
+{   
+  "EXAMPLE:"; echo = 2;
+  ring R=0,t,dp;
+  print(secantFlag( 5, list(t,1,2,3,4) ));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////	
+//
+//   Computes the minimal equations  in the local stiefelCoords for the Grassmannian Schubert variety
+//     given by the condition and flag flagMatrix.
+//
+//  This assumes (and will check) that everything is in a Grassmannian Gr(k,n).
+//
+proc minimalEquationsGrassmannian( matrix stiefelCoords, intvec condition, matrix flagMatrix)
+{
+  int n = nrows(stiefelCoords);
+  int k = ncols(stiefelCoords);
+  if (k <> nrows(condition))
+  {
+    print("The Schubert condition is not compatible with the Stiefel Coordinates");
+    quit;
+  }
+  int i,j;
+  list flagCoords;
+  ideal I;
+  poly f;
+  list pIndices = plueckerIndices( k, n );
+  list pluckerCoordinates = plueckerVector( pIndices, stiefelCoords);
+  matrix flagInverse = inverse(flagMatrix);
+ 
+  list conds = allNotLessThan( condition, n, pIndices);
+  I = 0;
+  for (i=1; i<=size(conds); i++)
+  {
+    flagCoords =  plueckerVector(pIndices, transpose(submat(flagInverse, conds[i], 1..n)));
+    f=0;
+    for (j=1; j<=size(pluckerCoordinates); j++)
+    {
+      f = f + pluckerCoordinates[j]*flagCoords[j];
+    }
+    I = I + ideal(f);
+  }
+  return(I)
+}
+example
+{
+  "EXAMPLE:"; echo = 2;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  makes Stiefel Coordinates for a Schubert subvariety of the Lagrangian Grassmannian, with the standard symplectic form
+//
+//   
+//  # is a list of strings [characteristic, generic variable name, term order, name_of_coordinates]
+//     This is used for the exported ring and the name of the exported coordinates
+//     If not set by user, set to default values ["0", "x", "dp", "stiefelCoordinates"]
+//
+//  Note: cannot use locCoordinats, returns an error message if that is passed
+//  This returns a list [ ringDescriptor, list # describing the ring and coordinates ]
+//
+proc makeLagrangianCoordinates ( intvec w, list # )
+//
+//   May be able to upgrade to a pair of conditions.
+//
+"USAGE: makeLagrangianCoordinates( w , # ) intvec w, list #
+  Computes local Stiefel coordinates for Schubert variety given by w in the Lagrangian Grassmannian.
+   # contains information for the ring (characteristic, variablename, monomial order), and the name for the matrix of coordinates.
+
+ RETURN: A list containing the ring constructor and exporting of the matrix of coordinates
+
+ EXAMPLE: example makeLagrangianCoordinates shows an example"
+{
+  if (isLagrangianCondition( w ) != 1)
+  {
+    print("The input to makeLagrangianCoordinates is not the index of a Lagrangian Schubert variety");
+    quit;
+  }
+  //   Sets default values for ring constructor, if user did not already set them
+  if (size(#)==3) {#[4] = "stiefelCoordinates"; }
+  if (size(#)<>4) {#[1] = "0"; #[2] = "x"; #[3] = "dp"; #[4] = "stiefelCoordinates"; }
+  if ( #[4] == "locCoordinats" )
+  {
+    printf("Input failure in makeLagrangianCoordinates, must use a different name for local Stiefel Coordinates than locCoordinats");
+    quit;
+  }
+  int n = nrows(w);
+  int i,j;
+  intvec pr;
+  //
+  //  Need wo and wc to get indices of variables
+  //
+  intvec wo = intvec(0), w;
+  intvec wc;
+  for (i=1; i<=n; i++)
+  {
+    wc[i] = 2*n+1-w[i];
+  }
+  list indsOfVariables = list();
+  //  Finds the indices of variables in Stiefel coordinates for the Lagrangian Grassmannian, when there is one Schubert condition
+  for (i=1; i<=n; i++)
+  {
+     for (j=1; j<=n; j++)
+     {
+       if (wo[j] < w[i] and w[i] < wc[j]) { indsOfVariables = insert( indsOfVariables, intvec(w[i],j) ); }
+     }
+  }
+  //   Make the coordinate ring.  The name R is internal to this proceduire
+  string ringConstructor = "ring R = " + #[1] + ",(" ;
+  for ( i=1; i<=size(indsOfVariables); i++ )  {
+    pr = indsOfVariables[i];
+    if ( i>1 ) { ringConstructor = ringConstructor + ","; }
+    ringConstructor =  ringConstructor + #[2] + "(" + string(pr[1]) + ")" + "(" + string(pr[2]) + ")";
+  }   
+  ringConstructor = ringConstructor + ")," + #[3] + ";";
+  execute(ringConstructor);
+
+  matrix locCoordinats[2*n][n];
+
+  for (j=1; j<=n; j++) { locCoordinats[wc[j],j] = 1; }
+  for ( i=1; i<=size(indsOfVariables); i++ )
+  {
+    pr = indsOfVariables[i];
+    locCoordinats[pr[1],pr[2]] = var(i);
+  }
+  //  Finds the indices of dependent entries in Stiefel coordinates for the Lagrangian Grassmannian
+  for (j=2; j<=n; j++)
+  {
+     for (i=1; i<=j; i++)
+     {
+        if (w[i] < w[j] and w[i] < wc[j])
+        {
+          locCoordinats[w[i],j] = locCoordinats[w[j],i];
+	  if (w[j]>n) { locCoordinats[w[i],j] = -1 * locCoordinats[w[i],j]; }
+        }
+     }
+  }
+  string coordConstructor = "matrix " + #[4] + " = locCoordinats ;";
+  execute(coordConstructor); 
+  string exportConstructor = "export( " + #[4] + " );";
+  execute(exportConstructor);
+  return( list(R, #) );
+}
+example
+{
+  "EXAMPLE:"; echo = 2;
+  list myRingData = "0", "y", "dp", "myCoordinates";
+  def myRing = makeLagrangianCoordinates( w , myRingData)[1];
+  setring myRing;
+  print(myCoordinates);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Makes the symplectic flag osculating the rational normal curve
+//   transpose( 1, t, t^2/2!, ... , t^(2n-1)/(2n-1)! ) , where positions n+1, n+3, ... are negated.
+//  This gives an isotropic flag
+//
+proc osculatingFlagC ( int n, poly t)
+"USAGE: osculatingFlagC ( n, t )
+
+   Computes the isotropic flag osculating the rational normal curve for our given symplectic form internalJ:
+   transpose( t^(2n-1)/(2n-1)! , ... , t^2/2!, t, 1 ) , where positions n, n-2, ... negated.
+
+ RETURN: The 2n x 2n matrix F(t) representing the osculating isotropic flag 
+ NOTE:    Requires a basering.  When t=0, the osculating flag is the coordinate flag opposite to the standard flag.
+           This may cause issues with local coordinates of Richardson varieties
+ EXAMPLE: example osculatingFlagC shows an example"
+{
+  int i,j;
+  matrix M = osculatingFlag(2*n, t);
+  for (i=1; i<=n; i = i+2) 
+  {
+    for (j=1; j<=2*n; j++)
+    {
+      M[n+1-i,j] = -1 * M[n+1-i,j];
+    }
+  }
+  return(M);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes a random symplectic flag with integer entries; the initial entries are in 
+//    -range ..  range
+//
+//   Need more instructions here.  characteristic, default range, parameters, etc.
+//
+//
+proc randomflagC (int n, int range)
+"USAGE: randomflagC ( n, r )
+
+ RETURN: A 2n x 2n matrix representing a random 2n x 2n isotropic flag with seeded entries in -r..r
+
+ EXAMPLE: example randomFlagC shows an example"
+{
+  int i,j,ii;
+  matrix myJ,M;
+  poly pairing;
+
+  myJ = internalJ( n );
+  // Start with a random flag
+  M =  randomFlag( list( 2*n, range) );
+  // make it triangular and set some entries to zero
+  for (i=1; i<=2*n; i++)
+  {
+    M[i,i] = 1;
+    for (j=i+1; j<=2*n; j++)
+    {
+      M[i,j] = 0;
+    }
+    for (j=i+1; j<=2*n-i; j++)
+    {
+      M[2*n+1-i,j] = 0;
+    }
+  }
+  // fill in the missing entries to make it an isotropic flag with respect to the internal matrix J
+  for (i=n; i>0; i--)
+  {
+    for (j=i+1; j<=2*n-i; j++)
+    {
+      pairing=0;
+      for (ii=1; ii<=n; ii++)
+      {
+        pairing = pairing - M[ii,i]*M[2*n+1-ii,j] + M[ii,j]*M[2*n+1-ii,i];
+      }
+      M[2*n+1-i,j]=pairing;
+    } 
+  }
+  return( M );
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   This makes the matrix J of the (anti-diagonal) symplectic form that we use
+//
+proc internalJ( int n)
+"USAGE: internalJ( n )
+
+   Computes the skew-symmetric 2n by 2n matrix J representing the symplectic form that we are using for type C Schubert calculus
+
+ RETURN: The 2n x 2n matrix J
+
+ EXAMPLE: example internalJ shows an example"
+{
+  intmat J[2*n][2*n];
+  for (int i=1; i<=n; i++)
+  {
+    J[  i,2*n+1-i]=-1;
+    J[n+i,  n+1-i]= 1;
+  }
+  return( J );
+}
+example
+{
+  "EXAMPLE:"; echo = 2;
+  print(internalJ( 3 ));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Static procedures below
+//
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   Internal (static) procedures Not needed for export
+//
 //
 // proc isPartialPermutation( intvec w )
 //        tests if w is a partial permutation.  1 = yes and 0 = no
 //
-// proc makeGrassmannianPermutation ( intvec w, int k, int n)
-//       Computes the Grassmannian permutation of a partial permutation w given by 
-//       the first k values of w.  This indexes the Schubert variety of the image  
-//
-// proc makeStiefelPatternMatrix ( intvec flagType, list conditions )   This helper function
-//      returns an intmat encoding the shape of the Steifel coordinates and a list
-//      encoding the positions of the variables in the Stiefel coordinates.
-//
-// proc member (int d, intvec a)   returns a boolean 0 or 1
+// proc belongsTo (int d, intvec a)   returns a boolean 0 or 1
 //        Checks if integer d is a component of vector a
 //
-// proc partitionToPermutation ( intvec partition, int k, int n )
-//       Converts a partition for Gr(k,n) into the corresponding permuation or breaks
+// proc isCondition (intvec w, intvec flagType)
+//    Checks if partial permutation w is a Schubert condition for the flag manifold of type flagType
 //
-/////////////////////////////////////////////////////////////////////////////////
-/*  Completes a partial permutation w to a full permutation for S_n            */
+// proc indicesOfVariables ( intvec flagType , list conditions )   This helper function
+//      returns a list of pairs which are the positions of the variables in the type A Stiefel coordinates.
+//      This is a helper function for makeStiefelCordinates
 //
-proc completePermutation ( intvec w, int n )
-"USAGE:  completePermutation( w, n);  w intvec, n int
-   
- RETURN: The full permutation in S_n whose initial values agree with w, and remaining
-           values are increasing.
-
- Example: example completePermutation; shows an example"
-{
-  if (isPartialPermutation(w) <>1 ) {
-    printf("Input failure for completePermutation ( intvec (%s), int %s ) :",w, n);
-    printf("The vector (%s) is not a partial permutation.",w);
-    quit;
-  }
-  if ( nrows(w) < n ) {
-    for ( int i=1; i<=n; i++ ) {
-      if (member(i,w)==0) { w = w, intvec(i); }
-    }
-  }
-  return ( w );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 1,4,3;   
-  int n = 5;   
-  completePermutation(w, n);   
-}
-//   The result should be 1,4,3,2,5
-/////////////////////////////////////////////////////////////////////////////////
-/* Gets the descent set of a partial permutation w.                            */
+// proc jumps (intvec condition)  Fnds the positions of the essential conditions (jumps) in the Schubert
+//          condition for a classical Grassmannian
 //
-proc getDescents (intvec w)
+// proc getDescents (intvec w)
+//        Gets the descent set of a partial permutation w in type A. 
+//
+// proc completeToPermutation ( intvec w, int n ) returns an intvec (a permutation)
+//      Completes a partial permutation w to a full permutation in S_n or breaks
+//
+//   The next three may be missing input checks ans examples
+//
+// proc  plueckerStep( intvec w, int n )
+//      Computes one step in the lexicographic walk through  Pluecker indices on the Grassmannian Gr( len(w), n )
+//
+// proc plueckerIndices( int k, int n )
+//    Computes the list of all Pl\"ucker indices for  on the Grassmannian Gr(k,n), in lexicoigraphic order
+//    This is a helper function for computing the minimal equations for Schubert varieties.
+//
+// proc plueckerVector ( list plIndices, matrix myMatrix )
+//    Computes the Pluecker vector of the n\times k matrix myMatrix w.r.t. the given set plIndices of Pluecker indices
+//
+// proc dualIndex( intvec w, int n )
+//     Computes the dual Pluecker index to w (with k rows) for Grass(k,n)
+//
+// proc  leqPluecker( intvec firstIndex, intvec secondIndex)
+//     Computes the Boolean firstIndex \leq secondIndex in Bruhat Order on Grassmannian
+//
+// proc allNotLessThan( intvec w, int n, list pIndices)
+//     Computes all Pluecker indices from pIndices for Gr(k,n)  that are not less than w
+//
+///// &&&&&&&&&&&&&&&&&&&&&&&&&&&&    Type C  helper routines
+//
+// proc isPartialPermutationC( intvec w, int n )
+//      Tests if w is a partial permutation in the Weyl group C_n, returning a boolean
+//
+// proc isLagrangianCondition ( intvec w )
+//     Tests if w is a condition for the Lagrangian Grassmannian
+//
+//
 
-"USAGE:  getDescents( w );  w intvec
-   
- RETURN: The integer vector whose components are the descent set { i : w[i]>w[i+1] }
-           of w.
-
- NOTE: This does not check that w is a partial permutation.
-   
- Example: example getDescents; shows an example"
-{
-  intvec descents;
-  for (int i=1; i<=nrows(w)-1; i++) {
-    if (w[i]>w[i+1]) { descents = descents , intvec(i) ; }
-  } 
-  descents = descents , nrows(w);
-  descents = descents[2..size(descents)];
-  return ( descents );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 3,5, 1,6, 2,7;   
-  getDescents( w );
-}
-//   The result should be 2, 4, 6
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //   This tests if w is a partial permutation.  1 = yes and 0 = no
 //
 proc isPartialPermutation( intvec w )
 "USAGE:  isPartialPermutation( w );  w intvec
    
- RETURN: int: 1 if the integer vector is a partial premutation in that it has positive
-                 integral components that are distinct.
+ RETURN: int: 1 if the integer vector is a partial premutation in that it has distinct positive entries.
               0 if it is not a partial permutation.
    
- Example: example isPartialPermutation; shows an example"
+ EXAMPLE: example isPartialPermutation; shows an example"
 {
   intvec u = sort(w)[1];
   if (u[1] < 1) { return( 0 ); }
@@ -298,173 +799,22 @@ proc isPartialPermutation( intvec w )
 example
 {
   "EXAMPLE:"; echo = 2;   
-  intvec w = 1, 4, 3, 7;   
-  isPartialPermutation( w );
+  isPartialPermutation( intvec( 1, 4, 3, 7 ) );
   isPartialPermutation( intvec( 1, 4, 3, 4 ) );
   isPartialPermutation( intvec( 1,-1, 3, 4 ) );
 }
 // should get the values 1, 0, 0 from these inputs
-//////////////////////////////////////////////////////////////////////////////////////
-/*    Computes the Grassmannian permutation of a partial permutation w given by     */
-/*     the first k values of w.  This indexes the Schubert variety of the image     */
-//
-proc makeGrassmannianPermutation ( intvec w, int k, int n)
-
-"USAGE:  makeGrassmannianPermutation( w, k, n);  w intvec, k int, n int
-   
- RETURN: The full permutation in S_n with unique descent at k whose first k values
-           are the first k values of the completion of w to a permutation in S_n,
-	   sorted in order.
-
- NOTE: This does not check that w is a partial permutation.
-   
- Example: example makeGrassmannianPermutation; shows an example"
-{
-  if (size(w)<n) { w = completePermutation ( w, n ); }
-  intvec tmp = w[1];
-  for (int i=2; i<=k; i++) {
-    tmp = tmp, intvec(w[i]);
-  }
-  completePermutation ( sort(tmp)[1], n );
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;   
-  intvec w = 3,5, 1,6, 2,7;   
-  int k = 4;   
-  int n = 8;   
-  makeGrassmannianPermutation( w, k, n);
-}
-//   The result should be 1,3,5,6, 2,4,7,8
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  This is a helper function for making Stiefel coordinates and the ring in which they
-//    live.  It returns an integer patternMatrix, which is a blueprint for the 
-//    Stiefel coordinates, as well as a list of indices where the variables will go
-//    in the Stiefel coordinates.
-//      
-//  patternMatrix contains  0s, 1s, and 2s with 2s in the positions of 
-//       the variables for Stiefel coordinates.  
-//
-//  This is typically called with a flagType and a list of a single condition w and 
-//    returns data for Steifel coordinates for a Schubert cell X_w, but
-//    if the flagType is a Grassmannian, there may be two conditions and it will  
-//    return Stiefel coordinates for a Richardson variety.
-//
-//  This is an internal procedure and will not be exported.
-//
-//
-proc makeStiefelPatternMatrix ( intvec flagType, list conditions )
-"USAGE:  list L = makeStiefelPatternMatrix( flagType, conditions); 
-   
- flagType describes the type of the flag manifold
- conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
-      (two only when flagType is a Grassmannian)
-
- RETURN: a list containing an integer matrix and a list of integer vectors of length 2. 
-   
- Example: example makeStiefelPatternMatrix; shows an example"
-{
-  int i,j,ii;
-  int n = flagType[nrows(flagType)];
-  int m = flagType[nrows(flagType)-1];
-  intvec extendedFlagType = intvec(0), flagType;
-  intmat patternMatrix[n][m];
-  //
-  //  First, make a square integer matrix of 2s  (2 is a place keeper)
-  //
-  for (i=1; i<=n; i++) {
-    for (j=1; j<=m; j++) {
-      patternMatrix[i,j] = 2;
-    }
-  }
-  //
-  //  Next, place w in the pivots
-  //
-  for  (j=1; j<=m; j++) {
-    patternMatrix[n+1-w[j],j] = 1;
-    for (i=n+2-w[j]; i<=n; i++) {
-      patternMatrix[i,j] = 0;
-    }
-    for (i=j+1; i<=m; i++) {
-      patternMatrix[n+1-w[j],i] = 0;
-    }
-  }
-  //
-  //  Finishes the Stiefel coordinates for X_w I
-  //
-  if (size(conditions) == 1) {
-    for (ii=1; ii<nrows(extendedFlagType)-1; ii++) {
-      for (j=extendedFlagType[ii]+1; j<=extendedFlagType[ii+1]; j++) {
-        for (i=extendedFlagType[ii]+1; i<j; i++) {
-          patternMatrix[n+1-w[j],i] = 0;
-        }
-      }
-    }
-  }
-   else
-  //
-  //  In this case, we must have that flagType = (k,n) so that we are on a Grassmannian
-  //
-  {
-    if (nrows(flagType) > 2) {
-      printf("Input failure for makeSteifelCoordinates ( intvec (%s), intvec (%s), intvec (%s) ) :",
-               flagType, conditions[1], conditions[2]);
-      printf("The flag variety is not a Grassmannian, as flagType = (%s), and the Richarson variety",flagType);
-      printf("option requires a Grassmannian.");
-      quit;
-    }
-    intvec v = conditions[2];
-    //
-    //  This returns the pattern for a skew Schubert (Richardson) variety. Must check that it is nonempty,
-    //
-    for (j=1; j<=m; j++) {
-      if ( n+1 < w[j] +v[m+1-j] ) {
-      printf("Input failure for makeSteifelCoordinates ( intvec (%s), intvec (%s), intvec (%s) ) :",
-               flagType, conditions[1], conditions[2]);
-      printf("The conditions (%s) and (%s) define an empty Richardson variety",w,v);
-      quit;
-      }
-      for (i=1; i<v[m+1-j]; i++) {
-        patternMatrix[i,j] = 0;
-      }
-    }
-  }
-  //
-  //  Find the indices of our variables.
-  //
-  list  indicesOfVariables;
-  for (i=n; i>=1; i--) {
-    for (j=m; j>=1; j--) {
-      if (patternMatrix[i,j] == 2) {
-        indicesOfVariables = insert( indicesOfVariables, intvec(i,j) );
-      }
-    }
-  }
- return(list( patternMatrix, indicesOfVariables));
-}
-example   
-{   
-  "EXAMPLE:"; echo = 2;
-  intvec myFlagType =  2, 3, 6;
-  intvec w = 2,6, 4, 1,3,5;
-  list myConditions = w ;
-  list L  = makeStiefelPatternMatrix( myFlagType, myConditions);
-  print(L[1]);
-  print(L[2]);
-} 
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/*  Checks if integer d is a component of vector a, returning a boolean 1/0    */
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Checks if integer d is a component of vector a, returning a boolean 1/0    
 //
 //   This is static and not exported
 //
-proc member (int d, intvec a)
-"USAGE:  member(d, a);  d int, a intvec
+proc belongsTo (int d, intvec a)
+"USAGE:  belongsTo(d, a);  d int, a intvec
 
  RETURN: int: 1 if d is a component of a  and  0 if it is not
  
- Example: example member; shows an example"
+ EXAMPLE: example belongsTo; shows an example"
 {
   for (int i=1; i<=nrows(a); i++) {
     if (d==a[i]) { return(1) }
@@ -476,62 +826,483 @@ example
   "EXAMPLE:"; echo = 2;   
   intvec myFlagType = 2,3,5;   
   int d = 3;   
-  member(d, myFlagType);   
+  belongsTo(d, myFlagType);   
 } 
-/////////////////////////////////////////////////////////////////////////////////
-/* Converts a partition Gr(k,n) into the corresponding permuation.             */
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Checks if partial permutation w is a Schubert condition for the
+//     flag manifold of type flagType                                                             
 //
-proc partitionToPermutation ( intvec partition, int k, int n )
-
-"USAGE:  partitionToPermutation( partition, k, n);  partition intvec, k int, n int
+proc isCondition (intvec w, intvec flagType)
+"USAGE:  isCondition( w, flagType);  w intvec, flagType intvec
    
- RETURN: The full permutation in S_n with unique descent at k corresponding to the
-           given partition.  w[i] = i + partition[k+1-i] -1 for i=1..k
-
- NOTE: This checks that k < n, that the partition has at most k parts, that it is
-        weakly decreasing and if its largest part at most n-k.
+ RETURN: int: 1 if the partial permutation w has descents in the set flagType
+              0 if not, including if it is not a partial permutation.
+	This is the requirement that w is a Schubert condition for the flag variety
+              encoded by flagType
    
- Example: example partitionToPermutation; shows an example"
+ EXAMPLE: example isCondition; shows an example"
 {
-  if (n<=k) {
-    printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
-    printf("The dimension %s of the ambient space is larger than the dimension %s of a subspace.",n,k);
-    quit;
-  }
-  if (k<nrows(partition)) {
-    printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
-    printf("The partition (%s) has more parts than %s, so it is not a condition on Gr(%s,%s).",partition,k,k,n);
-    quit;
-  }
-  for (int i=1; i<nrows(partition); i++) {
-    if (partition[i]<partition[i+1]) {
-      printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
-      printf("The integer vector (%s) is not a partition, as it is not weakly decreasing.",partition);
-      quit;
+  int fits = isPartialPermutation( w ) * belongsTo(nrows(w), flagType);
+  if (fits==1)
+  {
+    for (int i=1; i<nrows(w); i++)
+    {
+      if (w[i]>w[i+1]) { fits = fits * belongsTo(i,flagType); }
     }
   }
-  if (n-k<partition[1]) {
-    printf("Input failure for partitionToPermutation ( intvec (%s), int %s, int %s ) :",partition, k, n);
-    printf("The first part of the partition (%s) exceeds %s=%s-%s, so it is not a condition on Gr(%s,%s).",
-             partition,n-k,n,k); 
+  return( fits );
+} 
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  intvec flagType = 2, 3, 5;   
+  isCondition(w, flagType);   
+  isCondition(intvec(1,4), flagType);   
+  isCondition(intvec(1,4,3), flagType);   
+}
+// should get the values 1, 1, 0 from these inp[uts
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  This is a helper function for making Stiefel coordinates in type A.  It returns a list of indices of the 
+//    variables in the Stiefel coordinates w.r.t. the standard coordinate flag.
+//      
+//  This is typically called with a flagType and a list of a single condition w and 
+//    returns data for Steifel coordinates for a Schubert cell X_w, but
+//    if the flagType is a Grassmannian, there may be two conditions and it will  
+//    return Stiefel coordinates for a Richardson variety.
+//
+//  This is an internal procedure and will not be exported.
+//
+//    Does not yet check that the Schubert condition fits the flagType
+//
+proc indicesOfVariables ( intvec flagType , list conditions )
+"USAGE:  list L =indicesOfVariables( flagType, conditions); 
+      flagType describes the type of the flag manifold
+      conditions is a list of one to two  permutations for flagType that describe the Stiefel coordinates
+             (two only when flagType is a Grassmannian)
+
+ RETURN: a list of integer vectors of length 2. 
+   
+ EXAMPLE: example indicesOfVariables; shows an example"
+{
+  if ( size(conditions)>2  or size(conditions)==0 )
+  {
+    printf("Input failure, Stiefel Coordinates requires at most two conditions.  You inputted %s.", size(conditions));
     quit;
   }
-  for (i=nrows(partition)+1; i<=k; i++) {
-    partition = partition , intvec(0);
+  if (not isCondition( conditions[1], flagType))
+  {
+    printf("Input failure, (%s) is not a Schubert condition for the flag variety ($s).", conditions[1], flagType);
+    quit;
   }
-  intvec condition= 1+partition[k];
-  for (i=2; i<=k; i++) {
-    condition = condition , intvec(i+partition[k+1-i]);
+  int a,i,j;
+  int n = flagType[nrows(flagType)];
+  list indicesOfVariables = list();
+  //  Finds the indices of variables in type A Stiefel coordinates, in the case when there is one Schubert condition
+  intvec w = conditions[1];
+  if (size(conditions) == 1)
+  {
+    intvec extendedFlagType = intvec(0), flagType;
+    for (a=1; a<nrows(flagType); a++)
+    {
+      for (j=extendedFlagType[a]+1; j<=flagType[a]; j++)
+      {
+        for (i=1; i<=n-w[j]; i++)
+        {
+          if (not belongsTo(n+1-i , intvec(w[1..flagType[a]])) )
+          {
+            indicesOfVariables = insert( indicesOfVariables, intvec(i,j) );
+          }
+        }
+      }
+    }
+    return( indicesOfVariables );
   }
-   completePermutation ( condition, n ) ;
+ else
+  //   If there are two Schubert conditions, then we must be on a Grassmannian
+  {
+    if (nrows(flagType) > 2)
+    {
+      printf("Input failure for flagType = intvec (%s), conditions = list ( intvec (%s), intvec (%s) ) :",
+                flagType, conditions[1], conditions[2]);
+      printf("The flag variety is not a Grassmannian, as flagType = (%s), and the Richarson variety",flagType);
+      printf("option requires a Grassmannian.");
+      quit;
+    }
+     if (not isCondition( conditions[1], flagType))
+    {
+      printf("Input failure, (%s) is not a Schubert condition for the flag variety ($s).", conditions[2], flagType);
+      quit;
+    }
+    intvec v = conditions[2];
+    int k = flagType[1];
+    for (j=1; j<=k; j++)
+    {
+      if ( n+1 < w[j] +v[k+1-j] )
+      {
+        printf("Input failure  for flagType = intvec (%s), conditions = list ( intvec (%s), intvec (%s) ) :",
+                 flagType, conditions[1], conditions[2]);
+        printf("The conditions (%s) and (%s) define an empty Richardson variety",w,v);
+        quit;
+      }
+      for (i=v[k+1-j]; i<=n-w[j]; i++)
+      {
+        indicesOfVariables = insert( indicesOfVariables, intvec(i,j) );
+      }
+    }
+    return( indicesOfVariables );
+  }
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  intvec myFlagType =  2, 3, 6;
+  intvec w = 2,6, 4, 1,3,5;
+  list myConditions = w ;
+  list L  = indicesOfVariables( myFlagType, myConditions );
+  print(L[1]);
+  print(L[2]);
+} 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  This finds the positions of the essential conditions in a Scbubert condition for the classical Grassmannian
+//
+proc jumps (intvec condition)
+"USAGE: intvec essC = jumps( w )
+  w is a partial permutation
+ RETURN: The vector of positions i where w[i-1] + 1 < w[i] (w[0]=0)  --- the essential Conditions
+ EXAMPLE: example jumps shows an example"
+{
+  intvec w = sort(condition)[1];
+  intvec jmps;
+  int i,val;
+  val=0;
+  for (i=1; i<=nrows(w); i++) 
+  {
+    if (val+1 < w[i]) 
+    {
+      jmps= jmps, i;
+    }
+    val = w[i];
+  }
+  return(intvec(jmps[2..nrows(jmps)]));
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+  jumps(intvec(1, 2, 4, 6));
+} 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Gets the descent set of a partial permutation w.                                              //
+//
+proc getDescents (intvec w)
+
+"USAGE:  getDescents( w );  w intvec
+ RETURN: The integer vector whose components are the descent set { i : w[i]>w[i+1] } of w.
+ NOTE: This does not check that w is a partial permutation, but it does complete it to a permutation.
+ EXAMPLE: example getDescents; shows an example"
+{
+  if ( isPartialPermutation( w )<>1 )
+  {
+    print("Input (%s) to getDescents is not a partial permutation.",w);
+    quit;
+  }
+  intvec descents;
+  intvec u = sort(w)[1];
+  int n = u[nrows(w)];
+  u = completeToPermutation( w, n );
+  for (int i=1; i<=nrows(u)-1; i++) {
+    if (u[i]>u[i+1]) { descents = descents , intvec(i) ; }
+  }
+  if (nrows(descents)>1) {descents = descents[2..size(descents)];}
+  return ( descents );
 }
 example   
 {   
   "EXAMPLE:"; echo = 2;   
-  intvec lam = 2,2,1;   
-  int k = 4;   
-  int n = 8;   
-  partitionToPermutation( lam, k, n);
+  intvec w = 3,5, 1,6, 2,7;   
+  getDescentsA( w );
 }
-//   The result should be 1,3,5,6, 2,4,7,8
-/////////////////////////////////////////////////////////////////////////////////
+//   The result should be 2, 4, 6
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Completes a partial permutation w to a full permutation for S_n                               //
+//
+proc completeToPermutation ( intvec w, int n )
+"USAGE:  intvec w = completeToPermutation( w, n);  w intvec, n int
+   
+ RETURN: The full permutation in S_n whose initial values agree with w, and remaining values are increasing.
+
+ EXAMPLE: example completeToPermutation; shows an example"
+{
+  if ( isPartialPermutation(w) <>1 )
+  {
+    printf("Input failure for completeToPermutation ( intvec (%s), int %s ) :",w, n);
+    printf("The vector (%s) is not a partial permutation.",w);
+    quit;
+  }
+  if ( nrows(w) < n )
+  {
+    for ( int i=1; i<=n; i++ )
+    {
+      if (belongsTo(i,w)==0) { w = w, intvec(i); }
+    }
+  }
+  return ( w );
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;   
+  intvec w = 1,4,3;   
+  int n = 5;   
+  completeToPermutation(w, n);   
+}
+//   The result should be 1,4,3,2,5
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Computes one step in the lexicographic walk through Pluecker indices on a Grassmannian
+//
+proc plueckerStep( intvec w, int n )
+"USAGE: intvec u = plueckerStep( condition, dimension ); 
+
+  condition is a Schubert condition/Pluecker index for the Grassmannian Gr( nrows(w), dimension), 
+        an increasing sequence of integers in [1, dimension]
+
+ RETURN: The next index of a Pluecker coordinate for Gr( nrows(u), dimension) in lexicographic order,
+          or the intvec (0) if the w was the maximal Pluecker index
+
+ EXAMPLE: example plueckerStep shows an example"
+ {
+  int k = size(w);
+  //          Check  if the input is valid  (this was tested)
+  intvec sw = sort(w)[1];
+  if (isPartialPermutation( w ) <> 1  or sw <> w or sw[k]>n )
+  { 
+    printf("Input failure for plueckerStep ( intvec (%s), int %s ) :", w,n);
+    printf("The vector (%s) is not a Schubert condition for Gr(%s,%s).",w,k,n);
+    quit;
+  }
+  //       returns (0) if w was the largest Pluecker index
+  if ( w[1] == n+1-k ) { return( intvec(0) ); }
+  //
+  for (int i=1; i<=k; i=i+1)
+  {
+     if (w[k+1-i] < n+1-i) {break;}
+  }
+  int old = w[k+1-i];
+  for (int j=i; j>=1; j=j-1)
+  {
+    w[k+1-j] = old+i+1-j;
+  }
+  return( w );
+ }
+ example   
+ {
+   "EXAMPLE:"; echo = 2;   
+   intvec w = 1,5,6;   
+   int n = 6;   
+   plueckerStep(w, n);   
+ }
+//   The result should be 2,3,4
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Computes the list of n choose k Pluecker indices on a Grassmannian
+//
+//   Need to check that k < n
+//
+proc plueckerIndices( int k, int n )
+"USAGE: list L = plueckerIndices( k, n );   int k,  int n
+
+  RETURN: The complete list of all Grassmannian Schubert condition for Gr( k , n )) in lexicographic order.
+           This is to  generate equations for Schubert varieties
+ 
+  NOTE: This is for the Grassmannian Gr( k , n ) 
+
+ EXAMPLE: example plueckerIndices shows an example"
+ {
+  intvec w = 1..k;
+  list L=list(w);
+  while (1)
+   {
+    w  = plueckerStep(w,n);
+    if (not w[1]) {break;}
+    L = insert(L,w,size(L));
+   }
+  return(L);
+ }
+ example
+ {
+   "EXAMPLE:"; echo = 2;   
+   plueckerIndices( 2 , 4 );
+ }
+//   The result should be [ [1,2], [1,3], [1,4], [2,3] [2,4], [3,4] ]
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// This takes a pair of a list of indices (n choose k) and a n x k matrix myMatrix and returns
+//   the list of Pluecker vectors of myMatrix.
+//
+//  Warning:  This internal procedure assumes that the first list is indeed the set n choose k,
+//              and the matrix has given format.  It provides no checks, assuming that the parent
+//              procedure performs the check.
+//
+//  Missing checks and example
+//
+//
+proc plueckerVector ( list plIndices, matrix myMatrix )
+"USAGE: list L = plueckerVector( plIndices, myMatrix )
+
+   This takes a pair of a list of indices (n choose k) and a n x k matrix myMatrix
+
+  Warning:  This internal procedure assumes that the list is a list of k element subsets of row indices of myMatrix,
+                and that myMatrix has k columns. It provides no checks, assuming that the parent
+                procedure performs the check.
+
+ RETURN: The list of Pluecker vectors of myMatrix with indices in plIndices
+
+ EXAMPLE: example plueckerVector shows an example"
+{
+  list plCoords = list();
+  int k = nrows(plIndices[1]);
+  for (int i=1; i<=size(plIndices); i++)
+  {
+    plCoords = insert(plCoords, det(submat(myMatrix,plIndices[i],1..k)), i-1);
+  }
+  return(plCoords)
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes the dual Pluecker index to w for Grass (k, n)
+//
+//  Needs checks, documentation, and example
+//
+proc dualIndex( intvec w, int n )
+{
+  intvec dualCondition;
+  int k = size( w );
+  for (int i=1; i<=k; i++)
+  {
+    dualCondition[i]=n+1-w[k+1-i];
+  }
+  return(dualCondition)
+}
+example   
+{   
+  "EXAMPLE:"; echo = 2;
+   intvec w = 1,2,5;
+   int n = 7;
+   dualIndex( w, n );
+}
+// should get 3,6,7
+////////////////////////////////////////////////////////////////////////////////////////////////////.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes the Boolean that firstIndex \leq secondIndex in the Bruhat order on the Grassmannian
+//
+//   Need to check that they are both Pluecker indices for the same Grassmannian
+//
+proc  leqPluecker( intvec firstIndex, intvec secondIndex)
+{
+  int k = nrows(secondIndex);
+  if (nrows(firstIndex) <> k )
+  {
+    print("Incompatible inputs to leqPluecker.  They need to have the same length")'
+    quit;
+  }
+  int comparable = 1;
+  for (int i=1; i<=k; i++)
+  {
+    comparable = comparable * ( firstIndex[i] <= secondIndex[i]);
+  }
+  return(comparable)
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes all Pluecker indices from pIndices for Gr(k,n)  that are not less than w
+//
+//   Needs documentation and example
+//
+//
+proc allNotLessThan( intvec w, int n, list pIndices)
+{
+  int i;
+  int k = nrows( w );
+  intvec dualCondition = dualIndex( w, n );
+  list L;
+  for (i=1; i<=size(pIndices); i++)
+  {
+    if (not leqPluecker(pIndices[i], dualCondition))
+    {
+      L = insert( L, pIndices[i]);
+    }
+  }
+  return(L);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///// &&&&&&&&&&&&&&&&&&&&&&&&&&&&    Type C  helper routines     &&&&&&&&&&&&&&&&&&&&&&&&&&&&//////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Tests if w is a partial permutation in the Weyl group C_n
+//
+proc isPartialPermutationC( intvec w, int n )
+"USAGE:  isPartialPermutationC ( w, n );    w intvec, n int
+RETURN: int: 1 if w is a partial permutation in C_n in that it has distinct entries in [1, 2n],
+                and no two sum to 2n+1
+             0 if it is not in C_n
+EXAMPLE: example isPartialPermutationC; shows an example"
+{
+  int i,j;
+  int m = nrows(w);
+  intvec u = sort(w)[1];
+  if (u[1] < 1 or u[m]>2*n) { return(0==1); }
+  for (i=1; i<m; i++)
+  {
+    if (u[i]==u[i+1]) { return(0); }
+    for (j=i+1; j<=m; j++)
+    {
+      if (u[i]+u[j] == 2*n+1) { return(0==1); }
+    }
+  }
+  return( 1==1 );
+}
+example
+{
+  "EXAMPLE:"; echo = 2;
+  isPartialPermutationC ( intvec(1, 5, 3), 3 );
+  isPartialPermutationC ( intvec(1, 5, 3), 4 );
+  isPartialPermutationC ( intvec(1, 4, 5), 4 );
+}
+//  Answers should be  1 1 0
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  checks that w is a condition for the Lagrangian Grassmannian
+//
+proc isLagrangianCondition ( intvec w )
+"USAGE:  isLagrangianCondition ( w );   w intvec
+RETURN: int: 1 if w is a Schubert condition for the Lagrangian Grassmannian in that if n=nrows(w),
+               then w is a partial permutation in C_n and is increasing order
+             0 otherwise
+EXAMPLE: example isLagrangianCondition; shows an example"
+{
+  int n = nrows( w );
+  intvec u = sort(w)[1];
+  if (u<>w) { return(0); }
+  return( isPartialPermutationC( w, n) );
+}
+example
+{
+  "EXAMPLE:"; echo = 2;     
+   isLagrangianCondition( intvec(1,5,4) );
+   isLagrangianCondition( intvec(1,3,5) );
+}
+// Should get 0 1
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
