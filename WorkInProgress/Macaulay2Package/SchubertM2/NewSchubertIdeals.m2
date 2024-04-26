@@ -31,7 +31,7 @@ export{
   "coxeterLength"
 }
 
-exportMutable{"Field","Variable"}
+exportMutable{"Field","VariableName"}
 ------------------------------
 -- DECLARE VARIABLES --
 x := symbol x;
@@ -80,7 +80,7 @@ splitPermutation(List,List) := (flagtype,condition) -> (
 
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
 stiefelCoords = method(Options => true)
-stiefelCoords(List,List) := {Field => QQ, Variable => x} >> o -> (flagtype,condition) -> (
+stiefelCoords(List,List) := {Field => QQ, VariableName => x} >> o -> (flagtype,condition) -> (
 -- Define ring of variables
      K := o.Field;
      x := o.Variable;
