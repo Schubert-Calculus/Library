@@ -80,50 +80,33 @@ splitPermutation(List,List) := (flagtype,condition) -> (
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
 stiefelCoords = method()
 stiefelCoords(List,List,Ring) := (flagtype,condition,K) -> (
-      n := flagtype_(-1);
-      as := flagtype_(-2);
-      S := K[x_(1,1)..x_(n,as)];
-      conditionlist := splitPermutation(flagtype,condition);
-      firstcondition := conditionlist_(0);
-      l := length(firstcondition);
--- Define matrix of correct size (and over the correct ring) that we can manipulate for the first subcondition
-      M := mutableMatrix(S,n,l);
--- Set leading ones in lxl identity submatrix with rows indexed by condition
-      for i from 1 to l do M_(firstcondition_(i-1)-1,i-1) = 1;
--- Set variables below the leading 1's
-      for j from 1 to l do
-      for i from firstcondition_(j-1)+1 to n do M_(i-1,j-1) = x_(i,j);
--- Set to 0 all entries above and to the left of leading 1's
-      for i from 1 to l do
-      for j from 1 to i-1 do M_(firstcondition_(i-1)-1,j-1) = 0;
+-- Define ring of variables
+     n := flagtype_(-1);
+     as := flagtype_(-2);
+     S := K[x_(1,1)..x_(n,as)];
+-- Define matrix of correct size (and over the correct ring) that we can manipulate
+     M = mutableMatrix(S,n,as);
+     dualcondition = dualCondition(flagtype,condition);
+-- Set leading ones in asxas identity submatrix with rows indexed by condition
+     for i from 1 to as do M_(dualcondition_(i-1)-1,i-1) = 1;
+-- Set variables above the leading 1's
+     for j from 1 to as do
+     for i from 1 to dualcondition_(j-1)-1 do M_(i-1,j-1) = x_(i,j);
+-- Set to 0 all entries below and to the right of leading 1's
+     for i from 1 to as do
+     for j from i+1 to as do M_(dualcondition_(i-1)-1,j-1) = 0;
 -- Make matrix non-mutable
-      M = matrix M;
--- Remove firstcondition from conditionlist
-      conditionlist = delete(firstcondition,conditionlist);
--- Now repeat and concatenate the matrices
-      indexshift := length(firstcondition);
-      for subcondition in conditionlist do(
-            l = length(subcondition);
-            N := mutableMatrix(S,n,l);
-            for i from 1 to l do N_(subcondition_(i-1)-1,i-1) = 1;
-            for j from 1 to l do
-                  for i from subcondition_(j-1)+1 to n do N_(i-1,j-1) = x_(i,j+indexshift);
-            for i from 1 to l do
-                  for j from 1 to i-1 do N_(subcondition_(i-1)-1,j-1) = 0;
-            N = matrix N;
-            M = M | N;
-            indexshift = indexshift + l);
-      M = mutableMatrix M;
-      for i from 1 to as do(
-            for j from i to as-1 do(
-                  M_(condition_(i-1)-1,j) = 0));
-      M = matrix M;
+     M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
-      R := K[support M];
+     R = K[support M];
 -- Make it so that M is a matrix over the new ring
-      M = sub(M,R);
+     M = sub(M,R);
 -- Return Stiefel coordinates and new ring
-      return({M, R}))
+     {M, R})
+     
+----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
+----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
+-----             IN THE SAME ORDERING as the Plucker vector from "exteriorPower" above -----
      
 -- Returns whether a partial permutation is not greater than or equal to another in the Bruhat order.
 notGreaterThan = method(TypicalValue=>Boolean)
