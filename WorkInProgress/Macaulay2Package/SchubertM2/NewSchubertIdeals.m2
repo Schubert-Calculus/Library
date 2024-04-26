@@ -31,7 +31,7 @@ export{
   "coxeterLength"
 }
 
-exportMutable{"Field"}
+exportMutable{"Field","VariableName"}
 ------------------------------
 -- DECLARE VARIABLES --
 x := symbol x;
