@@ -83,7 +83,7 @@ stiefelCoords = method(Options => true)
 stiefelCoords(List,List) := {Field => QQ, VariableName => x} >> o -> (flagtype,condition) -> (
 -- Define ring of variables
      K := o.Field;
-     x := o.Variable;
+     x := o.VariableName;
      n := flagtype_(-1);
      as := flagtype_(-2);
      S := K[x_(1,1)..x_(n,as)];
