@@ -1,5 +1,5 @@
 //SchubertIdeals.lib 
-// 19 April 2024
+// 
 ////////////////////////////////////////////////////////////
 // This is a Singular library for computing ideals of
 //   Schubert varieties on Grassmannians and flag manifolds 
@@ -93,7 +93,7 @@ LIB "random.lib";
 //
 //  proc naiveEquationsFlag ( matrix stiefelCoordinates, intvec condition, matrix flag )
 //
-//   Computes the naive equations in the local stiefelCoords for the chubert variety
+//   Computes the naive equations in the local stiefelCoords for the Schubert variety
 //     given by the condition and flag flagMatrix.
 //
 //     Lacks checks and documentation
@@ -135,13 +135,12 @@ LIB "random.lib";
 //      Generates the symplectic isotropic flag osculating the rational normal curve
 //      transpose( 1, t, t^2/2!, ... , t^(2n-1)/(2n-1)! ) , where positions n+1, n+3, ... are negated.
 //  
-////
-//  Computes a random symplectic flag with integer entries; the initial entries are in 
+// proc randomflagC (int n, int range)
+//   Generates a random symplectic flag with integer entries; the initial entries are in 
 //    -range ..  range
 //
 //   Need more instructions here.  characteristic, default range, parameters, etc.
 //
-//proc randomflagC (int n, int range)
 
 
 
@@ -266,7 +265,7 @@ proc naiveEquationsGrassmannian ( matrix stiefelCoords, intvec condition, matrix
   int i;
   // finds the essential conditions
   intvec jmps = jumps(condition);
-  intvec flagCols;
+   intvec flagCols;
   // sets up the matrices and ideald of minors for the essential conditions
   for (i=1; i<=nrows(jmps); i++)
   {
@@ -300,16 +299,15 @@ proc naiveEquationsFlag ( matrix stiefelCoordinates, intvec condition, matrix fl
   intvec conditionInGrassmannian;
   matrix coordinatesInGrassmannian;
   ideal I=0;
-  intvec descents = getDescents(w);
+  intvec descents = getDescents( condition );
   int n = nrows(stiefelCoordinates);
 
   // This is to handle there being an identity condition
-  print(descents);
   if ( descents[1]<>0 )
   {
     for (int i=1; i<=nrows(descents); i++)
     {
-      conditionInGrassmannian = w[1..descents[i]];
+      conditionInGrassmannian = condition[1..descents[i]];
       conditionInGrassmannian = sort(conditionInGrassmannian)[1];
       coordinatesInGrassmannian = submat( stiefelCoordinates, 1..n, 1..descents[i]);
       I = I +  naiveEquationsGrassmannian( coordinatesInGrassmannian, conditionInGrassmannian, flag);
@@ -642,16 +640,28 @@ proc osculatingFlagC ( int n, poly t)
 //   Need more instructions here.  characteristic, default range, parameters, etc.
 //
 //
-proc randomflagC (int n, int range)
-"USAGE: randomflagC ( n, r )
-
- RETURN: A 2n x 2n matrix representing a random 2n x 2n isotropic flag with seeded entries in -r..r
-
+proc randomFlagC ( list # )
+"USAGE: matrix F = randomFlagC (  [n, range] ) or  matrix F = randomFlagC( [ n ] )
+  Creates a random invertible 2n x 2n symplectic matrix
+  In characteristic p > 0, the free entries are uniformily chosen random integers between 1 and p.
+  In characteristic 0, they are rational numbers a/b where a is a random integer in -range...range and b in 1..range.
+      With one entry, range is set to 100.
+ RETURN: The random flag
+ NOTE: This requires a basering to be active
  EXAMPLE: example randomFlagC shows an example"
 {
-  int i,j,ii;
+  if (size(#)==0 or size(#)>2) { print("incorrect input for randomFlag");  quit; }
+
+  int n = #[1];
+  int i,j,ii, range;
   matrix myJ,M;
   poly pairing;
+
+  if (size(#)==1)
+  {
+    #[2] = 100;
+  }
+  range = #[2];
 
   myJ = internalJ( n );
   // Start with a random flag
