@@ -98,11 +98,11 @@ stiefelCoords(List,List,Ring) := (flagtype,condition,K) -> (
 -- Make matrix non-mutable
      M = matrix M;
 -- Create a new ring with variables only those that show up in the matrix M
-     R = K[support M];
+     R := K[support M];
 -- Make it so that M is a matrix over the new ring
      M = sub(M,R);
 -- Return Stiefel coordinates and new ring
-     {M, R})
+     return({M, R}))
      
 ----- NOTE: "exteriorPower(k,M)" will compute the Plucker vector for us -----
 ----- NOTE: "subsets({1..n},k)" will compute all k element subsets of {1,...,n} for us, 
