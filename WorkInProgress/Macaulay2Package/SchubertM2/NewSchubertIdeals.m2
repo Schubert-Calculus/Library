@@ -81,7 +81,7 @@ splitPermutation(List,List) := (flagtype,condition) -> (
 stiefelCoords = method(Options => {Field => QQ})
 stiefelCoords(List,List) := (o) -> (flagtype,condition) -> (
 -- Define ring of variables
-     K = o.Field
+     K := o.Field
      n := flagtype_(-1);
      as := flagtype_(-2);
      S := K[x_(1,1)..x_(n,as)];
