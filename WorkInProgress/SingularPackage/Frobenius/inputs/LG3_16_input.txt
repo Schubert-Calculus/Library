@@ -1,0 +1,6 @@
+int Char = 1009;
+intvec flagType = 3,6;
+string LieType = "C";
+int numSolns = 16;
+list SchubertProblem = intvec(1,2,4),intvec(1,2,4),intvec(1,2,4),intvec(1,2,4),intvec(1,2,4),intvec(1,2,4) ;
+
