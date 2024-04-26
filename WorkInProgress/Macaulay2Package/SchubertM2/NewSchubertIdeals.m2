@@ -180,7 +180,7 @@ schubertIdeal(List,List,List,Ring) := (flagtype,conditions,flags,K) -> (
 -- Computes the dimension and degree of the ideal of a Type A Schubert problem.
 numSols = method()
 numSols(List,List,List,Ring) := (flagtype,conditions,flags,K) -> (
-      I := typeASchubertIdeal(flagtype,conditions,flags,K);
+      I := schubertIdeal(flagtype,conditions,flags,K);
       return (dim I, degree I))
 
 -- Completes a partial permutation into a full one.
