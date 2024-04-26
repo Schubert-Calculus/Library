@@ -33,6 +33,7 @@ export{
 
 ------------------------------
 -- DECLARE VARIABLES --
+Field := symbol Field;
 x := symbol x;
 y := symbol y;
 t := symbol t;
