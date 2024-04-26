@@ -126,8 +126,9 @@ allNotGreaterThan(List,ZZ) := (condition, n) -> (
       return(L))
 
 -- Computes the P(condition)(F^{-1}) matrix that is essential in finding a minimal number of generators for the ideal of a Schubert problem.
-cauchyBinetCoefficients = method()
-cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) -> (
+cauchyBinetCoefficients = method(Options => {Field => QQ})
+cauchyBinetCoefficients(List,List,Matrix) := (o) -> (grassmannianshape,betas,F) -> (
+      K := o.Field;
       k := grassmannianshape_(0);
       n := grassmannianshape_(1);
       Finv := inverse F;
@@ -141,15 +142,16 @@ cauchyBinetCoefficients(List,List,Matrix,Ring) := (grassmannianshape,betas,F,K) 
       return(M))
 
 -- Computes the ideal for a Type A Schubert problem.
-schubertIdeal = method()
+schubertIdeal = method(Options => {Field => QQ})
 ----- NOTE: There should be m conditions and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the condition's codimensions should add up to k(n-k) to give an actual Schubert problem
-schubertIdeal(List,List,List,Ring) := (flagtype,conditions,flags,K) -> (
+schubertIdeal(List,List,List) := (o) -> (flagtype,conditions,flags) -> (
+      K := o.Field;
       n := last(flagtype);
       q := length(flags);
       subspaces := delete(n,flagtype);
-      bigcoords := (stiefelCoords(flagtype,conditions_(0),K))_(0);
-      bigring := (stiefelCoords(flagtype,conditions_(0),K))_(1);
+      bigcoords := (stiefelCoords(flagtype,conditions_(0),Field=>K))_(0);
+      bigring := (stiefelCoords(flagtype,conditions_(0),Field=>K))_(1);
       eqns := ideal(0_bigring);
       for a in subspaces do(
            coords := submatrix(bigcoords,{0..(a-1)});
@@ -158,13 +160,14 @@ schubertIdeal(List,List,List,Ring) := (flagtype,conditions,flags,K) -> (
            for i from 1 to q do(
                 conds = append(conds,sort(take(conditions_(i),a))));
            for i from 1 to length(conds)-1 do( 
-                 eqns = eqns + sub(ideal(cauchyBinetCoefficients({a,n},allNotGreaterThan(conds_(i),n),flags_(i-1),K)*PY),bigring)));
+                 eqns = eqns + sub(ideal(cauchyBinetCoefficients({a,n},allNotGreaterThan(conds_(i),n),flags_(i-1),Field=>K)*PY),bigring)));
       return(eqns))
 
 -- Computes the dimension and degree of the ideal of a Type A Schubert problem.
-numSols = method()
-numSols(List,List,List,Ring) := (flagtype,conditions,flags,K) -> (
-      I := schubertIdeal(flagtype,conditions,flags,K);
+numSols = method(Options => {Field => QQ})
+numSols(List,List,List,Ring) := (o) -> (flagtype,conditions,flags) -> (
+      K := o.Field;
+      I := schubertIdeal(flagtype,conditions,flags,Field=>K);
       return (dim I, degree I))
 
 -- Completes a partial permutation into a full one.
