@@ -80,13 +80,12 @@ splitPermutation(List,List) := (flagtype,condition) -> (
 
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
 stiefelCoords = method(Options => true)
-stiefelCoords(List,List) := {Field => QQ, Variable => x} >> o -> (flagtype,condition) -> (
+stiefelCoords(List,List) := {Field => QQ} >> o -> (flagtype,condition) -> (
 -- Define ring of variables
      K := o.Field;
-     v := o.Variable;
      n := flagtype_(-1);
      as := flagtype_(-2);
-     S := K[v_(1,1)..v_(n,as)];
+     S := K[x_(1,1)..x_(n,as)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
      M := mutableMatrix(S,n,as);
      dualcondition := dualCondition(flagtype,condition);
@@ -94,7 +93,7 @@ stiefelCoords(List,List) := {Field => QQ, Variable => x} >> o -> (flagtype,condi
      for i from 1 to as do M_(dualcondition_(i-1)-1,i-1) = 1;
 -- Set variables above the leading 1's
      for j from 1 to as do
-     for i from 1 to dualcondition_(j-1)-1 do M_(i-1,j-1) = v_(i,j);
+     for i from 1 to dualcondition_(j-1)-1 do M_(i-1,j-1) = x_(i,j);
 -- Set to 0 all entries below and to the right of leading 1's
      for i from 1 to as do
      for j from i+1 to as do M_(dualcondition_(i-1)-1,j-1) = 0;
