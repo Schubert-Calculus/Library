@@ -85,8 +85,8 @@ stiefelCoords(List,List,Ring) := (flagtype,condition,K) -> (
      as := flagtype_(-2);
      S := K[x_(1,1)..x_(n,as)];
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
-     M = mutableMatrix(S,n,as);
-     dualcondition = dualCondition(flagtype,condition);
+     M := mutableMatrix(S,n,as);
+     dualcondition := dualCondition(flagtype,condition);
 -- Set leading ones in asxas identity submatrix with rows indexed by condition
      for i from 1 to as do M_(dualcondition_(i-1)-1,i-1) = 1;
 -- Set variables above the leading 1's
