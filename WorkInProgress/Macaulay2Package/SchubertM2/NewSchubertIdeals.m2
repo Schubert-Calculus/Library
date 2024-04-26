@@ -126,8 +126,8 @@ allNotGreaterThan(List,ZZ) := (condition, n) -> (
       return(L))
 
 -- Computes the P(condition)(F^{-1}) matrix that is essential in finding a minimal number of generators for the ideal of a Schubert problem.
-cauchyBinetCoefficients = method(Options => {Field => QQ})
-cauchyBinetCoefficients(List,List,Matrix) := (o) -> (grassmannianshape,betas,F) -> (
+cauchyBinetCoefficients = method(Options => true)
+cauchyBinetCoefficients(List,List,Matrix) := {Field => QQ} >> o -> (grassmannianshape,betas,F) -> (
       K := o.Field;
       k := grassmannianshape_(0);
       n := grassmannianshape_(1);
@@ -142,10 +142,10 @@ cauchyBinetCoefficients(List,List,Matrix) := (o) -> (grassmannianshape,betas,F) 
       return(M))
 
 -- Computes the ideal for a Type A Schubert problem.
-schubertIdeal = method(Options => {Field => QQ})
+schubertIdeal = method(Options => true)
 ----- NOTE: There should be m conditions and m-1 flags (first flag will be assumed to be the identity and not given as input)
 ----- NOTE: The flags should be general and the condition's codimensions should add up to k(n-k) to give an actual Schubert problem
-schubertIdeal(List,List,List) := (o) -> (flagtype,conditions,flags) -> (
+schubertIdeal(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flags) -> (
       K := o.Field;
       n := last(flagtype);
       q := length(flags);
@@ -164,8 +164,8 @@ schubertIdeal(List,List,List) := (o) -> (flagtype,conditions,flags) -> (
       return(eqns))
 
 -- Computes the dimension and degree of the ideal of a Type A Schubert problem.
-numSols = method(Options => {Field => QQ})
-numSols(List,List,List,Ring) := (o) -> (flagtype,conditions,flags) -> (
+numSols = method(Options => true)
+numSols(List,List,List,Ring) := {Field => QQ} >> o -> (flagtype,conditions,flags) -> (
       K := o.Field;
       I := schubertIdeal(flagtype,conditions,flags,Field=>K);
       return (dim I, degree I))
