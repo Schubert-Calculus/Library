@@ -34,7 +34,7 @@ export{
 exportMutable{"Field","VariableName"}
 ------------------------------
 -- DECLARE VARIABLES --
-x := symbol x;
+#x := symbol x;
 y := symbol y;
 t := symbol t;
 ------------------------------
