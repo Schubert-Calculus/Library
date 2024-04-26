@@ -80,9 +80,10 @@ splitPermutation(List,List) := (flagtype,condition) -> (
 
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
 stiefelCoords = method(Options => true)
-stiefelCoords(List,List) := {Field => QQ} >> o -> (flagtype,condition) -> (
+stiefelCoords(List,List) := {Field => QQ,VariableName => x} >> o -> (flagtype,condition) -> (
 -- Define ring of variables
      K := o.Field;
+     x := o.VariableName;
      n := flagtype_(-1);
      as := flagtype_(-2);
      S := K[x_(1,1)..x_(n,as)];
