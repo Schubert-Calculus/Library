@@ -33,7 +33,7 @@ export{
 
 ------------------------------
 -- DECLARE VARIABLES --
-Field := symbol Field;
+Field := symbol(Field);
 x := symbol x;
 y := symbol y;
 t := symbol t;
@@ -166,7 +166,7 @@ schubertIdeal(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flag
 
 -- Computes the dimension and degree of the ideal of a Type A Schubert problem.
 numSols = method(Options => true)
-numSols(List,List,List,Ring) := {Field => QQ} >> o -> (flagtype,conditions,flags) -> (
+numSols(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flags) -> (
       K := o.Field;
       I := schubertIdeal(flagtype,conditions,flags,Field=>K);
       return (dim I, degree I))
