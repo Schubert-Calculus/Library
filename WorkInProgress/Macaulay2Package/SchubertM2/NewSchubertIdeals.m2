@@ -115,10 +115,10 @@ stiefelCoords(List,List) := opts >> o -> (flagtype,condition) -> (
      
 -- Returns whether a partial permutation is not greater than or equal to another in the Bruhat order.
 notGreaterThan = method(TypicalValue=>Boolean)
-notGreaterThan(List,List) := (beta,condition) -> (
+notGreaterThan(List,List) := (condition1,condition2) -> (
       notgreaterthan := false;
-      for i from 1 to length(beta) do
-            if beta_(i-1) < condition_(i-1) then notgreaterthan = true;
+      for i from 1 to length(condition1) do
+            if condition1_(i-1) < condition2_(i-1) then notgreaterthan = true;
       return(notgreaterthan))
       
 -- Gives all partial permutations not greater than or equal to a fixed one.
