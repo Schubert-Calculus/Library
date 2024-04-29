@@ -28,6 +28,7 @@ export{
   "numSols",
   "completePermutation",
   "coxeterLength",
+  "randomFlag",
   "secantFlag",
   "osculatingFlag",
   "symplectify"
