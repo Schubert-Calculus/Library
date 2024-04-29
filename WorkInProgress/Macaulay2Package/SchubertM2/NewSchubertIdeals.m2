@@ -185,7 +185,7 @@ randomFlag(ZZ) := {Field => QQ} >> o -> (n) -> (
       isflag := false;
       while (isflag == false) do(
             M := random(K^n,K^n);
-            if det(M) != 0 do(
+            if det(M) != 0 then(
                   isflag = true));
       return(M))
 
