@@ -25,7 +25,6 @@ export{
   "allNotGreaterThan",
   "cauchyBinetCoefficients",
   "schubertIdeal",
-  "numSols",
   "completePermutation",
   "coxeterLength",
   "randomFlag",
@@ -153,13 +152,6 @@ schubertIdeal(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flag
            for i from 1 to length(conds)-1 do( 
                  eqns = eqns + sub(ideal(cauchyBinetCoefficients({a,n},allNotGreaterThan(conds_(i),n),flags_(i-1),Field=>K)*PY),bigring)));
       return(eqns))
-
--- Computes the dimension and degree of the ideal of a Type A Schubert problem.
-numSols = method(Options => true)
-numSols(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flags) -> (
-      K := o.Field;
-      I := schubertIdeal(flagtype,conditions,flags,Field=>K);
-      return (dim I, degree I))
 
 -- Completes a partial permutation into a full one.
 completePermutation = method(TypicalValue=>List)
