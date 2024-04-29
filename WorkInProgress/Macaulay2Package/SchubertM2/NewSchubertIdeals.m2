@@ -189,23 +189,26 @@ randomFlag(ZZ) := {Field => QQ} >> o -> (n) -> (
                   isflag = true));
       return(M))
 
-secantFlag = method()
-secantFlag(List,Ring) := (L,R) -> (
+secantFlag = method(Options => true)
+secantFlag(List) := {Field => QQ} >> o -> (L) -> (
+      K := o.Field;
       n := length(L);
-      secantflag := mutableMatrix(R,n,n);
+      secantflag := mutableMatrix(K,n,n);
       for i from 1 to n do
             for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
       secantflag = matrix secantflag;
       return(secantflag))
 
 -- Osculating Flags
-osculatingFlag = method()
-osculatingFlag(QQ, ZZ) := (t, n) -> (
-      F := mutableMatrix(QQ,n,n);
-      for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
-            for j from 1 to n-1 do 
-                  for k from j to n-1 do
-                        F_(k,j) = F_(k-1,j-1);
+osculatingFlag = method(Options => true)
+osculatingFlag(Thing,ZZ) := {Field => QQ} >> o -> (s, n) -> (
+      K := o.Field;
+      t := sub(s,K);
+      F := mutableMatrix(K,n,n);
+      for i from 0 to n-1 do F_(i,n-1) = t^(i)/(i!);
+      for j from 0 to n-2 do 
+            for k from j+1 to n-1 do
+                 F_(k,n-2-j) = F_(k-1,n-2-j+1);
       for l from sub(n/2,ZZ) to n-1 do if odd l then
             for m from 0 to n-1 do
                   F_(l,m) = -1*F_(l,m);
