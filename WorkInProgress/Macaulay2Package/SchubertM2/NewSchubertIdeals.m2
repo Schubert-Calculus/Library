@@ -187,7 +187,7 @@ randomFlag(ZZ) := {Field => QQ} >> o -> (n) -> (
             M := mutableMatrix(random(K^n,K^n));
             for i from 0 to n-1 do(
                   for j from 0 to n-1 do(
-                        M_(i,j) = (-1)^random(ZZ)));
+                        M_(i,j) = (-1)^(random(ZZ))));
             M = matrix(M);
             if det(M) != 0 then(
                   isflag = true));
