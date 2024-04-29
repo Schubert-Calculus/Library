@@ -20,7 +20,7 @@ newPackage(
 export{
   --methods
   "dualCondition",
-  "stiefelCoords",
+  "stiefelCoordinates",
   "notGreaterThan",
   "allNotGreaterThan",
   "cauchyBinetCoefficients",
@@ -65,9 +65,9 @@ dualCondition(List,List) := (flagtype,condition) -> (
       return(dualcondition))
 
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
-stiefelCoords = method(Options => true)
+stiefelCoordinates = method(Options => true)
 opts := {Field => QQ,VariableName=>x};
-stiefelCoords(List,List) := opts >> o -> (flagtype,condition) -> (
+stiefelCoordinates(List,List) := opts >> o -> (flagtype,condition) -> (
 -- Define ring of variables
      x := o.VariableName;
      K := o.Field;
@@ -140,8 +140,8 @@ schubertIdeal(List,List,List) := {Field => QQ} >> o -> (flagtype,conditions,flag
       n := last(flagtype);
       q := length(flags);
       subspaces := delete(n,flagtype);
-      bigcoords := (stiefelCoords(flagtype,conditions_(0),Field=>K))_(0);
-      bigring := (stiefelCoords(flagtype,conditions_(0),Field=>K))_(1);
+      bigcoords := (stiefelCoordinates(flagtype,conditions_(0),Field=>K))_(0);
+      bigring := (stiefelCoordinates(flagtype,conditions_(0),Field=>K))_(1);
       eqns := ideal(0_bigring);
       for a in subspaces do(
            coords := submatrix(bigcoords,{0..(a-1)});
