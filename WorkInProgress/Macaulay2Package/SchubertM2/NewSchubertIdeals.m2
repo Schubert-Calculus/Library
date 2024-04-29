@@ -178,6 +178,20 @@ coxeterLength(List,ZZ) := (w,n) -> (
                   if wcomp_(i-1) > wcomp_(j-1) then count = count+1;
       return(count))
 
+cauchyBinetCoefficients = method(Options => true)
+cauchyBinetCoefficients(List,List,Matrix) := {Field => QQ} >> o -> (grassmannianshape,betas,F) -> (
+      K := o.Field;
+
+randomFlag = method(Options => true)
+randomFlag(ZZ) := {Field => QQ} >> o -> (n) -> (
+      K := o.Field;
+      isflag := false;
+      while (isflag == false) do(
+            M := random(K^n,K^n);
+            if det(M) != 0 do(
+                  isflag = true));
+      return(M))
+
 secantFlag = method()
 secantFlag(List,Ring) := (L,R) -> (
       n := length(L);
