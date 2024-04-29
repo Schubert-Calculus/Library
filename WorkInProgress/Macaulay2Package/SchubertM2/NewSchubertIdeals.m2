@@ -20,7 +20,6 @@ newPackage(
 export{
   --methods
   "dualCondition",
-  "splitPermutation",
   "stiefelCoords",
   "notGreaterThan",
   "allNotGreaterThan",
@@ -28,7 +27,10 @@ export{
   "schubertIdeal",
   "numSols",
   "completePermutation",
-  "coxeterLength"
+  "coxeterLength",
+  "secantFlag",
+  "osculatingFlag",
+  "symplectify"
 }
 
 exportMutable{"Field","VariableName"}
@@ -61,22 +63,6 @@ dualCondition(List,List) := (flagtype,condition) -> (
             for i from 1 to k do(
                   dualcondition = append(dualcondition,n+1-condition_(breaks_(b-1)+k-i))));
       return(dualcondition))
-
--- A helper function for typeAStiefelCoords
-splitPermutation = method()
-splitPermutation(List,List) := (flagtype,condition) -> (
-      gaps := {flagtype_(0)};
-      for i from 1 to (length(flagtype)-2) do(
-            gaps = append(gaps,flagtype_(i)-flagtype_(i-1)));
-      splitperm := {};
-      copycondition := condition;
-      for gap in gaps do(
-            subcondition := {};
-            for i from 0 to (gap-1) do(
-                  subcondition = append(subcondition,copycondition_(0));
-                  copycondition = delete(copycondition_(0),copycondition));
-            splitperm = append(splitperm,subcondition));
-      return(splitperm))
 
 -- Gives the Stiefel Coordinates for a Type A Schubert Variety
 stiefelCoords = method(Options => true)
@@ -191,3 +177,51 @@ coxeterLength(List,ZZ) := (w,n) -> (
             for j from i+1 to n do
                   if wcomp_(i-1) > wcomp_(j-1) then count = count+1;
       return(count))
+
+secantFlag = method()
+secantFlag(List,Ring) := (L,R) -> (
+      n := length(L);
+      secantflag := mutableMatrix(R,n,n);
+      for i from 1 to n do
+            for j from 1 to n do secantflag_(i-1,j-1) = L_(j-1)^i;
+      secantflag = matrix secantflag;
+      return(secantflag))
+
+-- Osculating Flags
+osculatingFlag = method()
+parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
+      F := mutableMatrix(QQ,n,n);
+      for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
+            for j from 1 to n-1 do 
+                  for k from j to n-1 do
+                        F_(k,j) = F_(k-1,j-1);
+      for l from sub(n/2,ZZ) to n-1 do if odd l then
+            for m from 0 to n-1 do
+                  F_(l,m) = -1*F_(l,m);
+      F = matrix F;
+      return F)
+    
+symplectify = method()
+symplectify(Matrix) := (M) -> (
+      n := numgens target M;
+      Mnew := mutableMatrix M;
+-- Make anti-upper triangular
+      for i from 1 to n do(
+            Mnew_(i-1,n-i) = 1;
+            for j from i to (n-1) do(
+                  Mnew_(j,n-i) = 0));
+-- f_i and f_(n-i) are "orthogonal" under skew-symmetric bilinear form
+      for i from 0 to (sub(n/2,ZZ)-2) do Mnew_(n-i-2,i) = (-1)*Mnew_(i,n-i-2);
+-- Create the symplectic form J
+      J := mutableMatrix(QQ,n,n);
+      halfn := sub(n/2,ZZ);
+      for i from 1 to halfn do J_(n-i,i-1) = 1;
+      for j from halfn+1 to n do J_(n-j,j-1) = -1;
+-- Make 1st half of columns symplectic via J
+      for j from 0 to (sub(n/2,ZZ)-2) do(
+            r := sub(n/2,ZZ)-2-j;
+            for i from 0 to (sub(n/2,ZZ)-r-2) do(
+                  s := sub(n/2,ZZ)-1-i;
+	          Mnew_(s,r) = Mnew_(s,r) + (transpose(submatrix(Mnew,{r}))*J*submatrix(Mnew,{s}))_(0,0)));
+      Mnew = matrix Mnew;
+      return Mnew)
