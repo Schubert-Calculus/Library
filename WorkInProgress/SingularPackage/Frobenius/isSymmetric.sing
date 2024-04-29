@@ -37,7 +37,7 @@ proc randEliminant ( ideal G )
 LIB "sets.lib";
 LIB "SchubertIdeals.lib";
 ////////////LIB "FrobeniusAlgorithm.lib";
-int mltplier = 10;   //  This is the multiplier for number of Frobenius elements to compute before giving up
+int mltplier = 100;   //  This is the multiplier for number of Frobenius elements to compute before giving up
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int i,nSuccess,isSymmetric,tElapsed;
