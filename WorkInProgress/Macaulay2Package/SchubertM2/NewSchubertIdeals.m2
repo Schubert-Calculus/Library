@@ -88,6 +88,7 @@ stiefelCoords(List,List) := opts >> o -> (flagtype,condition) -> (
      n := flagtype_(-1);
      as := flagtype_(-2);
      S := K[x_(1,1)..x_(n,as)];
+     GenS := genericMatrix(S,n,as);
 -- Define matrix of correct size (and over the correct ring) that we can manipulate
      M := mutableMatrix(S,n,as);
      dualcondition := dualCondition(flagtype,condition);
@@ -95,7 +96,7 @@ stiefelCoords(List,List) := opts >> o -> (flagtype,condition) -> (
      for i from 1 to as do M_(dualcondition_(i-1)-1,i-1) = 1;
 -- Set variables above the leading 1's
      for j from 1 to as do
-     for i from 1 to dualcondition_(j-1)-1 do M_(i-1,j-1) = x_(i,j);
+     for i from 1 to dualcondition_(j-1)-1 do M_(i-1,j-1) = GenS_(i-1,j-1);
 -- Set to 0 all entries below and to the right of leading 1's
      for i from 1 to as do
      for j from i+1 to as do M_(dualcondition_(i-1)-1,j-1) = 0;
