@@ -1,0 +1,122 @@
+//checkDegAndTime.sing
+//
+// Frank Sottile
+// 24 April 2024
+//
+// This will read a file "input.txt" that contains information needed to compute a Schbert problem and 
+//   it will check that the expected number of solutions is correct, as well as record the time
+// It is intended to be used to callibrate larger calculations.
+//
+//   Currently, it assumes that if in type C then the ambient space is a Lagrangian Grassmannian 
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// input.txt is a file containing the following information:
+//  characteristic of field, type of flag manifold, incuding its lie type,
+//   the degree of the Schubert problem and the list of conditions.
+//
+//  int Char = 1009;
+//  intvec flagType = 2,4;
+//  string LieType = "C";
+//  int numSolns = 2;
+//  list SchubertProblem = (intvec(1,3),intvec(1,3),intvec(1,3));
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes an eliminant for the zero-dimensional ideal G, starting with a random linear polynomial
+//    having coefficients between 0 and 10.  The eliminant is artificially in the first variable var(1)
+//
+proc randEliminant ( ideal G )
+{
+  poly g = sparsepoly(1,1,3,10);
+  ideal B = kbase(G);  
+  return(charpoly(coeffs(reduce(g*B,G),B), varstr(1)));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+LIB "SchubertIdeals.lib";
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int i,tElapsed,nSuccess;
+int firstCondition = 2;     // This is the first condition not encoded in the Stiefel coordinates
+
+//
+execute(read("input.txt"));
+//execute(read("G48_4_input.txt"));
+//execute(read("G49_6_input.txt"));
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//if (LieType<>"C" or LieType<>"A") {quit;}
+
+tElapsed = timer;
+
+
+string charStr = sprintf("%s",Char);
+list myRingData = charStr, "x", "dp", "Coordinates";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+if (LieType == "C")
+{
+  def myRing = makeLagrangianCoordinates ( SchubertProblem[1], myRingData )[1];
+}
+if (LieType == "A")
+{
+  if (nrows(flagType) == 2)
+  {
+    def  myRing = makeStiefelCoordinates ( flagType , list(SchubertProblem[1],SchubertProblem[2]), myRingData )[1];
+    firstCondition = 3;
+  }
+  else
+  {
+    def  myRing = makeStiefelCoordinates ( flagType , list(SchubertProblem[1]), myRingData )[1];
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+setring myRing;
+
+ideal I;
+matrix F;
+poly f;
+list Factors;
+
+int counter = 0;
+
+while (nSuccess < 1 and counter < 10 )
+{
+  counter = counter+1;
+  tElapsed = timer;
+  I = 0;
+  ////////////////////
+  //  Compute Schubert problem
+  ////////////////////
+  for (i=firstCondition; i<=size(SchubertProblem); i++)
+  {
+    if (LieType == "C") { F = randomFlagC( list(flagType[nrows(flagType)]) ); } //  Needs to be checked
+    if (LieType == "A") { F = randomFlag( list(flagType[nrows(flagType)]) ); }
+    I = I + naiveEquationsFlag( Coordinates, SchubertProblem[i], F );
+  }
+
+  I = std(I);
+  /////////////////////////////////////////////////  dim(I), mult(I);  //quit;
+  if (dim(I)==0 )
+  {
+    f = randEliminant ( I );
+    Factors = factorize(f,2)[1];
+    if (deg(f)+mult(I) == 2*numSolns)
+    {
+      nSuccess = 1;
+    }
+    else
+    {
+      print("%s=%s has wrong %s number of solutions",numSolns,SchubertProblem,deg(f));
+    }
+     
+  }
+
+}
+
+// Record the time
+tElapsed = timer-tElapsed;
+//  Need to record data of computation [nSols, nVars, elapsed time]
+string outStr = sprintf("[ %s, %s, %s ],",numSolns, nvars(basering), tElapsed);
+write(":a times.maple", outStr);
+
+quit;

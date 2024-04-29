@@ -1,0 +1,193 @@
+//isSymmetric.sing
+//
+// Frank Sottile
+// 22 April 2024
+//
+// This will read a file "input.txt" that contains information needed to compute a Schbert problem and determine
+//   if its Galois group is the full symmetric group.
+// If its Galois group is not the full symmetric group, it will write a datafile with all of the discovered conjugacy classes
+//
+//   Currently, it assumes that if in type C then the ambient space is a Lagrangian Grassmannian 
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// input.txt is a file containing the following information:
+//  characteristic of field, type of flag manifold, incuding its lie type,
+//   the degree of the Schubert problem and the list of conditions.
+//
+//  int Char = 1009;
+//  intvec flagType = 2,4;
+//  string LieType = "C";
+//  int numSolns = 1;
+//  list SchubertProblem = (intvec(1,3),intvec(1,3),intvec(1,3));
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Computes an eliminant for the zero-dimensional ideal G, starting with a random linear polynomial
+//    having coefficients between 0 and 10.  The eliminant is artificially in the first variable var(1)
+//
+proc randEliminant ( ideal G )
+{
+  poly g = sparsepoly(1,1,3,10);
+  ideal B = kbase(G);  
+  return(charpoly(coeffs(reduce(g*B,G),B), varstr(1)));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+LIB "sets.lib";
+LIB "SchubertIdeals.lib";
+////////////LIB "FrobeniusAlgorithm.lib";
+int mltplier = 10;   //  This is the multiplier for number of Frobenius elements to compute before giving up
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int i,nSuccess,isSymmetric,tElapsed;
+int firstCondition = 2;     // This is the first condition not encoded in the Stiefel coordinates
+int fullCycle = 0; 
+int minusOneCycle = 0; 
+int bigPrimeCycle = 0;
+intvec cycles;
+list cycleList;
+
+execute(read("input.txt"));
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//   This is to catch an upgrade in notation that does not get into software
+//if (LieType<>"C" and LieType<>"A") {quit;}
+
+tElapsed = timer;
+
+//  Make vector of large, relevant primes.
+intvec pr = primes((numSolns+1) div 2, numSolns-3);
+Set Primes;
+for (i=1; i<=nrows(pr); i++) { Primes = addElement(Primes, pr[i]); }
+
+string charStr = sprintf("%s",Char);
+list myRingData = charStr, "x", "dp", "Coordinates";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+if (LieType == "C")
+{
+  def myRing = makeLagrangianCoordinates ( SchubertProblem[1], myRingData )[1];
+}
+if (LieType == "A")
+{
+  if (nrows(flagType) == 2)
+  {
+    def  myRing = makeStiefelCoordinates ( flagType , list(SchubertProblem[1],SchubertProblem[2]), myRingData )[1];
+    firstCondition = 3;
+  }
+  else
+  {
+    def  myRing = makeStiefelCoordinates ( flagType , list(SchubertProblem[1]), myRingData )[1];
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+setring myRing;
+
+ideal I;
+matrix F;
+poly f;
+list Factors;
+
+while (nSuccess < numSolns * mltplier )
+{
+  I = 0;
+  cycles = 0;
+  ////////////////////
+  //  Compute Schubert problem
+  ////////////////////
+  for (i=firstCondition; i<=size(SchubertProblem); i++)
+  {
+    if (LieType == "C") { F = randomFlagC( list(flagType[nrows(flagType)]) ); } //  Needs to be checked
+    if (LieType == "A") { F = randomFlag( list(flagType[nrows(flagType)]) ); }
+    I = I + naiveEquationsFlag( Coordinates, SchubertProblem[i], F );
+  }
+
+  I = std(I);
+  /////////////////////////////////////////////////dim(I), mult(I);  quit;
+  if (dim(I)==0 and mult(I)==numSolns)
+  {
+    f = randEliminant ( I );
+
+    if (deg(f)==numSolns and 1==std(ideal(f, diff(f, var(1))))[1])
+    {
+      nSuccess = nSuccess+1;
+
+      Factors = factorize(f,2)[1];
+      for (i=1; i<=size(Factors[1]); i++)
+      {
+        cycles[i] = deg(Factors[1][i]);
+      }
+
+      cycles = sort(cycles)[1];
+      cycleList = insert( cycleList, cycles);
+
+      //  
+      //   This next block deals with the different ways to ensure that we have the symmetric group
+      //     The statements may be verified by considering sybgroups of the different symmetric groups
+      //
+      //////////////////////    numSolns = 3 
+      if (numSolns == 3 ) ////  cycles = 1,2 implies symmetric (the other possibilities are 1,1,1 or 3)
+      {
+        if (nrows(cycles) == 2 ) { isSymmetric=1; break; }
+      }
+      //////////////////////    numSolns = 4   or 5 
+      if (numSolns == 4 or numSolns == 5 ) ////  need a 4- and a 3- cycle
+      {
+        bigPrimeCycle = 1; 
+        if ( cycles[nrows(cycles)] == 4 ) { fullCycle = 1; }         
+        if ( cycles[nrows(cycles)] == 3 ) { minusOneCycle = 1; }        
+      }
+      //////////////////////    numSolns = 6 
+      if (numSolns == 6 ) ////  need a 6-, 5-, and a 4- cycle
+      {
+        if ( cycles[nrows(cycles)] == 6 ) { fullCycle = 1; }         
+        if ( cycles[nrows(cycles)] == 5 ) { minusOneCycle = 1; }        
+        if ( cycles[nrows(cycles)] == 4 ) { bigPrimeCycle = 1;  }        
+      }
+      //////////////////////    numSolns > = 7    The general case
+      if (numSolns >= 7)
+      {
+        if ( cycles[1] == numSolns )
+        {
+          fullCycle = 1;
+        }
+        else
+        {
+          if ( cycles[2] == numSolns-1 ) { minusOneCycle = 1; }
+          if ( isElement(cycles[nrows(cycles)], Primes) ) { bigPrimeCycle = 1; }
+        }
+      }    // completes the general case
+
+  
+      if ( fullCycle*minusOneCycle*bigPrimeCycle == 1 ) { isSymmetric=1; break; }
+    }
+  }
+
+}
+
+// Record the time
+tElapsed = timer-tElapsed;
+
+if (isSymmetric==1)
+{
+  // Only record the time of those that are full symmetric, the possibly enriched ones
+  //   have time recorded in enrichedProblems.json
+  write(":a times.data", tElapsed);
+}
+else
+{
+  write(":w time.txt", tElapsed);
+  close(": time.txt");
+  open(":w cycles.data");
+  close(": cycles.data");
+  for (i=1; i<=size(cycleList); i++)
+  {
+    write(":a cycles.data",cycleList[i]);
+  }
+}
+  //  Record data of computation [nSols, nVars, elapsed time, isSymmetric]
+  string outStr = sprintf("[ %s, %s, %s, %s ],",numSolns, nvars(basering), tElapsed, isSymmetric);
+  write(":a model.maple", outStr);
+  write(":w isSymmetric.txt", isSymmetric);
+quit;

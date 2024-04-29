@@ -1,0 +1,59 @@
+Singular/Frobenius/
+
+python3 and Singular scripts to study Galois groups of Schubert problems
+
+####################################################################################################
+Files:
+
+checkDegAndTime.py     Organizes initial computation of Schubert problems
+checkDegAndTime.sing   Singular file for initial computation of Schubert problems
+
+FrobeniusAlgorithm.py  Organizes the initial run of checking if the Group is full symmetric
+isSymmetric.sing       Singular file that runs the Frobenius algorithm
+
+input.json             json input file for checkDegAndTime.py and FrobeniusAlgorithm.py
+inputs/                directory with sample inputs for the Singular scripts and python scripts
+                               checkDegAndTime.py  and  FrobeniusAlgorithm.py
+
+README                 This file
+
+SchubertIdeals.lib@    symbolic link to SchubertIdeals Singular library
+
+####################################################################################################
+
+There are three sets of scripts for this.  In each, a python3 file reads input.json, which contains a list of
+  Schubert problems to study and data about them.
+
+The initial input.json is a python list describing the Schubert problems.  Here is an example:
+
+[ [ "C", [3,3] ],
+ [ 16, [ [1, 2, 4],[1, 2, 4],[1, 2, 4],[1, 2, 4],[1, 2, 4],[1, 2, 4] ] ],
+ [ 8, [ [1, 3, 5],[1, 2, 4],[1, 2, 4],[1, 2, 4],[1, 2, 4] ] ],
+ [ 4, [ [1, 3, 5],[1, 3, 5], [1, 2, 4],[1, 2, 4] ] ],
+ [ 4, [ [1, 4, 5], [1, 2, 4],[1, 2, 4],[1, 2, 4] ] ]
+ ]
+
+
+(1) checkDegAndTime.py runs all of the Schubert problems in input.json, and write a maple file: times.maple
+     to help see how long it takes to run each Schubert problem in input.json
+
+     This is to help make decisions about computational resources.
+
+     Makes file times.maple 
+
+(2) FrobeniusAlgorithm.py organizes the running of the Frobenius Algorithm, computing up to mltplier*numberOfSolutions
+      permutations (mltplier is set in isSymmetric.sing)
+
+    For each Schubert problem in input.json, it runs isSymmetric.sing (which does the computation).
+      If the Galois group of a problem is full symmetric, it records the elapsed time in 1/100th seconds in times.data,
+      If it is not the full symmetric group, it records the problem, the frequency table of observed cycles
+        in a python dictionary and the time in the file enrichedProblems.json.
+
+    It also writes information about the computation [ numSolns, nvars, elapsed time, isSymmetric] in model.maple (a maple input file)
+
+   Makes files: times.data,   enrichedProblems.json,   model.maple 
+
+(3)   For another day:
+
+    Need another python file that takes the possibly not full symmetric group from the other one, 
+     and computes sufficiently many Frobenius elements to get a decent frequency table.
