@@ -189,7 +189,7 @@ secantFlag(List,Ring) := (L,R) -> (
 
 -- Osculating Flags
 osculatingFlag = method()
-parametrizedSymplecticFlag(QQ, ZZ) := (t, n) -> (
+osculatingFlag(QQ, ZZ) := (t, n) -> (
       F := mutableMatrix(QQ,n,n);
       for i from 0 to n-1 do F_(i,0) = t^(i)/(i!);
             for j from 1 to n-1 do 
