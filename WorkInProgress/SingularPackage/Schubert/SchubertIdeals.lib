@@ -34,7 +34,6 @@ Fulton, Wm., Young Tableaux: With Applications to
 Fulton, Wm. and Pragacz, P., Schubert Varieties and 
   Degeneracy Loci, LNM 1689, Springer, 1998.
 
-
 KEYWORDS: Grassmannian; Schubert variety; Schubert Problem; 
     Littlewood-Richardson Rule;
 
@@ -70,6 +69,13 @@ LIB "random.lib";
 //         w has descents only at positions of adot, where flagType=(adot,n)
 //
 // Flags are represented by matrices with n rows
+//
+///////////////////////////////////////////////////////////////////////
+//  Type C   flagType is an intvec (a_1,...,a_s,n) where a_1<...<a_s\leq n
+//        This is for isotropic flags of type a_1,...,a_2 in a symplectic 2n vector space
+//
+//  Schubert conditions are partial permutations w of 1...2n such that w_0 w = w w_0, and may only be specified
+//   by their first n values as w(i) + w(2n+1-i) = 2n+1.
 //
 ////////////////////////////////////////////////////////////
 //
@@ -663,7 +669,6 @@ proc randomFlagC ( list # )
   }
   range = #[2];
 
-  myJ = internalJ( n );
   // Start with a random flag
   M =  randomFlag( list( 2*n, range) );
   // make it triangular and set some entries to zero
@@ -905,7 +910,7 @@ proc indicesOfVariables ( intvec flagType , list conditions )
   }
   if (not isCondition( conditions[1], flagType))
   {
-    printf("Input failure, (%s) is not a Schubert condition for the flag variety ($s).", conditions[1], flagType);
+    printf("Input failure, (%s) is not a Schubert condition for the flag variety (%s).", conditions[1], flagType);
     quit;
   }
   int a,i,j;
@@ -944,7 +949,7 @@ proc indicesOfVariables ( intvec flagType , list conditions )
     }
      if (not isCondition( conditions[1], flagType))
     {
-      printf("Input failure, (%s) is not a Schubert condition for the flag variety ($s).", conditions[2], flagType);
+      printf("Input failure, (%s) is not a Schubert condition for the flag variety (%s).", conditions[2], flagType);
       quit;
     }
     intvec v = conditions[2];
@@ -1038,6 +1043,7 @@ example
   getDescentsA( w );
 }
 //   The result should be 2, 4, 6
+////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Completes a partial permutation w to a full permutation for S_n                               //
 //

@@ -1,0 +1,19 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{1}
+
+\bibitem{EPieri}
+Changzheng Li, Vijay Ravikumar, Frank Sottile, and Mingzhi Yang, \emph{A
+  geometric proof of an equivariant pieri rule for flag manifolds}, Forum
+  Mathematicum \textbf{31} (2019), 779--783.
+
+\bibitem{MaxPieri}
+F.~Sottile, \emph{Pieri-type formulas for maximal isotropic {G}rassmannians via
+  triple intersections}, Colloquium Mathematicum \textbf{82} (1999), 49--63.
+
+\end{thebibliography}

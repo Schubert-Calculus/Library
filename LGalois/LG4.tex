@@ -1,0 +1,260 @@
+%Filename:   LG4.tex
+%
+\documentclass[12pt]{amsart}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                              packages                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathtools}
+\usepackage{amsfonts,amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{ulem}  % rule out text
+
+%%%%%%%%%%%%%%%  Layouts   Gives correct margins for 12 pt amsart  %%%%%%%%%%%%%% 
+% 
+%  US size paper 
+% 
+\headheight=8pt      \topmargin=0pt 
+\textheight=613pt    \textwidth=466pt 
+\oddsidemargin=1pt   \evensidemargin=1pt 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Environments %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{Theorem}{Theorem}[section]
+\newtheorem{Proposition}[Theorem]{Proposition}
+\newtheorem{Lemma}[Theorem]{Lemma}
+\newtheorem{Corollary}[Theorem]{Corollary}
+\newtheorem{Conjecture}[Theorem]{Conjecture}
+\newtheorem{Fact}[Theorem]{Fact}
+
+\theoremstyle{remark}
+\newtheorem{Remark}[Theorem]{Remark}
+\newtheorem{Example}[Theorem]{Example}
+\newtheorem{Definition}[Theorem]{Definition}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                Macros
+\newcommand{\Gr}{\textit{Gr\,}}
+\newcommand{\Hom}{\textrm{Hom}}
+\newcommand{\LG}{\textit{LG}}
+\newcommand{\pr}{\textit{pr}}
+\newcommand{\Span}{\textrm{span}}
+
+\newcommand{\CC}{{\mathbb C}}
+\newcommand{\PP}{{\mathbb P}}
+\newcommand{\ZZ}{{\mathbb Z}}
+
+\newcommand{\ndot}{\mbox{{\tiny$\bullet$}}}
+
+%
+% Tableaux
+%
+\newcommand{\I}{\includegraphics{images/1.eps}}
+\newcommand{\TI}{\includegraphics{images/21.eps}}
+\newcommand{\ThI}{\includegraphics{images/31.eps}}
+\newcommand{\Th}{\includegraphics{images/3.eps}}
+
+\newcommand{\sI}{\includegraphics{images/s1.eps}}
+\newcommand{\sTI}{\includegraphics{images/s21.eps}}
+\newcommand{\sThI}{\includegraphics{images/s31.eps}}
+\newcommand{\sTh}{\includegraphics{images/s3.eps}}
+
+\newcommand{\schTI}{\raisebox{-2pt}{\sTI\hspace{.5pt}}}
+\newcommand{\schThI}{\raisebox{-2pt}{\sThI\hspace{.5pt}}}
+
+\newcommand{\tTT}{\includegraphics{images/t22.eps}}
+\newcommand{\tTIc}{\includegraphics{images/t21c.eps}}
+
+\newcommand{\defcolor}[1]{{\color{blue}#1}}
+\newcommand{\demph}[1]{\defcolor{{\sl #1}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Enriched Schubert problems in the Grassmannian  \\ of Lagrangian subspaces in 8-space}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author{F.~Sottile}
+\address{Frank Sottile, Department of Mathematics,
+         Texas A\&M University, College Station, Texas 77843,  USA}
+\email{sottile@math.tamu.edu}
+\urladdr{http://www.math.tamu.edu/\~{}sottile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thanks{Research of Sottile supported in part by NSF grant  DMS-2201005.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subjclass{}
+%
+%
+%
+\keywords{Lagrangian Grassmannian, Galois groups, Schubert problem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+  We describe the three enriched Schubert problems on the Lagrangian Grassmannian $\LG(4)$ of isotropic 4-planes in 8-space,
+  and use that to determine their Galois groups.
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+
+
+\section{Preliminary calculations}
+Using the Frobenius algorithm, we determined that three of the 44 essential Schubert problems on $\LG(4)$ are enriched.
+For one, with 384 solutions, we are still computing Frobenius elements.
+We have yet to be able to compute an eliminant for a problem with 768 solutions.
+
+Using strict partitions to represent Schubert conditions, these three problems are
+\[
+  \raisebox{-8pt}{\TI\,}^2\cdot \raisebox{-8pt}{\ThI}\ =\ 4\,, \quad
+  \raisebox{-8pt}{\TI\,}^2\cdot \Th\cdot \I\ =\ 4\,, \quad\mbox{ and } \quad
+  \raisebox{-8pt}{\TI\,}^3\cdot \I\ =\ 8\,.
+\]
+
+
+Let $V\simeq\CC^8$ be a vector space equipped with a nondegenerate alternating form $\langle\ndot,\ndot\rangle$.
+We will call $(V,\langle\ndot,\ndot\rangle)$ a \demph{symplectic vector space}.
+Write \defcolor{$\LG(V)$} or \defcolor{$\LG(4)$} for the space of \demph{Lagrangian} (maximal isotropic) subspaces of $V$.
+This is a ten-dimensional smooth subvariety of $\Gr(4,V)$, the Grassmannian of 4-planes in $V$.
+We will assume the reader is familiar with our terminology, as well as the basics of Schubert calculus on $\LG(V)$.
+
+Let $L,M\in\LG(V)$ be two general Lagrangian subspaces.
+In particular $L\cap M=\{0\}$ so that the map $L\oplus M\to V$ defined by $u\oplus v\mapsto u+v$ is an isomorphism.
+For $0\neq v\in M$ consider the linear function $\Lambda_v\colon L\to \CC$ defined by $\Lambda_v(u)=\langle u,v\rangle$.
+As $L$ is Lagrangian (maximal isotropic) and $L\cap M=\{0\}$, this linear form is nondegenerate on $L$.
+In particular, $v\mapsto \Lambda_v$ identifies $M$ with the linear dual $L^*:=\Hom(L,\CC)$ of $L$.
+
+Suppose that $N\in\LG(V)$ is a third Lagrangian subspace in general position with respect to $L$ and $M$.
+Then projection of $N$ to each summand in $L\oplus M\simeq V$ is an isomorphism, which identifies $N$ as the graph of a linear isomorphism
+$\defcolor{\varphi_N}\colon L\to M$.
+As $N$ is isotropic, we have that for $u,u'\in L$, $u+\varphi_N(u)$ and $u'+\varphi_N(u')$ lie in $N$ so that
+%
+ \begin{multline*}
+   \qquad 0\ =\  \langle u+\varphi_N(u)\,,\, u'+\varphi_N(u')\rangle
+   \\
+    \ =\
+    \langle u\,,\,u' \rangle \ +\ 
+    \langle u\,,\,\varphi_N(u') \rangle  \ +\ 
+    \langle \varphi_N(u)\,,\,u' \rangle \ +\ 
+    \langle \varphi_N(u)\,,\,\varphi_N(u') \rangle\,. \qquad
+ \end{multline*}
+%
+ As $u,u'\in L$ and $\varphi_N(u),\varphi_N(u')\in M$, we see that 
+ $0 = \langle u,\varphi_N(u') \rangle   + \langle \varphi_N(u),u' \rangle$,
+ so that $\langle u,\varphi_N(u') \rangle =\langle u',\varphi_N(u) \rangle$.
+ Thus the bilinear form $(\ndot,\ndot)_N$ induced on $L$ by the linear isomorphism $\varphi_N\colon L\to M\simeq L^*$ is symmetric (and
+ nondegenerate). 
+
+
+Define $\defcolor{\schTI(L)}:=\{H\in\LG(V)\mid \dim H\cap L\geq 2\}$, which is a Schubert variety of codimension three in $\LG(V)$.
+It is the intersection of $\LG(V)$ with a Schubert variety $\Omega_{\tTT}(L)$  of the Grassmannian $\Gr(4,V)$.
+Set $\defcolor{X(L,M)}:=\schTI(L)\cap\schTI(M)$, a Richardson variety.
+If $H\in X(L,M)$, then $H\cap L\in\Gr(2,L)$ and  $H\cap M\in\Gr(2,M)$.
+Let us write $\defcolor{h}:=H\cap L$ and $h':=H\cap M$, then $H=h\oplus h'$.
+As $H$ is isotropic, $\langle h,h'\rangle\equiv 0$, which implies that $h'$ is the annihilator \defcolor{$h^\perp$} of $h$ in $L^*=M$.
+
+Following work on the Pieri formula in isotropic Schubert calculus~\cite{MaxPieri} (see also~\cite{EPieri}), 
+it is useful to define the union, $Z(L,M)$, of the linear spaces in $X(L,M)$,
+\[
+\defcolor{Z(L,M)}\ :=\  \bigcup\{ H\ \mid\ H\in X(L,M)\}\,.
+\]
+More formally and projectively, let $C(1,4;V)=\{(\ell,H)\mid H\in\LG(V)\mbox{ and }\ell\subset H\}$ be the symplectic flag variety of
+isotropic lines lying on Lagrangian subspaces in $V$.
+This is a fibre bundle over its projections to projective space, $\pr\colon C(1,4;V)\twoheadrightarrow\PP(V)$, and to $LG(V)$,
+$\pi\colon C(1,4;V)\twoheadrightarrow\LG(V)$.
+Then $Z(L,M):=\pr\circ\pi^{-1}(X(L,M))$.
+Define $\defcolor{Y(L,M)}:=\pi^{-1}(X(L,M))$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{Lemma}
+  \label{L:quadrics}
+  In the coordinates $\{(u,v)\mid u\in L\mbox{ and }v\in M\}$ for $V$, the variety $Z(L,M)$ is the quadratic hypersurface with 
+  equation $\langle u,v\rangle = 0$.
+  The map $Y(L,M)\to Z(L,M)$ is a $\PP^1$-bundle with fibre over a point $(u,v)\in Z(L,M)$ identified with $\PP(v^\perp/u)$.
+  Given $(u,v)\in Z(L,M)$, and restricting the maps $\pi,\pr$ to $Y(L,M)$, the set
+  \[
+     \bigcup\{ H\in X(L,M)\mid (u,v)\in H\}\ =\ \pr \circ \pi^{-1} \circ \pi \circ \pr^{-1}(u,v)\,,
+   \]
+  is the quadric $Z(L,M,u,v):=Z(L,M)\cap (v^\perp+u^\perp)$ in $\PP^5$, and the maps
+  between $\pi \circ \pr^{-1}(u,v) \subset\LG(V)$ and $Z(L,M,u,v)$ is birational away from the exceptional divisor
+  $v^\perp \cup u^\perp$.
+\end{Lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{proof}
+  Since Lagrangian planes $H\in X(L,M)$ have the form $h+h^\perp$ for $h\in\Gr(2,L)$ and these are in direct sum, if $(u,v)\in H$,
+  then $u\in h$ and $v\in h^\perp$, so that $\langle u,v\rangle=0$.
+  Given a point $(u,v)\in V$ with  $\langle u,v\rangle=0$, we see that $u\in v^\perp \subset l$.
+  Let $h\in\Gr(2,L)$ be any 2-plane in the Schubert variety $\Omega_{\tTIc}(u,v^\perp)= \PP(v^\perp/u)\simeq\PP^1$, then
+  $v\in h^\perp$ so that $(u,v)\in h+h^\perp$, which is a Lagrangian plane in $X(L,M)$.
+
+  For the last statement, note that this set is contained in $Z(L,M,u,v)$.
+  Given a point $(a,b)\in Z(L,M,u,v)\smallsetminus( v^\perp \cup u^\perp)$, we have that $a$ and $u$ are linearly independent, as are
+  $b$ and $v$.
+  Furthermore, $\Span\{a,u\}$ annihilates $\Span\{b,v\}$, so that $\Span\{a,b,u,v\}$ is the unique Lagrangian subspace containing these four 
+  points. 
+\end{proof}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Galois group of $\schTI^2\cdot\sTh\cdot\sI=4$ is $D_4$.}
+
+Let $L$, $M$, and $N$ be general Lagrangian subspaces in $V$ as before, and let $m$ be an isotropic 2-plane, also in general position.
+Observe that 
+\[
+     \schTI(L)\cap\schTI(M)\cap \sTh(m)\ =\ \pi \bigl( \pr^{-1}(m\cap Z(L,M))\bigr)\,.
+\]
+By Lemma~\ref{L:quadrics}, $Z(L,M)$ is a quadric.
+Thus it meets $m$ in two points $(u,v)$ and $(u',v')$, showing that this intersection has two components.
+
+Let $W$ be the component coming from $(u,v)$.
+By Lemma~\ref{L:quadrics} again, if we restrict $\pi$ to $Y(L,M)$, then  $\pr(\pi^{-1}(W))=Z(L,M)\cap(u^\perp+v^\perp)=Z(L,M,u,v)$ is a quadric
+hypersurface in the $\PP^5\simeq u^\perp+v^\perp$.
+Each point of intersection of $N$ with $Z(L,M,u,v)$ gives a solution to the Schubert problem
+\[
+\schTI(L)\cap\schTI(M)\cap \sTh(m)\cap \sI(N)
+\]
+With the other point $(u',v')$ this gives four solutions to the Schubert problem.
+As its Galois group must preserve the partition coming from the two points $(u,v)$ and $(u',v')$, it is a subgroup of $D_4$.
+Either by considering Frobenius elements or by fixing the two points $x,y$ of intersection of $N$ with $Z(L,M,u,v)$, while the other two points
+$N\cap Z(L,M,u',v')$ are allowed to vary, we see that the Galois group is $D_4$.\footnote{need to make this more precise.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Galois group of $\schTI^2\cdot\schThI=4$ is $\ZZ_2\times\ZZ_2$.}
+
+Let $L,M,N$ be as before, and consider a Lagrangian subspace $H\in\schTI(L)\schTI(M)\schTI(N)$.
+As $H\in\schTI(L)\schTI(M)$, it has the form $h+h^\perp$, and it is not hard to see that $h^\perp=\varphi_N(h)$.
+These together imply that $(h,h)_N\equiv 0$, so that $h$ is an isotropic 2-plane in the linear space $L\simeq\CC^4$ equipped with the
+nondegenerate symmetric form $(\ndot,\ndot)_N$.
+Working projectively, $h$ lies in one of the two families of lines that rule the quadric surface $Q\colon\{u\in\PP(L)\mid (u,u)_N=0\}$
+in $\PP(L)$.
+Now let $\ell\subset L$ be an isotropic 2-plane in $L$, which is a line in $\PP(L)$.
+This will meet $Q$ in two points, and through each point there will be two lines---one in each ruling.
+These four solutions $h$ give the four solutions $h+h^\perp$ to the Schubert problem.
+
+The partition of the four solutions by the corresponding points of intersection $\ell\cap Q$ show that the Galois group is a subgroup of
+$D_4$.
+However,  there are two solution lines $h$ in each ruling and the Galois group must preserve their intersections.
+Consequently, the Galois group is the Klein 4-group, isomorphic to  $\ZZ_2\times\ZZ_2$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Galois group of $\schTI^3\cdot\sI=8$  is not yet determined.}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{amsplain}
+\bibliography{LG4.bib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

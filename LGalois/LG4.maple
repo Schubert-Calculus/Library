@@ -1,0 +1,60 @@
+# LG3.maple
+#
+#  This is set up to study the enriched Schubert problems on LG3
+#
+interface(quiet=true):
+with(LinearAlgebra):
+with(Groebner):
+
+####################################################################################################
+Form := proc(C)
+ global myJ;
+ return((Transpose(C).myJ).C)
+end proc:
+####################################################################################################
+####################################################################################################
+
+myJ := Matrix(8,8):
+for i from 1 to 4 do
+ myJ[i,9-i]:= 1:
+ myJ[9-i,i]:=-1:
+end do:
+
+Coords := Matrix([
+ [ 0, 0,a,b],
+ [ 0, 0,c,d],
+ [ 0, 0,0,1],
+ [ 0, 0,1,0],
+ [-a,-c,0,0],
+ [-b,-d,0,0],
+ [ 0, 1,0,0],
+ [ 1, 0,0,0]]);
+
+#;
+#M:= Matrix([[3,0,x,1],[0,0,1,0],[0,1,0,0],[1,0,0,3],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]]);
+M:= Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]]);
+Form(M);
+
+#quit;
+
+A:=Matrix([[Transpose(M)],[Transpose(Coords)]]);
+
+Eqns:=[]:
+for Rw in combinat[choose](8,7) do
+ for Cl in combinat[choose](8,7) do
+  Eqns:=[Eqns[], Determinant(SubMatrix(A,Rw,Cl))]:
+ end do:
+end do:
+
+
+
+Eqs:=Basis(Eqns,plex(op(indets(Eqns))));
+
+lprint(Eqs);
+
+# A Singular computation shows that this splits into two components
+[a+d, b-c, a^2+b^2+1];
+[a-d, b+c, a^2+b^2+1];
+
+Neqs:=[a*t+b*s-x, b*t-a*s-y, s-z, t-w];
+Basis(Neqs, wdeg([1,1,1,1,50,50,50,50],[x,y,z,w,a,b,s,t]));

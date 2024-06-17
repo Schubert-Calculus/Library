@@ -1,0 +1,34 @@
+%!PS-Adobe-3.0 EPSF
+%%Title: 21.eps
+%%Creator:  Frank
+%%Pages: 1
+%%BoundingBox: 0 0 21 21
+%%EndComments
+2 dict begin
+
+%8 8  scale 5 10 translate
+
+.5 .5 translate
+
+/side 10 def
+
+%We will create a blue square
+1 setlinejoin %if you wanted rounded or not
+1 setlinecap  %
+
+1.1 setlinewidth  %width of the line
+0 0 1 setrgbcolor  %choose the color
+
+newpath
+ 0 2 side mul moveto 2 side mul 0 rlineto
+ 0 1 side mul moveto 2 side mul 0 rlineto 
+ 1 side mul 0 moveto 1 side mul 0 rlineto 
+ 
+ 0 1 side mul moveto 0 1 side mul rlineto
+ 1 side mul 0 moveto 0 2 side mul rlineto
+ 2 side mul 0 moveto 0 2 side mul rlineto
+stroke
+
+showpage
+grestore 
+end
