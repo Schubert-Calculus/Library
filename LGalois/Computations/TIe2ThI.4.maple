@@ -1,0 +1,119 @@
+#Tie2ThI.4.maple
+#
+# Frank Sottile
+# 9 July 2007
+#
+###########################################################################
+#
+# This shows the critical parat of the determination of the Galois group of this problem in LG(4),
+#  which is the Klein 4-group
+#
+###########################################################################
+interface(quiet=true):
+plotsetup(x11):
+with(plots):
+with(plottools):
+
+
+###############################################################################
+#  [ r, r,  1 ]    t:=1
+#  [-r, r, -1 ]    t:=-1
+#  [-1, r,  r ]    t:=0
+
+# the hyperboloid  x^2+z^2 = y^2+1
+R := (r,th) -> [  r*cos(th) - sin(th), -r, r*sin(th) + cos(th) ]:
+# The second family of lines
+S := (r,th) -> [ -r*cos(th) - sin(th), -r,-r*sin(th) + cos(th) ]:
+
+L1 := [[0,  0, 1], [1, 1, 0]]:
+L2 := [[0,  0, -1], [-1, 1, 0]]:
+L3 := [[-1, 0, 0], [0, 1, 1]]:
+
+# line 4 (not on the hyperboloid)
+#L4:=th -> [R(2.2-0.6*cos(th),th),  R(2.2-0.6*cos(th+Pi),th+Pi)]:
+
+# two solutions for line 4 specified
+M1:=th -> [R(-3,th), R(3,th)]:
+M2:=th -> [R(-3,th+Pi), R(3,th+Pi)]:
+
+##########################################################################
+ec := COLOR(RGB, 1, .7, 0):
+
+NPth := 33:
+NPt  := 21:
+
+H  := plot3d(R(r,th), th=0..2*Pi, r=-3..3,color=yellow,grid=[NPth,NPt]):
+E1 := spacecurve(R(3,th), th=0..2*Pi,color=ec,thickness=4,numpoints=NPth):
+E2 := spacecurve(R(-3,th), th=0..2*Pi,color=ec,thickness=4,numpoints=NPth):
+
+Th1:=0*2*Pi/(NPth-1):
+Th2:=7*2*Pi/(NPth-1):
+t1:=-3+3*6/(NPt-1):
+t2:=-3+11*6/(NPt-1):
+Pt1:= evalf(R(t1,Th1));
+Pt2:= evalf(R(t2,Th2));
+
+Ans := S(t,th):
+SOL := [solve({Ans[1]=Pt1[1], Ans[2]=Pt1[2]})]:
+if abs(evalf(subs(op(SOL[1]),Ans))[3]-Pt1[3])<0.01 then
+  Ps1:=subs(op(SOL[1]), th):
+ else
+  Ps1:=subs(op(SOL[2]), th):
+end if:
+
+SOL := [solve({Ans[1]=Pt2[1], Ans[2]=Pt2[2]})]:
+if abs(evalf(subs(op(SOL[1]),Ans))[3]-Pt2[3])<0.01 then
+  Ps2:=subs(op(SOL[1]), th):
+ else
+  Ps2:=subs(op(SOL[2]), th):
+end if:
+
+la:=-1:
+La:=2:
+P1:=[seq(Pt1[ii]*la + Pt2[ii]*(1-la), ii=1..3)]:
+P2:=[seq(Pt1[ii]*La + Pt2[ii]*(1-La), ii=1..3)]:
+
+ell := line(P1,P2, color=blue, thickness=2):
+DOT1 := sphere(Pt1, 0.1, color=black, style=patchnogrid):
+DOT2 := sphere(Pt2, 0.1, color=green, style=patchnogrid):
+PTS := pointplot3d([Pt1,Pt2], color=pink, symbol=point):
+
+l1:=spacecurve(R(t,Th1), t=-3..3, thickness=3, color=red, numpoints=2):
+l2:=spacecurve(R(t,Th2), t=-3..3, thickness=3, color=green, numpoints=2):
+
+m1:=spacecurve(S(t,Ps1), t=-3..3, thickness=3, color=magenta, numpoints=2):
+m2:=spacecurve(S(t,Ps2), t=-3..3, thickness=3, color=cyan, numpoints=2):
+
+DR := [
+#H,
+E1,
+E2,
+#ell,DOT1,DOT2,
+
+#
+PTS,
+#
+l1,l2,m1,m2,
+NULL]:
+
+
+
+Pic:= ang -> display(DR,orientation=[ang,60]):
+
+
+plotsetup(gif,plotoutput="B.gif",plotoptions=`height=1000,width=1000`):
+#
+plotsetup(ps,plotoutput=`A.eps`,plotoptions=`color,portrait,width=3in,height=3in,noborder`):
+#
+display(Pic(210),scaling=constrained);
+
+quit;
+
+plotsetup(gif,plotoutput="movie.gif",plotoptions=`height=1000,width=1000`):
+NFr:=130:
+
+#animate(Pic,[ang],ang=0..(1-1/NFr)*360,scaling=constrained,axes=none,frames=NFr,paraminfo=true);
+animate(Pic,[ang],ang=130..240, scaling=constrained,axes=none,frames=NFr,paraminfo=true);
+#quit;
+
+quit;

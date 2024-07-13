@@ -1,3 +1,9 @@
+
+sudo apt-get install parallel
+
+
+Look up https://beta/lmfdb   Data base for groups
+
 LGalois/      Studying Galois groups of Schubert problems in the Lagrangian Grassmannian
 
 LG4.tex   This studies the three enriched problems

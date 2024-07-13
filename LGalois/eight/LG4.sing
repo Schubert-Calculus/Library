@@ -1,0 +1,29 @@
+//Try elimination
+//
+//
+
+ring R = 0, (x(1..4), y(1..4),a,b,A,B,C,D), dp;
+
+ideal I = x(1)-a*A, x(2)-a*B, x(3)-b*A, x(4)+b*B,
+          y(1)+b*C, y(2)-b*D, y(3)-a*C, y(4)-a*D;
+
+ideal J = eliminate( I, a*b*A*B*C*D );
+
+ring S = 0,  (x(1..4), y(1..4)), lp;
+
+ideal II = std(fetch(R, J));
+II;
+dim(II), mult(II);
+
+ideal JJ  = x(1)*y(1)+x(2)*y(2)+x(3)*y(3)+x(4)*y(4),
+          x(1)*x(4) + x(2)*x(3),
+          y(1)*y(4) + y(2)*y(3);
+
+list L = facstd(JJ);
+
+//quotient(II, ideal(x(1),x(2),x(3),x(4),y(1),y(2),y(3),y(4)));
+
+//quotient(std(quotient(L[2],II)), ideal(x(1),x(2),x(3),x(4),y(1),y(2),y(3),y(4)));
+
+
+facstd(quotient(L[2],II));

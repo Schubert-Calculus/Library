@@ -1,0 +1,122 @@
+#makeTableau.fig.maple
+#
+#  This makes an xfig 3.2 file drawing Young diagrams
+#
+interface(quiet=true):
+#  When run from the shell command, 
+#   P is the partition.  eg. 321
+#
+################################################################
+
+#
+#  Eventual Size
+#
+X[Big]:=600:
+X[Small]:=300:
+#
+#  Thickness
+#
+T[Big]:=9:
+T[Small]:=6:
+
+Sizes:=[Big,Small]:
+
+################################################################
+
+lambdaC:=proc(lambda)
+#
+# returns the transpose of the shifted partition lambda
+#
+ local lc, ii, i, j, l:
+ lc:=[seq(ii,ii=1..nops(lambda)),nops(lambda)]:
+ for i from nops(lambda)+1 to lambda[1] do
+  j:=0:
+  for ii from 1 to nops(lambda) do
+   if (lambda[ii]+ii>i) then j:=j+1: fi:
+  od:
+  lc:=[op(lc),j]:
+ od:
+ return(lc):
+end proc:
+###############################################
+makeLine2:=proc(V1,V2)
+local line2:
+ line2:=cat(convert(V1[1],string),` `,convert(V1[2],string),` `):
+ line2:=cat(line2,convert(V2[1],string),` `,convert(V2[2],string),`\n`):
+ return(line2):
+end proc:
+###############################################
+makeLine1:=proc(Thickness)
+ local Line1:
+ Line1:=cat(`2 1 0 `,convert(Thickness,string),` 32 `):
+ Line1:=cat(Line1,`7 50 0 -1 0.000 0 0 -1 0 0 2\n        `):
+ return(Line1):
+end proc:
+###############################################
+
+lambda:=[P mod 10]:
+for i from 1 to trunc(log10(P)) do
+ lambda:=[trunc(P/10^i) mod 10, lambda[]]:
+od:
+
+lc:=lambdaC(lambda):
+
+#####################################################
+for size in Sizes do 
+  Line1:=makeLine1(T[size]):
+
+  fname:=sprintf("%d.%a.fig",P,size):
+  file:=fopen(fname,WRITE):
+  fprintf(file,"#FIG 3.2 \nLandscape \nCenter \nInches \n"):
+  fprintf(file,"Letter   \n100.00 \nSingle \n-2 \n1200 2 \n"):
+  fprintf(file,"0 32 #0000aa\n"):
+  # printing the rows
+  fprintf(file,Line1):
+  fprintf(file,makeLine2([0,0],[lambda[1]*X[size],0])):
+  for i from 1 to nops(lambda) do
+    fprintf(file,Line1):
+    fprintf(file,makeLine2([(i-1)*X[size],i*X[size]],[(lambda[i]+i-1)*X[size],i*X[size]])):
+  od:
+  # printing the columns
+  for i from 0 to lambda[1] do 
+    fprintf(file,Line1):
+    fprintf(file,makeLine2([i*X[size],0],[i*X[size],lc[i+1]*X[size]])):
+  od:
+  fclose(file):
+od:
+quit;
+###########################################################
+#
+#   Sample fig file  drawing lambda=[3,1], with colours
+#
+#FIG 3.2
+Landscape
+Center
+Inches
+Letter
+100.00
+Single
+-2
+1200 2
+0 32 #ff0000
+#       _ Thickness
+#      /
+#     |   _ Color
+#     |  /                              Number of points
+#     | |                             /
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+         0 0 900 0                        <----- Starting and ending point
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        0 300 900 300
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        0 600 300 600
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        0 900 300 900
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        0 0 0 900
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        300 0 300 900
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        600 0 600 300
+2 1 0 2 32 7 50 0 -1 0.000 0 0 -1 0 0 2
+        900 0 900 300
