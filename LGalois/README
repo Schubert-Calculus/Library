@@ -1,10 +1,19 @@
 
-sudo apt-get install parallel
-
+sudo apt-get install parallel : this is to help run many jobs in parallel that are embarassingly parallelizable
 
 Look up https://beta/lmfdb   Data base for groups
 
-LGalois/      Studying Galois groups of Schubert problems in the Lagrangian Grassmannian
+-----------------------------------------------------------------------------------------------------------------
 
-LG4.tex   This studies the three enriched problems
+The directory  LGalois:        Studying Galois groups of Schubert problems in the Lagrangian Grassmannian
+
+
+Computations/
+eight/
+html/   Creates web page
+images/
+
+LG4.tex   This studies the three enriched problems in LG4
+
+Mathematics_2017_June_ComputingGaloisGroupswithResolvents_M.C.Obi.pdf
 
