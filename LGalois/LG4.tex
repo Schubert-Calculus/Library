@@ -43,12 +43,14 @@
 \newcommand{\Sp}{\textrm{Sp}}
 
 \newcommand{\Fdot}{F_\bullet}
+\newcommand{\Edot}{E_\bullet}
 
 \newcommand{\Gr}{\textit{Gr\,}}
 \newcommand{\LG}{\textit{LG}}
 \newcommand{\Fln}{{\mathbb F}\ell_n}
 \newcommand{\pr}{\textit{pr}}
 \newcommand{\Span}{\textrm{span}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
 
 \newcommand{\CC}{{\mathbb C}}
 \newcommand{\KK}{{\mathbb K}}
@@ -146,8 +148,9 @@ Let $\Fln$ be the set of all isotropic flags, which we call the \demph{sympletic
 This has a transitive action of the symplectic group $\Sp(n)$ and is an algebnraic manifold of dimension $n^2$.
   
 The attitude of a Lagrangian subspace $L$ with respect to an isotropic flag is the sequence
-$A(L,\Fdot)\vcentcolon=(\dim L\cap F_j\mid j=1,\dotsc,2n)$.
-As $L$ and $\Fdot$ are isotropic any attitude $A$ is necessarily symmetric in that
+$A(L,\Fdot)\vcentcolon=(j\in[2n]\mid L\cap F_{j-1}\subsetneq L\cap F_j)$ of indices of elements of $\Fdot$ where the dimension of
+$L\cap F_j$ jumps.
+As $L$ and $\Fdot$ are isotropic, any attitude $A$ is necessarily symmetric in that
 %
 \[
     j\in A \ \Longleftrightarrow\  2n-j\not\in A\,.
@@ -163,10 +166,44 @@ It is an exercise that all subsets $\lambda$ of $[n]$ may occur, and for each $\
 is isomorphic to the affine space $\KK^{\binom{n+1}{2}-|\lambda|}$, where $|\lambda|=\sum_{\ell\in\lambda}\ell$.
 
 We have just described the Schubert decomposition of $LG(n)$ into Schubert cells.
+The closure of the Schubert cell $\Omega_\lambda^\circ \Fdot$ is the \emph{Schubert variety} \defcolor{$\Omega_\lambda\Fdot$}.
+A \demph{Schubert problem} on $\LG(n)$ is a list of subsets
+$\blambda = \lambda^1,\dotsc,\lambda^r$ of $[n]$ such that $\sum_i|\lambda^i|=\binom{n+1}{2}$.
+An \demph{instance} of a Schubert problem $\blambda$ is given by a list $\Fdot^1,\dotsc,\Fdot^r$ of isotropic flags, and
+its solutions are the points in the intersection of Schubert varieties
+%
+ \begin{equation}\label{Eq:SchubertIntersection}
+   \Omega_{\lambda^1}\Fdot^1\; \cap\;
+   \Omega_{\lambda^2}\Fdot^2\; \cap\; \dotsb
+   \; \cap\; \Omega_{\lambda^r}\Fdot^r\,.
+ \end{equation}
+%   
 
-
+It is known that there is a dense open set $U\subset\Fln^r$ and a nonnegative integer $d=d(\blambda)$ such that for all
+instances $(\Fdot^1,\dotsc,\Fdot^r)\in U$, either $d(\blambda)=0$ and the intersection~\eqref{Eq:SchubertIntersection}
+is empty, or $d(\blambda)>0$ and~\eqref{Eq:SchubertIntersection} is transverse and consists of $d(\blambda)$ Lagrangian subspaces.
+These numbers $d(\blambda)$ are known and easy to compute.
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulating Schubert Problems on $LG(n)$}
+
+To represent a Scubert problem on a computer, we need to choose coordinates.
+There exists an ordered basis  $e_1,\dotsc,e_{2n}$ for $V\simeq\KK^{2n}$ such that for any indices  $i\leq j$, we have 
+$\langle e_i,e_j\rangle = \delta_{j, 2n+1-i}$.
+Let $J$ be the $2n\times 2n$-matrix whose only non-zero entries lie along its anti-diagonal, in positions $(i,2n{+}1{-}i)$.
+The entry is 1 if $i\leq n$ and $-1$ for $i>n$.
+Then, if $u,v\in V$, we have $\langle u,v\rangle = u^T J v$.
+
+With respect to these coordinates, two both the standard coordinate flag $\Fdot'$ and the reverse coordinate flag $\Fdot$
+are isotropic.
+(For $\Edot'$, the $i$-th subspace $E'_i$ is spanned by the first $i$ basis vetors $e_1,\dotsc,e_i$ and
+the  $i$-th subspace $E_i$ of $\Edot$ is spanned by the last $i$ basis vectors $e_{2n+1-i},\dotsc, e_{2n}$.)
+
+The Schubert cell $\Omega^\circ_\emptyset \Fdot$ is dense in $\LG(n)$ ans elements of it are represented as the column span of a matrix
+$\left(\begin{smallmatrix}I_n\\X\end{smallmatrix}\right)$, where $X$ is symmetric across its anti-diagonal.\newpage
+
+
+
 
 
 
@@ -388,12 +425,12 @@ point of $\ell\cap Q_N$ it meets.
 However,  there are two solution lines $h$ in each ruling and the Galois group must preserve their intersections.
 Consequently, the Galois group is the Klein 4-group, isomorphic to  $\ZZ_2\times\ZZ_2$.
 \[
-\fbox{\begin{picture}(200,120)
+\begin{picture}(180,120)
     \put(0,0){\includegraphics[height=120pt]{images/TIe2ThI.4.eps}}
     \put(4,65){$\ell$}
-    \put(30,95){$Q_N$}
+    \put(22,95){$Q_N$}
     
-   \end{picture}}
+   \end{picture}
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
