@@ -1,4 +1,3 @@
-%
 %Filename:   LG4.tex
 %
 \documentclass[12pt]{amsart}
@@ -35,6 +34,8 @@
 \newtheorem{Example}[Theorem]{Example}
 \newtheorem{Definition}[Theorem]{Definition}
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                Macros
 \newcommand{\GL}{\textrm{GL}}
@@ -45,6 +46,7 @@
 
 \newcommand{\Gr}{\textit{Gr\,}}
 \newcommand{\LG}{\textit{LG}}
+\newcommand{\Fln}{{\mathbb F}\ell_n}
 \newcommand{\pr}{\textit{pr}}
 \newcommand{\Span}{\textrm{span}}
 
@@ -79,7 +81,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title[Enriched Schubert problems in $LG(4)$]{Enriched Schubert problems in the Grassmannian  \\ of Lagrangian subspaces in 8-space}
+\title[Enriched Schubert Problems in $\LG(4)$]{Enriched Schubert problems in the Grassmannian  \\ of Lagrangian subspaces in 8-space}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \author{F.~Sottile}
 \address{Frank Sottile, Department of Mathematics,
@@ -120,7 +122,7 @@ The existence of such a form implies that $V$ has even dimension $2n$ for some p
 
 For a linear subspace $H\subset V$, its \demph{annihilator} is
 \[
-    \defcolor{H^\perp} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\qquad\forall\ h\in H\}\,.
+    \defcolor{H^\perp} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\quad\forall\ h\in H\}\,.
 \]
 A linear subspace $H\subset V$ is \demph{isotropic} if $H\subset H^\perp$, so that $\langle h,h'\rangle=0$
 for all $h,h'\in H$.
@@ -134,32 +136,38 @@ It has a transitive action by the \demph{symplectic group}, which is the group o
 preserve the form $\langle\:,\:\rangle$,
 \[
     \defcolor{\Sp(V)}\ =\ \defcolor{\Sp(n)}\ \vcentcolon=\
-    \{ g\in \GL(V) \mid \langle gv, gu\rangle=\langle v, u\rangle\qquad \forall u,v\in V\}\,.
+    \{ g\in \GL(V) \mid \langle gv, gu\rangle=\langle v, u\rangle\quad \forall u,v\in V\}\,.
 \]
 
 A complete flag $\Fdot\colon \{0\}\subset F_1\subset\dotsb\subset F_{2n-1}\subset V$ ($\dim F_j=j$)
 of subspaces in $V$ is \demph{isotropic} if $F_i^\perp=F_{2n-i}$.
-Consequently, this is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is isotropic.
+Consequently, this is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is Lagrangian.
+Let $\Fln$ be the set of all isotropic flags, which we call the \demph{sympletic flag manifold}.
+This has a transitive action of the symplectic group $\Sp(n)$ and is an algebnraic manifold of dimension $n^2$.
+  
 The attitude of a Lagrangian subspace $L$ with respect to an isotropic flag is the sequence
 $A(L,\Fdot)\vcentcolon=(\dim L\cap F_j\mid j=1,\dotsc,2n)$.
-
 As $L$ and $\Fdot$ are isotropic any attitude $A$ is necessarily symmetric in that
-$j\in A \leftrightarrow 2n-j\not\in A$.
+%
+\[
+    j\in A \ \Longleftrightarrow\  2n-j\not\in A\,.
+\]
+%
 Consequently, $A$ is determined by its intersection with $[n]:=\{1,\dotsc,n\}$.
 For reasons that will become clear in the sequel, we define $\lambda(A):=\{ n+1-j\mid j\in A\cap[n]\}$.
 It is an exercise that all subsets $\lambda$ of $[n]$ may occur, and for each $\lambda\subset[n]$, the set
 \[
+   \Omega_\lambda^\circ \Fdot\ \vcentcolon=\ 
 \{ L\in\LG(n) \mid \lambda = \lambda(A(L,\Fdot))\}
 \]
 is isomorphic to the affine space $\KK^{\binom{n+1}{2}-|\lambda|}$, where $|\lambda|=\sum_{\ell\in\lambda}\ell$.
 
-We have just described the Schubert decomposition of $LG(n)$ into Schubert cells
+We have just described the Schubert decomposition of $LG(n)$ into Schubert cells.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulating Schubert Problems on $LG(n)$}
 
-\newpage
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,10 +318,6 @@ Similarly, for $0\neq v\in M$, let $v^\perp\subset L$ be its annihilator.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Frank's Mac has a problem with the symbols in \subsection{ ... }
-%
-%\subsection{The Galois group of $\schTI^2\cdot\sTh\cdot\sI=4$ is $D_4$.}
 \subsection{The Galois group of $\schTI^2\cdot\sTh\cdot\sI=4$ is $D_4$.}
 
 Let $L$, $M$, and $N$ be general Lagrangian subspaces in $V$ as before, and let $m$ be an isotropic 2-plane, also in general position.
