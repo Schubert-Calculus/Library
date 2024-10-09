@@ -106,7 +106,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  We explain how to formulate Schubert problems on the lagrangian Grassmannian, and then
+  We explain how to formulate Schubert problems on the Lagrangian Grassmannian, and then
   describe the three enriched Schubert problems on the Lagrangian Grassmannian $\LG(4)$ of isotropic 4-planes in 8-space,
   and use that to determine their Galois groups. (This is in progress.)
 \end{abstract}
@@ -116,26 +116,26 @@
 
 
 Assume that $\KK$ is a field not of characteristic 2.
-Suppose that $\langle\:,\:\rangle$ is a nondegenerate alternating form on a $\KK$-vector space $V$.
+Suppose that $\langle\ndot,\ndot\rangle$ is a nondegenerate alternating form on a finite-dimensional $\KK$-vector space $V$.
 Nondegenerate means that the map $\varphi\colon V\to V^*$ is an isomorphism from $V$ to its dual space,
-or rather that for all $0\neq v\in V$, there is some $u\in V$ such that $\langle v, u\rangle\neq 0$.
+or rather that, for all $0\neq v\in V$, there is some $u\in V$ such that $\langle v, u\rangle\neq 0$.
 Alternating means that for all $u,v\in V$, we have $\langle v,u\rangle = - \langle u,v\rangle$.
 The existence of such a form implies that $V$ has even dimension $2n$ for some positive integer $n$.
 
 For a linear subspace $H\subset V$, its \demph{annihilator} is
 \[
-    \defcolor{H^\perp} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\quad\forall\ h\in H\}\,.
+    \defcolor{H^\angle} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\quad\forall\ h\in H\}\,.
 \]
-A linear subspace $H\subset V$ is \demph{isotropic} if $H\subset H^\perp$, so that $\langle h,h'\rangle=0$
+A linear subspace $H\subset V$ is \demph{isotropic} if $H\subset H^\angle$, so that $\langle h,h'\rangle=0$
 for all $h,h'\in H$.
-As $\langle\:,\:\rangle$ is a nondegenerate, this implies that $\dim H \leq \dim H^\perp = 2n-\dim H$, so that
+As $\langle\:,\:\rangle$ is a nondegenerate, this implies that $\dim H \leq \dim H^\angle = 2n-\dim H$, so that
 $\dim H\leq n$.
 
 An isotropic subspace $L$ of dimension $n$ is necessarily maximal (and vice-versa).
 We call such a maximal isotropic subspace \demph{Lagrangian}.
 The set of all Lagrangian subspaces forms the \demph{Lagrangian Grassmannian}, \defcolor{$\LG(V)$} or \defcolor{$\LG(n)$}.
 It has a transitive action by the \demph{symplectic group}, which is the group of all linear transformations of $V$ that
-preserve the form $\langle\:,\:\rangle$,
+preserve the form $\langle\ndot,\ndot\rangle$,
 \[
     \defcolor{\Sp(V)}\ =\ \defcolor{\Sp(n)}\ \vcentcolon=\
     \{ g\in \GL(V) \mid \langle gv, gu\rangle=\langle v, u\rangle\quad \forall u,v\in V\}\,.
@@ -145,7 +145,7 @@ A complete flag $\Fdot\colon \{0\}\subset F_1\subset\dotsb\subset F_{2n-1}\subse
 of subspaces in $V$ is \demph{isotropic} if $F_i^\perp=F_{2n-i}$.
 Consequently, this is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is Lagrangian.
 Let $\Fln$ be the set of all isotropic flags, which we call the \demph{sympletic flag manifold}.
-This has a transitive action of the symplectic group $\Sp(n)$ and is an algebnraic manifold of dimension $n^2$.
+This has a transitive action of the symplectic group $\Sp(n)$ and is an algebraic manifold of dimension $n^2$.
   
 The attitude of a Lagrangian subspace $L$ with respect to an isotropic flag is the sequence
 $A(L,\Fdot)\vcentcolon=(j\in[2n]\mid L\cap F_{j-1}\subsetneq L\cap F_j)$ of indices of elements of $\Fdot$ where the dimension of
@@ -164,11 +164,22 @@ It is an exercise that all subsets $\lambda$ of $[n]$ may occur, and for each $\
 \{ L\in\LG(n) \mid \lambda = \lambda(A(L,\Fdot))\}
 \]
 is isomorphic to the affine space $\KK^{\binom{n+1}{2}-|\lambda|}$, where $|\lambda|=\sum_{\ell\in\lambda}\ell$.
+It is traditional to write such a subset in decreasing order, $\blambda\colon \lambda_1>\dotsb>\lambda_r>0$, and refer to this as a
+\demph{(strict) partition}.
+A strict partition $\lambda$ is  represented by an array of boxes, with $\lambda_i$ in the $i$th row.
+These are not left-justified, but rather the $i$th row begins in the $i$the position from the left.
+For example,
+\[
+  (2,1)\ \leftrightarrow\ \TI
+    \qquad\mbox{and}\qquad
+  (3,1)\ \leftrightarrow\ \ThI\ .
+\]
+
 
 We have just described the Schubert decomposition of $LG(n)$ into Schubert cells.
 The closure of the Schubert cell $\Omega_\lambda^\circ \Fdot$ is the \emph{Schubert variety} \defcolor{$\Omega_\lambda\Fdot$}.
-A \demph{Schubert problem} on $\LG(n)$ is a list of subsets
-$\blambda = \lambda^1,\dotsc,\lambda^r$ of $[n]$ such that $\sum_i|\lambda^i|=\binom{n+1}{2}$.
+A \demph{Schubert problem} on $\LG(n)$ is a list of strict partitions
+$\blambda = \lambda^1,\dotsc,\lambda^r$ such that $\sum_i|\lambda^i|=\binom{n+1}{2}$.
 An \demph{instance} of a Schubert problem $\blambda$ is given by a list $\Fdot^1,\dotsc,\Fdot^r$ of isotropic flags, and
 its solutions are the points in the intersection of Schubert varieties
 %
@@ -190,17 +201,28 @@ These numbers $d(\blambda)$ are known and easy to compute.
 To represent a Scubert problem on a computer, we need to choose coordinates.
 There exists an ordered basis  $e_1,\dotsc,e_{2n}$ for $V\simeq\KK^{2n}$ such that for any indices  $i\leq j$, we have 
 $\langle e_i,e_j\rangle = \delta_{j, 2n+1-i}$.
-Let $J$ be the $2n\times 2n$-matrix whose only non-zero entries lie along its anti-diagonal, in positions $(i,2n{+}1{-}i)$.
-The entry is 1 if $i\leq n$ and $-1$ for $i>n$.
+Write \defcolor{$\omega_0$} for the $n\times n$ matrix with 1's along its anti-diagonal, in positions $(i,n{+}1{-}i)$.
+It represents the longest permutation in $S_n$.
+Let $J$ be the $2n\times 2n$-matrix $\left(\begin{smallmatrix}0&\omega_0\\-\omega_0&0\end{smallmatrix}\right)$.
 Then, if $u,v\in V$, we have $\langle u,v\rangle = u^T J v$.
 
-With respect to these coordinates, two both the standard coordinate flag $\Fdot'$ and the reverse coordinate flag $\Fdot$
+With respect to these coordinates, two both the standard coordinate flag $\Edot'$ and the reverse coordinate flag $\Edot$
 are isotropic.
 (For $\Edot'$, the $i$-th subspace $E'_i$ is spanned by the first $i$ basis vetors $e_1,\dotsc,e_i$ and
 the  $i$-th subspace $E_i$ of $\Edot$ is spanned by the last $i$ basis vectors $e_{2n+1-i},\dotsc, e_{2n}$.)
 
-The Schubert cell $\Omega^\circ_\emptyset \Fdot$ is dense in $\LG(n)$ ans elements of it are represented as the column span of a matrix
-$\left(\begin{smallmatrix}I_n\\X\end{smallmatrix}\right)$, where $X$ is symmetric across its anti-diagonal.\newpage
+The Schubert cell $\Omega^\circ_\emptyset \Edot$ is dense in $\LG(n)$ and its elements are represented as the column span of a matrix
+$\left(\begin{smallmatrix}\omega_0\\X\end{smallmatrix}\right)$, where$X$ is a symmetric matrix.
+For example, when $n=2$, we display $J$ and a parametrization of $\Omega^\circ_\emptyset \Edot$
+\[
+\left(\begin{matrix} 0& 0&0&1\\ 0& 0&1&0\\ 0&-1&0&0\\ -1& 0&0&0\end{matrix}\right)
+  \qquad
+  \left(\begin{matrix} 0&1\\ 1&0\\ a&b\\ b&c\end{matrix}\right)\ .
+\]
+
+
+
+  \newpage
 
 
 
