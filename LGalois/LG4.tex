@@ -40,6 +40,7 @@
 %                                Macros
 \newcommand{\GL}{\textrm{GL}}
 \newcommand{\Hom}{\textrm{Hom}}
+\newcommand{\Mat}{\textrm{Mat}}
 \newcommand{\Sp}{\textrm{Sp}}
 
 \newcommand{\Fdot}{F_\bullet}
@@ -142,7 +143,7 @@ preserve the form $\langle\ndot,\ndot\rangle$,
 \]
 
 A complete flag $\Fdot\colon \{0\}\subset F_1\subset\dotsb\subset F_{2n-1}\subset V$ ($\dim F_j=j$)
-of subspaces in $V$ is \demph{isotropic} if $F_i^\perp=F_{2n-i}$.
+of subspaces in $V$ is \demph{isotropic} if $F_i^\angle=F_{2n-i}$.
 Consequently, this is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is Lagrangian.
 Let $\Fln$ be the set of all isotropic flags, which we call the \demph{sympletic flag manifold}.
 This has a transitive action of the symplectic group $\Sp(n)$ and is an algebraic manifold of dimension $n^2$.
@@ -170,9 +171,9 @@ A strict partition $\lambda$ is  represented by an array of boxes, with $\lambda
 These are not left-justified, but rather the $i$th row begins in the $i$the position from the left.
 For example,
 \[
-  (2,1)\ \leftrightarrow\ \TI
+  (2,1)\ \longleftrightarrow\ \raisebox{-8pt}{\TI}
     \qquad\mbox{and}\qquad
-  (3,1)\ \leftrightarrow\ \ThI\ .
+  (3,1)\ \longleftrightarrow\ \raisebox{-8pt}{\ThI}\ .
 \]
 
 
@@ -219,7 +220,22 @@ For example, when $n=2$, we display $J$ and a parametrization of $\Omega^\circ_\
   \qquad
   \left(\begin{matrix} 0&1\\ 1&0\\ a&b\\ b&c\end{matrix}\right)\ .
 \]
+We may represent an isotropic flag $\Fdot$ by a $2n\times 2n$ invertible matrix (also written $\Fdot$) such that $F_i$ is the span of
+the first $i$ columns of the matrix $\Fdot$.
+That $\Fdot$ is isotropic has the following consequences for the matrix $\Fdot$.
+For each $i=1,\dotsc,2n$, let $v_i$ be the $i$th column of $\Fdot$.
+Then
+\[
+\langle v_i, v_j\rangle \ =\ v_i^T J v_j\ =\ 0\quad\mbox{for }\ i+j\leq 2n\,.
+\]
+That is, the skew-symmetrix matrix $Fdot^T J \Fdot$ has only 0 entries above its anti-diagonal.
+Observe that there is not neessarily a linear parametrization of the space of isotropic flags.
 
+\demph{Steifel coordinates} for a subset $Y\subset \LG(n)$ are given by a subset $Z$ of $\Mat_{2n\times n}(\KK)$ consisting
+of full-rank matrices satisfying $M^T J M=0_{n\times n}$ for $M\in Z$ such that the map $M\mapsto \mbox{column span}M$ is a
+birational map from $Z$ to $Y$.
+Given an isotropic flag $\Fdot$ and a strict partition $\lambda$, the intersetion $Y\cap X_\lambda\Fdot$ is represented in
+a set $Z$ of Stifel coordinates for $Y$ by rank conditions:
 
 
   \newpage
