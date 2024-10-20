@@ -1,5 +1,4 @@
-%
-%Filename:   LG4.tex
+%Filename:   LG2.tex
 %
 \documentclass[12pt]{amsart}
 
@@ -12,7 +11,7 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{enumitem}
 \usepackage{wrapfig}
-\usepackage{ulem}  % rule out text
+%\usepackage{ulem}  % rule out text
 
 %%%%%%%%%%%%%%%  Layouts   Gives correct margins for 12 pt amsart  %%%%%%%%%%%%%% 
 % 
@@ -35,18 +34,24 @@
 \newtheorem{Example}[Theorem]{Example}
 \newtheorem{Definition}[Theorem]{Definition}
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                Macros
 \newcommand{\GL}{\textrm{GL}}
 \newcommand{\Hom}{\textrm{Hom}}
+\newcommand{\Mat}{\textrm{Mat}}
 \newcommand{\Sp}{\textrm{Sp}}
 
 \newcommand{\Fdot}{F_\bullet}
+\newcommand{\Edot}{E_\bullet}
 
 \newcommand{\Gr}{\textit{Gr\,}}
 \newcommand{\LG}{\textit{LG}}
+\newcommand{\Fln}{{\mathbb F}\ell_n}
 \newcommand{\pr}{\textit{pr}}
 \newcommand{\Span}{\textrm{span}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
 
 \newcommand{\CC}{{\mathbb C}}
 \newcommand{\KK}{{\mathbb K}}
@@ -79,7 +84,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title[Enriched Schubert problems in $LG(4)$]{Enriched Schubert problems in the Grassmannian  \\ of Lagrangian subspaces in 8-space}
+\title[Enriched Schubert Problems in $\LG(4)$]{Enriched Schubert problems in the Grassmannian  \\ of Lagrangian subspaces in 8-space}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \author{F.~Sottile}
 \address{Frank Sottile, Department of Mathematics,
@@ -102,7 +107,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  We explain how to formulate Schubert problems on the lagrangian Grassmannian, and then
+  We explain how to formulate Schubert problems on the Lagrangian Grassmannian, and then
   describe the three enriched Schubert problems on the Lagrangian Grassmannian $\LG(4)$ of isotropic 4-planes in 8-space,
   and use that to determine their Galois groups. (This is in progress.)
 \end{abstract}
@@ -112,61 +117,186 @@
 
 
 Assume that $\KK$ is a field not of characteristic 2.
-Suppose that $\langle\:,\:\rangle$ is a nondegenerate alternating form on a $\KK$-vector space $V$.
+Suppose that $\langle\ndot,\ndot\rangle$ is a nondegenerate alternating form on a finite-dimensional $\KK$-vector space $V$.
 Nondegenerate means that the map $\varphi\colon V\to V^*$ is an isomorphism from $V$ to its dual space,
-or rather that for all $0\neq v\in V$, there is some $u\in V$ such that $\langle v, u\rangle\neq 0$.
+or rather that, for all $0\neq v\in V$, there is some $u\in V$ such that $\langle v, u\rangle\neq 0$.
 Alternating means that for all $u,v\in V$, we have $\langle v,u\rangle = - \langle u,v\rangle$.
 The existence of such a form implies that $V$ has even dimension $2n$ for some positive integer $n$.
 
 For a linear subspace $H\subset V$, its \demph{annihilator} is
 \[
-    \defcolor{H^\perp} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\qquad\forall\ h\in H\}\,.
+    \defcolor{H^\angle} \ \vcentcolon=\ \{u\in V\mid \langle u, h\rangle =0\quad\forall\ h\in H\}\,.
 \]
-A linear subspace $H\subset V$ is \demph{isotropic} if $H\subset H^\perp$, so that $\langle h,h'\rangle=0$
+A linear subspace $H\subset V$ is \demph{isotropic} if $H\subset H^\angle$, so that $\langle h,h'\rangle=0$
 for all $h,h'\in H$.
-As $\langle\:,\:\rangle$ is a nondegenerate, this implies that $\dim H \leq \dim H^\perp = 2n-\dim H$, so that
+As $\langle\:,\:\rangle$ is a nondegenerate, we have $\dim H \leq \dim H^\angle = 2n-\dim H$, so that
 $\dim H\leq n$.
 
 An isotropic subspace $L$ of dimension $n$ is necessarily maximal (and vice-versa).
 We call such a maximal isotropic subspace \demph{Lagrangian}.
 The set of all Lagrangian subspaces forms the \demph{Lagrangian Grassmannian}, \defcolor{$\LG(V)$} or \defcolor{$\LG(n)$}.
+This has dimension $\binom{n{+}1}{2}$.
 It has a transitive action by the \demph{symplectic group}, which is the group of all linear transformations of $V$ that
-preserve the form $\langle\:,\:\rangle$,
+preserve the form $\langle\ndot,\ndot\rangle$,
 \[
     \defcolor{\Sp(V)}\ =\ \defcolor{\Sp(n)}\ \vcentcolon=\
-    \{ g\in \GL(V) \mid \langle gv, gu\rangle=\langle v, u\rangle\qquad \forall u,v\in V\}\,.
+    \{ g\in \GL(V) \mid \langle gv, gu\rangle=\langle v, u\rangle\quad \forall u,v\in V\}\,.
 \]
 
 A complete flag $\Fdot\colon \{0\}\subset F_1\subset\dotsb\subset F_{2n-1}\subset V$ ($\dim F_j=j$)
-of subspaces in $V$ is \demph{isotropic} if $F_i^\perp=F_{2n-i}$.
-Consequently, this is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is isotropic.
-The attitude of a Lagrangian subspace $L$ with respect to an isotropic flag is the sequence
-$A(L,\Fdot)\vcentcolon=(\dim L\cap F_j\mid j=1,\dotsc,2n)$.
-
-As $L$ and $\Fdot$ are isotropic any attitude $A$ is necessarily symmetric in that
-$j\in A \leftrightarrow 2n-j\not\in A$.
-Consequently, $A$ is determined by its intersection with $[n]:=\{1,\dotsc,n\}$.
-For reasons that will become clear in the sequel, we define $\lambda(A):=\{ n+1-j\mid j\in A\cap[n]\}$.
-It is an exercise that all subsets $\lambda$ of $[n]$ may occur, and for each $\lambda\subset[n]$, the set
+of subspaces in $V$ is \demph{isotropic} if $F_i^\angle=F_{2n-i}$.
+Consequently, an isotropic flag is determined by its restriction $F_1\subset\dotsb\subset F_n$ to $F_n$, which is Lagrangian.
+Let $\Fln$ be the set of all isotropic flags, which we call the \demph{sympletic flag manifold}.
+This has a transitive action of the symplectic group $\Sp(n)$ and is an algebraic manifold of dimension $n^2$.
+  
+The  \demph{attitude} of a Lagrangian subspace $L$ with respect to an isotropic flag is the sequence
+$A(L,\Fdot)\vcentcolon=(j\in[2n]\mid L\cap F_{j-1}\subsetneq L\cap F_j)$ of indices of elements of $\Fdot$ where the
+dimension of $L\cap F_j$ jumps.
+As $L$ and $\Fdot$ are isotropic, any attitude $A$ is necessarily symmetric in that
+%
 \[
+    j\in A \ \Longleftrightarrow\  2n-j\not\in A\,.
+\]
+%
+Consequently, $A$ is determined by its intersection with $[n]:=\{1,\dotsc,n\}$.
+For reasons that will become clear in the sequel, we define $\defcolor{\lambda(A)}:=\{ n+1-j\mid j\in A\cap[n]\}$.
+It is an exercise that all subsets $\lambda$ of $[n]$ may occur.
+For each $\lambda\subset[n]$ and isotropic flag $\Fdot$, the set
+\[
+   \defcolor{\Omega_\lambda^\circ \Fdot}\ \vcentcolon=\ 
 \{ L\in\LG(n) \mid \lambda = \lambda(A(L,\Fdot))\}
 \]
 is isomorphic to the affine space $\KK^{\binom{n+1}{2}-|\lambda|}$, where $|\lambda|=\sum_{\ell\in\lambda}\ell$.
+It is traditional to write such a subset in decreasing order, $\lambda\colon \lambda_1>\dotsb>\lambda_r>0$, and refer to
+this as a \demph{(strict) partition}.
+A strict partition $\lambda$ is  represented by an array of boxes, with $\lambda_i$ in the $i$th row.
+These are not left-justified, but rather the $i$th row begins in the $i$the position from the left.
+For example,
+\[
+  (2,1)\ \longleftrightarrow\ \raisebox{-8pt}{\TI}
+    \qquad\mbox{and}\qquad
+  (3,1)\ \longleftrightarrow\ \raisebox{-8pt}{\ThI}\ .
+\]
 
-We have just described the Schubert decomposition of $LG(n)$ into Schubert cells
 
+We have just described the Schubert decomposition of $LG(n)$ into Schubert cells.
+The closure of the Schubert cell $\Omega_\lambda^\circ \Fdot$ is the \demph{Schubert variety} \defcolor{$\Omega_\lambda\Fdot$}.
+We have
+%
+\begin{equation}\label{Eq:SchubertVariety}
+    \Omega_\lambda\Fdot\ =\ \{ L\in\LG(V)\mid \dim L\cap F_{n{+}1-\lambda_i}\geq i\quad i=1,\dotsc,r\}\,.
+\end{equation}
+%
+(Here, $\lambda$ has $r$ parts.)
+{\it A priori}, there are other conditions for higher-dimensional intersections, but they are implied from these as $L$ and
+the flag $\Fdot$ are isotropic.
 
+  
+A \demph{Schubert problem} on $\LG(n)$ is a list of strict partitions
+$\blambda = \lambda^1,\dotsc,\lambda^r$ such that $\sum_i|\lambda^i|=\binom{n+1}{2}$.
+An \demph{instance} of a Schubert problem $\blambda$ is given by a list $\Fdot^1,\dotsc,\Fdot^r$ of isotropic flags, and
+its \demph{solutions} are the points in the intersection of Schubert varieties
+%
+ \begin{equation}\label{Eq:SchubertIntersection}
+   \Omega_{\lambda^1}\Fdot^1\; \cap\;
+   \Omega_{\lambda^2}\Fdot^2\; \cap\; \dotsb
+   \; \cap\; \Omega_{\lambda^r}\Fdot^r\,.
+ \end{equation}
+%   
+
+It is known that there is a dense open set $U\subset(\Fln)^r$ and a nonnegative integer $d=d(\blambda)$ such that for all
+instances $(\Fdot^1,\dotsc,\Fdot^r)\in U$, either $d(\blambda)=0$ and the intersection~\eqref{Eq:SchubertIntersection}
+is empty, or $d(\blambda)>0$ and the intersection~\eqref{Eq:SchubertIntersection} is transverse and consists of
+$d(\blambda)$ Lagrangian subspaces. 
+These numbers $d(\blambda)$ are known and easy to compute.
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulating Schubert Problems on $LG(n)$}
 
-\newpage
+To represent a Schubert problem~\eqref{Eq:SchubertIntersection} on a computer, we need to choose coordinates
+and give defining equations.
+There exists an ordered basis  $e_1,\dotsc,e_{2n}$ for $V\simeq\KK^{2n}$ such that for any indices  $i\leq j$, we have 
+$\langle e_i,e_j\rangle = \delta_{j, 2n+1-i}$.
+Write \defcolor{$\omega_0$} for the $n\times n$ matrix with 1's along its anti-diagonal, in positions $(i,n{+}1{-}i)$.
+It represents the longest permutation in $S_n$.
+Let $J$ be the $2n\times 2n$-matrix with $2\times 2$ block structure
+$\left(\begin{smallmatrix}0&\omega_0\\-\omega_0&0\end{smallmatrix}\right)$.
+Then, if $u,v\in V$ are expressed in this basis, we have $\langle u,v\rangle = u^T J v$.
+
+With respect to these coordinates,  both the standard coordinate flag \defcolor{$\Edot'$} and the reverse
+coordinate flag \defcolor{$\Edot$} are isotropic.
+(For $\Edot'$, the $i$-th subspace $E'_i$ is spanned by the first $i$ basis vetors $e_1,\dotsc,e_i$ and
+the  $i$-th subspace $E_i$ of $\Edot$ is spanned by the last $i$ basis vectors $e_{2n+1-i},\dotsc, e_{2n}$.)
+
+The Schubert cell $\Omega^\circ_\emptyset \Edot$ is dense in $\LG(n)$ and its elements are represented as the column span
+of a matrix $\left(\begin{smallmatrix}\omega_0\\X\end{smallmatrix}\right)$, where $X$ is a symmetric matrix.
+For example, when $n=2$, we display $J$ and a parametrization of $\Omega^\circ_\emptyset \Edot$
+\[
+\left(\begin{matrix} 0& 0&0&1\\ 0& 0&1&0\\ 0&-1&0&0\\ -1& 0&0&0\end{matrix}\right)
+  \qquad
+  \left(\begin{matrix} 0&1\\ 1&0\\ a&b\\ b&c\end{matrix}\right)\ .
+   \qquad (a,b,c\in\KK)
+\]
+We may represent an isotropic flag $\Fdot$ by a $2n\times 2n$ invertible matrix (also written $\Fdot$) such that $F_i$ is the span of
+the first $i$ columns of the matrix $\Fdot$.
+That $\Fdot$ is isotropic has the following consequences for the matrix $\Fdot$.
+For each $i=1,\dotsc,2n$, let $v_i$ be the $i$th column of $\Fdot$.
+Then
+\[
+\langle v_i, v_j\rangle \ =\ v_i^T J v_j\ =\ 0\quad\mbox{for }\ i+j\leq 2n\,.
+\]
+That is, the skew-symmetrix matrix $\Fdot^T J \Fdot$ has only 0 entries above its anti-diagonal.
+Observe that there is not neessarily a linear parametrization of the space of isotropic flags.
+
+\demph{Steifel coordinates} for a subset $Y\subset \LG(n)$ are given by a subset $Z$ of $\Mat_{2n\times n}(\KK)$ consisting
+of full-rank matrices satisfying $M^T J M=0_{n\times n}$ for $M\in Z$ such that the map $M\mapsto \mbox{column span}M$ is a
+birational map from $Z$ to $Y$.
+Given an isotropic flag $\Fdot$ and a strict partition $\lambda$, the intersetion $Y\cap X_\lambda\Fdot$ is represented in
+a set $Z$ of Stiefel coordinates for $Y$ by rank conditions ({\it cf.}~\eqref{Eq:SchubertVariety}) on $M\in Z$:
+\[
+\mbox{rank}\bigl( M\colon F_{n{+}1-\lambda_i} \bigr)\ \leq\ 2n{+}1{-}\lambda_i-i\,,\quad\mbox{ for } i=1,\dotsc,r\,.
+\]
+That is, by the vanishing of all minors of $(M\colon F_{n{+}1-\lambda_i})$ of size  $2n{+}2{-}\lambda_i-i$.
+Thus we see that typically a Schubert problem is not a complete intersection.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulation of Schubert problems of interest}
+
+In $\LG(4)$, there are three enriched Schubert problems
+\[
+  \raisebox{-8pt}{\TI\,}^2\cdot\, \raisebox{-8pt}{\ThI}\ =\ 4\,, \quad
+  \raisebox{-8pt}{\TI\,}^2\cdot\, \raisebox{-2pt}{\Th}\cdot\, \raisebox{-2pt}{\I}\ =\ 4\,, \quad\mbox{ and } \quad
+  \raisebox{-8pt}{\TI\,}^3\cdot\, \raisebox{-2pt}{\I}\ =\ 8\,.
+\]
+%
+(These are written multiplicatively and the number for a Schubert problem $\blambda$ is $d(\blambda)$.)
+All three contain $\schTI^2$.
+We give Stiefel coordiniates for $\Omega_{21}\Edot\cap\Omega_{21}\Edot'$:
+\[
+  \left(
+  \begin{array}{cccc|cccc}
+    0&0&  0 &  0 & 0&1&a&b\\
+    0&0&  0 &  0 & 1&0&c&d\\\hline
+    0&1& -a & -b & 0&0&0&0\\
+    1&0& -c & -d & 0&0&0&0
+  \end{array}\right)\ .
+\]
+Also, note that
+\begin{eqnarray*}
+    \Omega_{sThI}\Fdot &=& \{L\mid \dim L\cap F_2\geq 1\ \mbox{ and }\ \dim L\cap F_4\geq 2\}\,,\\
+    \Omega_{sTh}\Fdot  &=& \{L\mid \dim L\cap F_2\geq 1\}\,,\\
+    \Omega_{sT}\Fdot   &=& \{L\mid \dim L\cap F_4\geq 2\}\,,\\
+    \Omega_{sI}\Fdot   &=& \{L\mid \dim L\cap F_4\geq 1\}\,.
+\end{eqnarray*}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminary calculations}
 Using the Frobenius algorithm, we determined that three of the 44 essential Schubert problems on $\LG(4)$ are enriched.
-For one, with 384 solutions, we are still computing Frobenius elements.
-We have yet to be able to compute an eliminant for a problem with 768 solutions.
+We have yet to be able to compute an eliminant for a problem with 768 solutions, which is the largest.
 
 Using strict partitions to represent Schubert conditions, these three problems are
 \[
@@ -310,10 +440,6 @@ Similarly, for $0\neq v\in M$, let $v^\perp\subset L$ be its annihilator.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Frank's Mac has a problem with the symbols in \subsection{ ... }
-%
-%\subsection{The Galois group of $\schTI^2\cdot\sTh\cdot\sI=4$ is $D_4$.}
 \subsection{The Galois group of $\schTI^2\cdot\sTh\cdot\sI=4$ is $D_4$.}
 
 Let $L$, $M$, and $N$ be general Lagrangian subspaces in $V$ as before, and let $m$ be an isotropic 2-plane, also in general position.
@@ -342,10 +468,11 @@ Note that $N$ is spanned by its intersections with  $Z(L,M,u,v)$  and  $Z(L,M,u'
 As its Galois group must preserve the partition coming from the two points $(u,v)$ and $(u',v')$, it is a subgroup of $D_4$.
 We have computed Frobenius elements which show that the Galois group is $D_4$.
 
-For an alternative proof, note that it is possible to find a the monodromy loop that fixes $L,M,m$ (and hence the points $(u,v)$ and
-$(u',v')$), as well as the two points $N\cap Z(L,M,u,v)$, but interchanges the other two points  $N\cap Z(L,M,u',v')$.
+For an alternative proof, note that it is possible to find a monodromy loop that fixes $L,M,m$ (and hence the points
+$(u,v)$ and $(u',v')$), as well as the two points $N\cap Z(L,M,u,v)$, but interchanges the other two points  $N\cap
+Z(L,M,u',v')$. 
 Indeed, let $\{x,y\}=N\cap Z(L,M,u,v)$.
-Then the set of Lagrangian planes containing $h := \Span{x,y}$ is identified with $\LG(h^\angle/h)$, and any two points in
+Then the set of Lagrangian planes containing $h := \Span\{x,y\}$ is identified with $\LG(h^\angle/h)$, and any two points in
 $\PP(x^\angle)\cap\PP(y^\angle)$ that are independent.
 {\color{Magenta}Fix this.  It is important to make these kinds of arguments.}
 
@@ -384,12 +511,12 @@ point of $\ell\cap Q_N$ it meets.
 However,  there are two solution lines $h$ in each ruling and the Galois group must preserve their intersections.
 Consequently, the Galois group is the Klein 4-group, isomorphic to  $\ZZ_2\times\ZZ_2$.
 \[
-\fbox{\begin{picture}(200,120)
+\begin{picture}(180,120)
     \put(0,0){\includegraphics[height=120pt]{images/TIe2ThI.4.eps}}
     \put(4,65){$\ell$}
-    \put(30,95){$Q_N$}
+    \put(22,95){$Q_N$}
     
-   \end{picture}}
+   \end{picture}
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
