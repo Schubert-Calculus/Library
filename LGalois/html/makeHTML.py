@@ -5,13 +5,13 @@
 import json
 import os
 
-jsonFileName = 'C44_enriched.json'
+jsonFileName = 'C55_enriched.json'
 #################### Read in Frobenius data from .json file
 jsonFile = open(jsonFileName, 'r')
 frobeniusData = json.load(jsonFile)
 
-sName = 'LG4'
-sTitle = 'Enriched Problems in LG(4)'
+sName = 'LG5'
+sTitle = 'Enriched Problems in LG(5)'
 sRule = '<!-------------------------------------------------->'
 lRule = '<!---------------------------------------------------------------------------------------------------->'
 #################### Start .html file  ####################
@@ -26,8 +26,10 @@ htmlFile.write(f'      <h1>{sTitle!s}</h1>\n      <font size=+2>\n      <a href=
 htmlFile.write(f'      </font>\n    </td>\n  </tr>\n</table>\n{lRule!s}\n<hr>\n{lRule!s}\n')
 ####################################################################################################
 
+
 #  Sizes of Galois groups (the third is not yet proven as of 3 July 2024)
-cardinality = [4,8,192]
+cardinality = [4,4,4,4,4,4,4, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,  192,192,192,192,  384,384,384,384, 768,768,768, 1440]
+#                                                                                                    fiction
 
 #################### Initiate the flag manifold
 flagInfo = frobeniusData.pop(0)
@@ -75,18 +77,18 @@ for ind in range(0,len(frobeniusData)):
         elif len(partition)==2:
             title = f'{title!s}<sub><img src=\"Tableaux/{tableau!s}.Small.gif\"></sub>'
         else:
-            title = f'{title!s}<sub><sub><img src=\"Tableaux/{tableau!s}.Small.gif\"></sub><\sub>'
+            title = f'{title!s}<sub><sub><img src=\"Tableaux/{tableau!s}.Small.gif\"></sub></sub>'
             
     title = f'{title!s} = {numberOfSolutions} in LG({k!s}) </font>'
 
     ####################  Start to create the table for the given Schubert problem
-    htmlFile.write(f'<table border=1>\n  <tr valign=top>\n    <td colspan=4 align=center>\n    {title!s} </td>\n   </tr>')
-    htmlFile.write(f'  <tr valign=top> <th>Cycle type</th> <th>Frequency</th> <th>Fraction</th> <th>Empirical</th>  </tr>')
+    htmlFile.write(f'<table border=1>\n  <tr valign=top>\n    <td colspan=4 align=center>\n    {title!s} </td>\n   </tr>\n')
+    htmlFile.write(f'  <tr valign=top> <th>Cycle type</th> <th>Frequency</th> <th>Fraction</th> <th>Empirical</th>  </tr>  {sRule!s}\n')
 
     for cycleType in frequencyTable:
         htmlFile.write(f'  <tr>\n    <td>&nbsp;{cycleType!s} </td>\n    <td align=right> {frequencyTable[cycleType]!s}&nbsp;</td>\n')
         htmlFile.write(f'    <td align=right> {frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n')
-        htmlFile.write(f'    <td align=right> {cardinality[ind]*frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n  </td>\n  {sRule!s}\n')
+        htmlFile.write(f'    <td align=right> {cardinality[ind]*frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n  </tr>\n  {sRule!s}\n')
 
     htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This computed {numberComputed!s} Frobenius elements </font></td>\n  </tr>\n')
     if time < 360000:
