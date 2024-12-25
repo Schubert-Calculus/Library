@@ -28,8 +28,8 @@ htmlFile.write(f'      </font>\n    </td>\n  </tr>\n</table>\n{lRule!s}\n<hr>\n{
 
 
 #  Sizes of Galois groups (the third is not yet proven as of 3 July 2024)
-cardinality = [4,4,4,4,4,4,4, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,  192,192,192,192,  384,384,384,384, 768,768,768, 1440]
-#                                                                                                    fiction
+cardinality = [4,4,4,4,4,4,4, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,  192,192,192,192,  384,384,384,384, 1152,1152,1152, 1920]
+#                                                                                                                    fiction
 
 #################### Initiate the flag manifold
 flagInfo = frobeniusData.pop(0)
