@@ -11,6 +11,7 @@ jsonFile = open(jsonFileName, 'r')
 frobeniusData = json.load(jsonFile)
 
 sName = 'LG5'
+sName = 'tmp'
 sTitle = 'Enriched Problems in LG(5)'
 sRule = '<!-------------------------------------------------->'
 lRule = '<!---------------------------------------------------------------------------------------------------->'
@@ -27,7 +28,7 @@ htmlFile.write(f'      </font>\n    </td>\n  </tr>\n</table>\n{lRule!s}\n<hr>\n{
 ####################################################################################################
 
 
-#  Sizes of Galois groups (the third is not yet proven as of 3 July 2024)
+#  Sizes of Galois groups For LG5 (the third is not yet proven as of 3 July 2024)
 cardinality = [4,4,4,4,4,4,4, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,  192,192,192,192,  384,384,384,384, 1152,1152,1152, 1920]
 #                                                                                                                    fiction
 
@@ -43,8 +44,9 @@ for ind in range(0,len(frobeniusData)):
     
     schubertProblem = myProblem[0]
     frequencyTable = myProblem[1]
+    myKeys = sorted(list(frequencyTable.keys()))
     numberComputed = 0
-    for cycleType in frequencyTable:
+    for cycleType in myKeys:
         numberComputed =  numberComputed + frequencyTable[cycleType]
     time = myProblem[2]
  
@@ -85,7 +87,7 @@ for ind in range(0,len(frobeniusData)):
     htmlFile.write(f'<table border=1>\n  <tr valign=top>\n    <td colspan=4 align=center>\n    {title!s} </td>\n   </tr>\n')
     htmlFile.write(f'  <tr valign=top> <th>Cycle type</th> <th>Frequency</th> <th>Fraction</th> <th>Empirical</th>  </tr>  {sRule!s}\n')
 
-    for cycleType in frequencyTable:
+    for cycleType in reversed(myKeys):
         htmlFile.write(f'  <tr>\n    <td>&nbsp;{cycleType!s} </td>\n    <td align=right> {frequencyTable[cycleType]!s}&nbsp;</td>\n')
         htmlFile.write(f'    <td align=right> {frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n')
         htmlFile.write(f'    <td align=right> {cardinality[ind]*frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n  </tr>\n  {sRule!s}\n')
