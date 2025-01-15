@@ -92,13 +92,16 @@ for ind in range(0,len(frobeniusData)):
         htmlFile.write(f'    <td align=right> {frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n')
         htmlFile.write(f'    <td align=right> {cardinality[ind]*frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n  </tr>\n  {sRule!s}\n')
 
+    time = time*3.7
     htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This computed {numberComputed!s} Frobenius elements </font></td>\n  </tr>\n')
     if time < 360000:
-        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/100:.2f} seconds </font></td>\n  </tr>\n')
+        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/100:.2f} GHz-seconds </font></td>\n  </tr>\n')
     elif time < 24*3600*100:
-        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/360000:.2f} Hours </font></td>\n  </tr>\n')
+        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/360000:.2f} GHz-Hours </font></td>\n  </tr>\n')
+    elif time < 24*3600*100*365.24:
+        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/360000/24:.2f} GHz-Days </font></td>\n  </tr>\n')
     else:
-        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/360000/24:.2f} Days </font></td>\n  </tr>\n')
+        htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This took {time/360000/24/365.24:.2f} GHz-Years </font></td>\n  </tr>\n')
         
     htmlFile.write(f'</table>\n{lRule!s}<br>\n')
     
