@@ -5,14 +5,14 @@
 import json
 import os
 
-jsonFileName = 'C44_enriched.json'
+jsonFileName = 'C55_enriched.json'
 #################### Read in Frobenius data from .json file
 jsonFile = open(jsonFileName, 'r')
 frobeniusData = json.load(jsonFile)
 
-sName = 'LG4'
+sName = 'LG5'
 sName = 'tmp'
-sTitle = 'Enriched Problems in L4(5)'
+sTitle = 'Enriched Problems in LG(5)'
 sRule = '<!-------------------------------------------------->'
 lRule = '<!---------------------------------------------------------------------------------------------------->'
 #################### Start .html file  ####################
@@ -28,8 +28,10 @@ htmlFile.write(f'      </font>\n    </td>\n  </tr>\n</table>\n{lRule!s}\n<hr>\n{
 ####################################################################################################
 
 
-#  Sizes of Galois groups For LG4 (These are now known as of February 2025)
-cardinality = [4, 8, 192]
+#  Sizes of Galois groups For LG5 (the third is not yet proven as of 3 July 2024)
+cardinality = [4,4,4,4,4,4,4, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,  192,192,192,192,  384,384,384,384, 1152,1152,1152, 1920]
+#                                                                                                       fiction
+totalTime = 0                                                                                                               
 
 #################### Initiate the flag manifold
 flagInfo = frobeniusData.pop(0)
@@ -48,6 +50,7 @@ for ind in range(0,len(frobeniusData)):
     for cycleType in myKeys:
         numberComputed =  numberComputed + frequencyTable[cycleType]
     time = myProblem[2]
+    totalTime = totalTime + time 
  
     numberOfSolutions = schubertProblem[0]
     conditions = schubertProblem[1]
@@ -91,6 +94,8 @@ for ind in range(0,len(frobeniusData)):
         htmlFile.write(f'    <td align=right> {frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n')
         htmlFile.write(f'    <td align=right> {cardinality[ind]*frequencyTable[cycleType]/numberComputed:.4f}&nbsp;</td>\n  </tr>\n  {sRule!s}\n')
 
+
+    # Fulton (and other computers have 3.7 GHz processors
     time = time*3.7
     htmlFile.write(f'  <tr>\n    <td colspan=4><font size=+1> This computed {numberComputed!s} Frobenius elements </font></td>\n  </tr>\n')
     if time < 360000:
@@ -113,8 +118,10 @@ for ind in range(0,len(frobeniusData)):
 
 
 
-
-
+####################################################################################################
+# Fulton (and other computers have 3.7 GHz processors
+totalTime = totalTime*3.7
+htmlFile.write(f'{lRule!s}\n<hr>\n{lRule!s}\n These computations took {totalTime/360000/24/365.24:.2f} GHz-Years \n')
 
 ####################################################################################################
 htmlFile.write(f'{lRule!s}\n<hr>\n{lRule!s}\n<font color=\"#aa00aa\">\n')
