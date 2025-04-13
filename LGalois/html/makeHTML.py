@@ -5,14 +5,14 @@
 import json
 import os
 
-jsonFileName = 'C44_enriched.json'
+jsonFileName = 'C55_enriched.json'
 #################### Read in Frobenius data from .json file
 jsonFile = open(jsonFileName, 'r')
 frobeniusData = json.load(jsonFile)
 
-sName = 'LG4'
+sName = 'LG5'
 sName = 'tmp'
-sTitle = 'Enriched Problems in L4(5)'
+sTitle = 'Enriched Problems in LG(5)'
 sRule = '<!-------------------------------------------------->'
 lRule = '<!---------------------------------------------------------------------------------------------------->'
 #################### Start .html file  ####################
@@ -34,6 +34,9 @@ cardinality = [4, 8, 192]
 #################### Initiate the flag manifold
 flagInfo = frobeniusData.pop(0)
 k = flagInfo[1][1]
+
+print(k)
+quit();
 
 ####################  Tables for Schubert problems
 for ind in range(0,len(frobeniusData)):

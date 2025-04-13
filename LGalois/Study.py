@@ -5,11 +5,9 @@
 import json
 import os
 
+fVar = "55"
 ####################    Read in data file
-enrichedProblemsFile = 'test.json'
-enrichedProblemsFile = 'C44_enriched.json'
-enrichedProblemsFile = 'C55_enriched.json'
-#enrichedProblemsFile = 'C66_enriched.json'
+enrichedProblemsFile = f'C{fVar}_enriched.json'
 probFile =  open(enrichedProblemsFile, 'r')
 enrichedProblems = json.load(probFile)
 
@@ -21,8 +19,10 @@ flagType = flagInfo[1]
 n = flagType[-1]
 
 totalTime = 0
+numberOfProblems = 0
 
 for problemData in enrichedProblems:
+    numberOfProblems = numberOfProblems + 1
     SchubertProblem = problemData[0]
     frequency = problemData[1]
     timeHundrethsOfSecond = problemData[2]
@@ -33,7 +33,16 @@ for problemData in enrichedProblems:
 #        print(f' time for one Frobenius elements = {timeHundrethsOfSecond/100/SchubertProblem[0]/100} secs.  number of cycles found = {len(frequency.keys())}')
 #        print(f' time for this = {timeHundrethsOfSecond/3600/100} hours.  number of cycles found = {len(frequency.keys())}')
 #        print(frequency)
-        print("----------------------\n")
+        print('----------------------')
+
+
+
+
+
+GHzYears = 3.7*timeHundrethsOfSecond/100/3600/24/365
+
+print(f'There were {numberOfProblems} enriched problems on C{fVar}. Computing them took {GHzYears} GHz-Years')
+
 
 
     

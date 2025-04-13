@@ -1,0 +1,24 @@
+These are the permutation groups we have found
+
+https://hobbes.la.asu.edu/Groups/group-data/
+
+Deg/Name  Order   #cClasses   Names and structure
+
+4T2          4        2       [S_2]^2             d4t2.html   Klein 4-group
+4T3          8        4       [S_2]^2 X| S_2      d4t3.html   Dihedral grop  D(4)
+
+8T3          8        2       [S_2]^3             d8t3.html    
+
+C66 : At least =2 with 4 conjugacy classes
+
+One should have order 16 with cc of sizes 1,2,4,9  the other has oder maybe 32  cc of sizes 1,6,13,12
+
+8T39       192        7       [S_2]^3 X| S_4      d8t39.html  (Weyl D_4)
+
+C66: Compute many more with 7 Conjugacy classes There are likely at least 2 different groups
+C66: Compute more with 10 Conjugacy classes  to determine the group
+
+8T44       384       14       [S_2]^2 X| S_4      d8t44.html  (Weyl B_4)
+8T47      1152       16       [S_4]^2 X| S_2      d8t47.html
+
+16T1328/9 1920       12       [S_2]^4 X| S_5       (Weyl D_5)
