@@ -7,7 +7,7 @@ newPackage(
      Email => "cbott2@tamu.edu"},
     {Name => "Frank Sottile",
      Email=>"sottile@tamu.edu",
-     HomePage=>"https://www.math.tamu.edu/~sottile/"}
+     HomePage=>"https://franksottile.github.io/"}
   },
 --  HomePage => "<FIX>",
   Headline => "Package for computing ideals of Schubert subvarieties of flag manifolds",
