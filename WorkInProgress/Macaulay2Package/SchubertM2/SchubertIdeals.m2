@@ -87,7 +87,8 @@ t := symbol t;
 
 --------------------------------------------------
 
--- Converts a partial permutation in dimension notation to the corresponding one in codimension notation. (Equivalently, gives the dual class).
+-- Converts a partial permutation in dimension notation to the corresponding one in codimension notation. 
+--    (Equivalently, gives the dual class).
 dimToCodim = method()
 dimToCodim(List,List) := (flagshape,alpha) -> (
       s := length(flagshape) - 1;
