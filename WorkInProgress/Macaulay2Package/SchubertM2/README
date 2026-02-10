@@ -1,13 +1,8 @@
 Make a proper README
 
+README    This file
 
-./
-../
-DimNotationSchubertIdeals.m2
-NewSchubertIdeals.m2
-OldFiles/
-README
-SchubertIdeals.m2
+SchubertIdeals.m2               Frank thinks this is the correct version to be working with
 SchubertIdealsDocumentation.m2
 TaylorsCodeSchubertIdeals.m2
 TestLibrary.m2
@@ -15,3 +10,12 @@ doc.m2
 examples.m2
 frank.m2
 test.m2
+
+
+Archived versions ?
+
+DimNotationSchubertIdeals.m2    This was an old version of the library, it used dimension notation instead of codimension
+NewSchubertIdeals.m2            This also looks to be not current
+OldFiles/                       Clear what this is 
+
+

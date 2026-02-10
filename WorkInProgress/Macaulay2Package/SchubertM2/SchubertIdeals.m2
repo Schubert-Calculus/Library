@@ -1,10 +1,16 @@
 newPackage(
   "SchubertIdeals",
   Version => "0.0.1", 
-  Date => "November 30, 2022",
+  Date => "February 9, 2026",
   Authors => {
     {Name => "C.J. Bott", 
-     Email => "cbott2@tamu.edu"},
+     Email => "cjbott@mathematics.byu.edu", 
+     HomePage=> "https://math.byu.edu/directory/c-j-bott"},
+    {Name => "Taylor Brysiewicz", 
+     Email => "tbrysiew@uwo.ca",
+     HomePage=> "https://sites.google.com/view/taylorbrysiewicz/home"},
+    {Name => "Daniel Dale", 
+     Email => "ddale@tamu.edu"},
     {Name => "Frank Sottile",
      Email=>"sottile@tamu.edu",
      HomePage=>"https://franksottile.github.io/"}

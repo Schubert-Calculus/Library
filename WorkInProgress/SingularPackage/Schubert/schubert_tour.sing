@@ -2,6 +2,9 @@
 //
 //   This is a tour of the functionality of the SchubertIdeals package
 // 19 April 2024
+//
+//  It currently only looks at type A routines.
+//
 /////////////////////////////////////////////////////////////////////////////////
 option(redSB); 
 LIB "SchubertIdeals.lib";

@@ -10,7 +10,7 @@
 //   Garcia-Puente, James Ruffo, and Frank Sottile 
 //
 // This version is written by  C.J. Bott, Taylor Brysiewicz,
-//   and Frank Sottile
+//   Daniel Dale, and Frank Sottile
 //
 //  All lines must be at most 60 characters long
 ////////////////////////////////////////////////////////////
@@ -18,8 +18,9 @@ version="version SchubertIdeals.lib 1.0.0.2 October_2025 ";
 category="Algebraic geometry"; 
 info="   
 LIBRARY:  SchubertIdeals.lib  ideals of Schubert varieties
-AUTHOR:   C.J. Bott,          cdott2@tamu.edu
+AUTHOR:   C.J. Bott,          cjbott@mathematics.byu.edu
           Taylor Brysiewicz,  tbrysiew@uwo.ca
+	  Daniel Dale,        ddale@tamu.edu
           Frank Sottile,      sottile@tamu.edu
 
 OVERVIEW: 
@@ -48,7 +49,6 @@ PROCEDURES:
  <proc_name_N>();     <one line description of the purpose>
 ";
 
-
 ////////////////////////////////////////////////////////////
 LIB "matrix.lib"; 
 LIB "linalg.lib"; 
@@ -72,7 +72,7 @@ LIB "random.lib";
 //
 ///////////////////////////////////////////////////////////////////////
 //  Type C   flagType is an intvec (a_1,...,a_s,n) where a_1<...<a_s\leq n
-//        This is for isotropic flags of type a_1,...,a_2 in a symplectic 2n vector space
+//        This is for isotropic flags of type a_1,...,a_s in a symplectic 2n vector space
 //
 //  Schubert conditions are partial permutations w of 1...2n such that w_0 w = w w_0, and need only be specified
 //   by their first n values as w(i) + w(2n+1-i) = 2n+1.
@@ -92,8 +92,8 @@ LIB "random.lib";
 //
 //  proc naiveEquationsGrassmannian ( matrix stiefelCoords, intvec condition, matrix flagMatrix)
 //
-//   Computes the naive equations in the local stiefelCoords for the Grassmannian Schubert variety
-//     given by the condition and flag flagMatrix.
+//   Computes the naive equations (all minors of a givne size) in the local stiefelCoords
+//     for the Grassmannian Schubert variety given by the condition and flag flagMatrix.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -157,7 +157,7 @@ LIB "random.lib";
 //
 //  proc internalJ( int n )
 //    Makes the default symplectic form that we use for our coordinates, a 2n x 2n matrix J with J^2 = - I
-//
+//     This has \pm 1 along the anti-diagonal
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -187,6 +187,7 @@ proc makeStiefelCoordinates ( intvec flagType , list conditions, list # )
   if (size(#)==3) {#[4] = "stiefelCoordinates"; }
   if (size(#)<>4) {#[1] = "0"; #[2] = "x"; #[3] = "dp"; #[4] = "stiefelCoordinates"; }
   if ( #[4] == "locCoordinats" )
+  //  Should use the ERROR function here
   {
     printf("Input failure in makeStiefelCoordinates, must use a different name for local Stiefel Coordinates than locCoordinats");
     quit;
@@ -577,8 +578,10 @@ proc makeLagrangianCoordinates ( list conditions, list # )
 //  conditions is either a singleton (w) or a pair (w,u)
 //
 "USAGE: makeLagrangianCoordinates( conditions , # ) list conditions, list #
-  Computes local Stiefel coordinates for Schubert/Richaradson variety given by one or two Schubert conditions in the Lagrangian Grassmannian.
-   # contains information for the ring (characteristic, variablename, monomial order), the name for the matrix of coordinates, and for the ideal.
+  Computes local Stiefel coordinates for Schubert/Richaradson variety given by one or
+     two Schubert conditions in the Lagrangian Grassmannian.
+   # contains information for the ring (characteristic, variablename, monomial order),
+     the name for the matrix of coordinates, and for the ideal.
 
  RETURN: A list containing the ring constructor and exporting of the matrix of coordinates
 
@@ -836,7 +839,7 @@ example
 //   The next three may be missing input checks and examples
 //
 // proc  plueckerStep( intvec w, int n )
-//      Computes one step in the lexicographic walk through  Pluecker indices on the Grassmannian Gr( len(w), n )
+//      Computes one step in the lexicographic walk through Pluecker indices on the Grassmannian Gr( len(w), n )
 //
 // proc plueckerIndices( int k, int n )
 //    Computes the list of all Pl\"ucker indices for  on the Grassmannian Gr(k,n), in lexicoigraphic order
@@ -870,7 +873,8 @@ example
 //      Computes one step of a decomposition of a pair of Schubert conditions for a Lagrangian Grassmannian
 //    
 // proc fullDecomposition( intvec wo, intvec uo )
-//      Decomposes a pair of Lagrangian Schubert Conditions to relfect the decomposition of the corresponding Richardson variety
+//      Decomposes a pair of Lagrangian Schubert Conditions to reflect the decomposition
+//        of the corresponding Richardson variety
 //
 // proc LagrIndicesPlain( intvec w )
 //      Computes the information about the variables and dependent coordinates for a single Lagrangian Schubert cell
