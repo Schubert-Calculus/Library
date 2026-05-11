@@ -1,0 +1,16 @@
+Things to do w.r.t. the library
+
+ proc minimalEquationsGrassmannian
+   Daniel Dale pointed out that this may not play well with indeterminate matrices, due to taking inverses.
+     Solution: use adjugate matrices instead
+
+// proc makeLagrangianCoordinates ( list L, list # )
+     What is L ?????     list conditions,
+
+// proc randomFlagC (int n, int range)
+      This needs to have more features.
+
+// proc randomFlagC ( list # )
+   Why is the flag invertible ?
+
+Need routine for local coordinates in any symplectic flag variety

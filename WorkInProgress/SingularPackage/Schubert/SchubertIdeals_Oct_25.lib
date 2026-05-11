@@ -86,13 +86,13 @@ LIB "random.lib";
 //     default for # : ["0", "x", "dp", "stiefelCoordinates"]
 //
 //     Makes the Stiefel coordinates in the tye A flag variety for either a Schubert variety
-//     or a Richardson variety (on a Grassmannian, and with two Schubert conditions
+//     or a Richardson variety (on a Grassmannian, and with two Schubert conditions )
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  proc naiveEquationsGrassmannian ( matrix stiefelCoords, intvec condition, matrix flagMatrix)
 //
-//   Computes the naive equations (all minors of a givne size) in the local stiefelCoords
+//   Computes the naive equations (all minors of a given size) in the local stiefelCoords
 //     for the Grassmannian Schubert variety given by the condition and flag flagMatrix.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +112,7 @@ LIB "random.lib";
 //     given by the condition and flag flagMatrix.
 //
 //     Lacks checks and documentation
+//     This may have problems with taking inverse of a matrix of indeterminates (use Adjugate matrices instead)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -424,6 +425,7 @@ example
   print(osculatingFlag( 5, 7 ));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Creates the n x n matrix of the flag osculating the rational normal curve
 //  (s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1)^T  at the point s=random number
@@ -468,11 +470,6 @@ example
   print(randomOsculatingFlag( list(4) ));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Creates the matrix of the flag secant to the rational normal curve (s^(n-1)/(n-1)!, ..., s^3/3!, s^2/2, s, 1)^T
@@ -555,10 +552,8 @@ example
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 //
+//   This begins some routines for the Lagrangian Grassmannian
 //
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,9 +616,6 @@ proc makeLagrangianCoordinates ( list conditions, list # )
   }
   //     Get the indices of the variables, the dependent variables, and the positions of the 1s
   list indicesOfVariables = LagrangianVariables( w, u );
-
-//  print(indicesOfVariables);
-
   //     Make the coordinate ring.  The name R is internal to this procedure
   string ringConstructor = "ring R = " + #[1] + ",(" ;
   for ( i=1; i<=size(indicesOfVariables[1]); i++ )  {
@@ -657,7 +649,8 @@ proc makeLagrangianCoordinates ( list conditions, list # )
   execute(exportConstructor);
 
   matrix myJ = internalJ( n );
-  ideal locIdeel =  transpose(locCoordinats)*myJ*locCoordinats;
+  ideal locIdeel =  transpose(locCoordinats)*myJ*locCoordinats;   // intentional misspelling of "Ideel"
+                                                                  //  Ensures that the coordinates lie in the Lagrangian Grassmannian
   locIdeel = std(locIdeel);
   string idealConstructor = "ideal " + #[5] + " = locIdeel ;";
   execute(idealConstructor); 
@@ -677,12 +670,13 @@ example
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+// Need local coordinates for any symplectic flag variety
+//
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+// Symplectic flags and such
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
