@@ -10,32 +10,66 @@ option(redSB);
 LIB "SchubertIntersection.lib";
 LIB "SchubertIdeals.lib";
 
-proc makeLongestA ( int n )
+int n = 4;
+
+intvec w =  1,4,3,2;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Given a partial permutation w and integer n
+//
+proc makeSchubertPolynomialA ( intvec w, int n, list # )
+
+
+{
+ if (size(#)<>1) {#[1] = "x"; }
+
+ if ( not isPartialPermutation( w ) or ( n < sort(w)[1][size(w)] ) )
  {
-  intvec wo = n;
-  for (int i=n-1; i>0; i=i-1)
-  {
-   wo = wo,  intvec(i);
-  }
-  return ( wo );
+  printf("The input intvec to makeSchubertPolynomialA is not a partialPermutation in s_(int)");
  }
+ else
+ {
+  intvec wLoc = completeToPermutation(w, n);
+  intvec rw = reducedWordToTopA( wLoc );
+  def myRing =  makeSymmetricIdeal(4,#)[1];
+  setring myRing;
+  symmetricIdeal = std(symmetricIdeal);
+  poly f = topClassA( basering );
+  for (int i=1; i<=size(rw); i=i+1)
+  {
+    f = dividedDifference( f, rw[i] );
+  }
+  print(basering);
+  return(reduce(f, symmetricIdeal));
+ }
+}
 
-int n = 5;
-intvec w =  4,5,1,3;
-w = completeToPermutation(w, n);
-intvec wo = makeLongestA(n);
+list # = "y";
+makeSchubertPolynomialA ( w, n )
 
 
+quit;
+w = 2,6,1,4,3;
+n = 6; 
+ makeSchubertPolynomialA(w,n);
 
 quit;
 
 def myRing =  makeSymmetricIdeal(3,"y")[1];
 setring myRing;
 symmetricIdeal;
+
+topClassA( basering );
+
+
 list L = "z", "J";
 def myRing =  makeSymmetricIdeal(4, L)[1];
 setring myRing;
 J;
+
+topClassA( basering );
 
 
 
