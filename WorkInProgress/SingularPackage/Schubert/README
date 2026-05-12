@@ -1,5 +1,9 @@
 Things to do w.r.t. the library
 
+Write code to compute Schubert intersection numbers
+
+
+
  proc minimalEquationsGrassmannian
    Daniel Dale pointed out that this may not play well with indeterminate matrices, due to taking inverses.
      Solution: use adjugate matrices instead

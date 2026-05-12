@@ -1,0 +1,41 @@
+// sPoly_tour.sing
+//
+//   This is a tour of the functionality of the SchubertIntersection package
+// 11 May 2026
+//
+//  It currently only looks at type A routines.
+//
+/////////////////////////////////////////////////////////////////////////////////
+option(redSB);
+LIB "SchubertIntersection.lib";
+LIB "SchubertIdeals.lib";
+
+proc makeLongestA ( int n )
+ {
+  intvec wo = n;
+  for (int i=n-1; i>0; i=i-1)
+  {
+   wo = wo,  intvec(i);
+  }
+  return ( wo );
+ }
+
+int n = 5;
+intvec w =  4,5,1,3;
+w = completeToPermutation(w, n);
+intvec wo = makeLongestA(n);
+
+
+
+quit;
+
+def myRing =  makeSymmetricIdeal(3,"y")[1];
+setring myRing;
+symmetricIdeal;
+list L = "z", "J";
+def myRing =  makeSymmetricIdeal(4, L)[1];
+setring myRing;
+J;
+
+
+
