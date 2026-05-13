@@ -29,19 +29,20 @@ proc intersectionNumberA( intvec flagType, list SchubertProblem )
  {
   int n = flagType[size(flagType)];
   ring R = 0, (x(n..1)), dp;
-//  ideal symmetricIdeal = std(makeSymmetricIdeal( R ));
+  ideal symmetricIdeal = std(makeSymmetricIdeal( ));
   poly SchClass = makeSchubertPolynomialA ( makeDualFlagType( flagType ) );
   for (i=1; i<=size(SchubertProblem); i=i+1)
   {
    SchClass = SchClass *  makeSchubertPolynomialA ( SchubertProblem[i] );
   }
-  SchClass = reduce(SchClass, std(makeSymmetricIdeal( R )));
+  SchClass = reduce(SchClass, std(makeSymmetricIdeal( )));
  }
- return(division(SchClass, topClassA())[1][1,1]);
+ return( int( leadcoef( SchClass ) ) );
 }
 
-intersectionNumberA( flagType, SchubertProblem  );
+int degSchubProb = intersectionNumberA( flagType, SchubertProblem  );
 
+degSchubProb;
 
 quit;
 
