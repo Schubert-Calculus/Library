@@ -10,66 +10,72 @@ option(redSB);
 LIB "SchubertIntersection.lib";
 LIB "SchubertIdeals.lib";
 
-int n = 4;
-
-intvec w =  1,4,3,2;
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Given a partial permutation w and integer n
-//
-proc makeSchubertPolynomialA ( intvec w, int n, list # )
+int n = 6;
+ring R = 0, (x(n..1)), dp;
+ideal symmetricIdeal = std(makeSymmetricIdeal( R ));
+makeSchubertPolynomialA ( intvec(1,4,2,5) );
 
 
+list SchubertProblem = intvec(1,4,2,5), intvec(1,4,2,5), intvec(1,4,2,5), intvec(1,4,2,5);
+SchubertProblem = intvec(1,3,2,5), intvec(1,3,2,4), intvec(1,4,2,5), intvec(1,4,2,5), intvec(1,4,2,5);
+intvec flagType = 2,4,6;
+
+proc intersectionNumberA( intvec flagType, list SchubertProblem )
 {
- if (size(#)<>1) {#[1] = "x"; }
-
- if ( not isPartialPermutation( w ) or ( n < sort(w)[1][size(w)] ) )
+ int i;
+ if (isSchubertProblemA( flagType, SchubertProblem ))
  {
-  printf("The input intvec to makeSchubertPolynomialA is not a partialPermutation in s_(int)");
- }
- else
- {
-  intvec wLoc = completeToPermutation(w, n);
-  intvec rw = reducedWordToTopA( wLoc );
-  def myRing =  makeSymmetricIdeal(4,#)[1];
-  setring myRing;
-  symmetricIdeal = std(symmetricIdeal);
-  poly f = topClassA( basering );
-  for (int i=1; i<=size(rw); i=i+1)
+  int n = flagType[size(flagType)];
+  ring R = 0, (x(n..1)), dp;
+//  ideal symmetricIdeal = std(makeSymmetricIdeal( R ));
+  poly SchClass = makeSchubertPolynomialA ( makeDualFlagType( flagType ) );
+  for (i=1; i<=size(SchubertProblem); i=i+1)
   {
-    f = dividedDifference( f, rw[i] );
+   SchClass = SchClass *  makeSchubertPolynomialA ( SchubertProblem[i] );
   }
-  print(basering);
-  return(reduce(f, symmetricIdeal));
+  SchClass = reduce(SchClass, std(makeSymmetricIdeal( R )));
  }
+ return(division(SchClass, topClassA())[1][1,1]);
 }
 
-list # = "y";
-makeSchubertPolynomialA ( w, n )
+intersectionNumberA( flagType, SchubertProblem  );
 
 
 quit;
-w = 2,6,1,4,3;
-n = 6; 
- makeSchubertPolynomialA(w,n);
 
+flagType = 2,5,8;
+w = 1,3,2,5,7;
+
+
+
+
+lengthA( intvec(1,3,2,5,7), 8 );
 quit;
 
-def myRing =  makeSymmetricIdeal(3,"y")[1];
-setring myRing;
-symmetricIdeal;
-
-topClassA( basering );
 
 
-list L = "z", "J";
-def myRing =  makeSymmetricIdeal(4, L)[1];
-setring myRing;
-J;
 
-topClassA( basering );
+
+
+quit;
+int n = 6;
+intvec flagType = 2,4,6;
+
+ring R = 0, (x(n..1)), dp;
+ideal symmetricIdeal = makeSymmetricIdeal( );
+
+topClassA();
+
+
+poly F =;
+F;
+w = 2,1,3,4,6,5;
+poly G = makeSchubertPolynomialA ( w );
+r
+
+quit;
 
 
 
